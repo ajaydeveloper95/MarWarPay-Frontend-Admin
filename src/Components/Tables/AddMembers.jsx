@@ -116,6 +116,7 @@ const AddMembers = () => {
                   <MenuItem value="Retailer">Retailer</MenuItem>
                   <MenuItem value="APIUser">API User</MenuItem>
                   <MenuItem value="User">User</MenuItem>
+                  <MenuItem value="User">User</MenuItem>
                 </Select>
               </FormControl>
             </Grid>
