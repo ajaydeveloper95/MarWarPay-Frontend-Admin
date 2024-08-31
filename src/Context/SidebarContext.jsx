@@ -1,4 +1,3 @@
-// src/contexts/SidebarContext.jsx
 import { createContext, useContext, useState } from 'react';
 
 const SidebarContext = createContext();

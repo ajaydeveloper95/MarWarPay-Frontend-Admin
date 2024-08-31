@@ -1,13 +1,19 @@
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import Sidebar from './Components/Sidebar';
 import { SidebarProvider } from './Context/SidebarContext';
-import AddMembers from './Components/Tables/AddMembers';
-import ViewAllMembers from './Components/Tables/ViewAllMembers';
-import Retailer from './Components/Tables/Retailer';
-import MasterDistributor from './Components/Tables/MasterDistributor';
-import Distributor from './Components/Tables/Distributor';
-import Users from './Components/Tables/Users';
-import ApiMember from './Components/Tables/ApiMember';
+import AddMembers from './Components/Tables/Members/AddMembers';
+import ViewAllMembers from './Components/Tables/Members/ViewAllMembers';
+import MasterDistributor from './Components/Tables/Members/MasterDistributor';
+import Retailer from './Components/Tables/Members/Retailer';
+import Distributor from './Components/Tables/Members/Distributor';
+import ApiMember from './Components/Tables/Members/ApiMember';
+import Users from './Components/Tables/Members/Users';
+import Sidebar from './Components/sidebar/Sidebar';
+import Payout from './Components/Tables/Reports/Payout';
+import BalanceRpt from './Components/Tables/Reports/BalanceRpt';
+import Qr from './Components/Tables/Reports/Qr';
+import Payin from './Components/Tables/Reports/Payin';
+import MemberWlt from './Components/Tables/UpiWallet/MemberWlt';
+import Transfer from './Components/Tables/UpiWallet/Transfer';
 // Import other components and pages
 
 function App() {
@@ -16,6 +22,8 @@ function App() {
       <Router>
         <Sidebar/>
         <Routes>
+
+          {/* here member table route define */}
           <Route path="/members/addMembers" element={<AddMembers/>} />
           <Route path="/members/all_members" element={<ViewAllMembers/>} />
           <Route path="/members/master_distributor" element={<MasterDistributor/>} />
@@ -23,8 +31,18 @@ function App() {
           <Route path="/members/distributor" element={<Distributor/>} />
           <Route path="/members/api_member" element={<ApiMember/>} />
           <Route path="/members/users" element={<Users/>} />
+
+           {/* here Report table route define */}
+           <Route path="/report/payout" element={<Payout/>} />
+           <Route path="/report/balance" element={<BalanceRpt/>} />
+           <Route path="/report/Qr" element={<Qr/>} />
+           <Route path="/report/payin" element={<Payin/>} />
+
+           {/* here UPI wallet table route define */}
+           <Route path="/upi-wallet/configure" element={<MemberWlt/>} />
+           <Route path="/upi-wallet/transactions" element={<Transfer/>} />
+
           
-          {/* Define other routes here */}
         </Routes>
       </Router>
     </SidebarProvider>

@@ -11,10 +11,14 @@ import {
   Grid,
   Box,
   IconButton,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useNavigate } from 'react-router-dom';
-import { useSidebar } from '../../Context/SidebarContext';
+import { useSidebar } from '../../../Context/SidebarContext';
 
 const AddMembers = () => {
   const [memberType, setMemberType] = useState(''); 
@@ -30,12 +34,14 @@ const AddMembers = () => {
   const [packageType, setPackageType] = useState('');
   const [minimumWallet, setMinimumWallet] = useState('');
   const [status, setStatus] = useState('');
+  const [isDialogOpen, setIsDialogOpen] = useState(false); // State for success dialog
 
   const navigate = useNavigate();
   const { isSidebarOpen } = useSidebar();
 
   const handleSubmit = (event) => {
     event.preventDefault();
+    
     console.log('Member added:', {
       memberType,
       name,
@@ -52,6 +58,9 @@ const AddMembers = () => {
       status,
     });
 
+    // Show success dialog
+    setIsDialogOpen(true);
+
     // Reset form fields
     setMemberType('');
     setName('');
@@ -66,6 +75,10 @@ const AddMembers = () => {
     setPackageType('');
     setMinimumWallet('');
     setStatus('');
+  };
+
+  const handleCloseDialog = () => {
+    setIsDialogOpen(false);
   };
 
   return (
@@ -115,7 +128,6 @@ const AddMembers = () => {
                   <MenuItem value="Distributor">Distributor</MenuItem>
                   <MenuItem value="Retailer">Retailer</MenuItem>
                   <MenuItem value="APIUser">API User</MenuItem>
-                  <MenuItem value="User">User</MenuItem>
                   <MenuItem value="User">User</MenuItem>
                 </Select>
               </FormControl>
@@ -260,6 +272,21 @@ const AddMembers = () => {
             </Grid>
           </Grid>
         </form>
+
+        {/* Success Dialog */}
+        <Dialog open={isDialogOpen} onClose={handleCloseDialog}>
+          <DialogTitle>Member Added Successfully</DialogTitle>
+          <DialogContent>
+            <Typography>
+              The new member has been successfully added!
+            </Typography>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleCloseDialog} color="primary">
+              OK
+            </Button>
+          </DialogActions>
+        </Dialog>
       </Box>
     </Container>
   );

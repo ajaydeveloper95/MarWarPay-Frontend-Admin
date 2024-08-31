@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import { Container, Typography, Table, TableBody, TableCell, TableContainer, Link, TableHead, TableRow, Paper, IconButton, Grid, TextField, Button, MenuItem, Select, InputLabel, FormControl, Box } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'; // Import back arrow icon
-import { useSidebar } from '../../Context/SidebarContext';
+import { useSidebar } from '../../../Context/SidebarContext';
 
 const membersData = [
   { id: 1, name: 'John Doe', email: 'john@example.com', phone: '123-456-7890', selfBalance: '$1000', downlineBalance: '$500', created: '2023-08-01', status: 'Active' },
@@ -11,7 +11,7 @@ const membersData = [
   // Add more member objects as needed
 ];
 
-const Users = () => {
+const MasterDistributor = () => {
   const navigate = useNavigate(); // Initialize useNavigate
   const { isSidebarOpen } = useSidebar(); // Get sidebar state
   const [searchQuery, setSearchQuery] = useState(''); // State for search query
@@ -132,7 +132,7 @@ const Users = () => {
                 </Grid>
                 <Grid item>
                   <Typography variant="h5" component="h1" gutterBottom>
-                    Users
+                    Master Distributor
                   </Typography>
                 </Grid>
               </Grid>
@@ -285,4 +285,4 @@ const Users = () => {
   );
 };
 
-export default Users;
+export default MasterDistributor;
