@@ -14,14 +14,26 @@ import Qr from './Components/Tables/Reports/Qr';
 import Payin from './Components/Tables/Reports/Payin';
 import MemberWlt from './Components/Tables/UpiWallet/MemberWlt';
 import Transfer from './Components/Tables/UpiWallet/Transfer';
+import AddPackage from './Components/Tables/Package/AddPackage';
+import ViewPackage from './Components/Tables/Package/ViewPackage';
+import PayoutCharge from './Components/Tables/Setting/PayoutCharge';
+import DashBoard from './Pages/DashBoard';
+import { ThemeProvider } from './Context/ThemeContext';
+import Footer from './Components/footer/Footer';
+import Profile from './Components/profile/Profile';
 // Import other components and pages
 
 function App() {
   return (
     <SidebarProvider>
+      <ThemeProvider>
       <Router>
         <Sidebar/>
         <Routes>
+
+           {/* here dashboard table route define */}
+           <Route path="/" element={<DashBoard/>} />
+           <Route path='/updateProfile' element={<Profile />} />
 
           {/* here member table route define */}
           <Route path="/members/addMembers" element={<AddMembers/>} />
@@ -42,9 +54,19 @@ function App() {
            <Route path="/upi-wallet/configure" element={<MemberWlt/>} />
            <Route path="/upi-wallet/transactions" element={<Transfer/>} />
 
+           {/* here Package Management table route define */}
+           <Route path="/package/add" element={<AddPackage/>} />
+           <Route path="/package/view" element={<ViewPackage/>} />
+
+           {/* here Package Management table route define */}
+           <Route path="/settings/payoutCharge" element={<PayoutCharge/>} />
+           {/* <Route path="/package/view" element={<ViewPackage/>} /> */}
+
           
         </Routes>
+        <Footer/>
       </Router>
+      </ThemeProvider>
     </SidebarProvider>
       
   );

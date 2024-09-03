@@ -1,16 +1,44 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useSidebar } from '../../Context/SidebarContext';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import SettingsIcon from '@mui/icons-material/Settings';
 
 const Sidebar = () => {
   const { isSidebarOpen, toggleSidebar } = useSidebar();
   const [isDropdownOpen, setIsDropdownOpen] = useState({});
+  const [profileMenuVisible, setProfileMenuVisible] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
+  // Function to toggle the profile menu
+  const handleProfileClick = () => {
+    setProfileMenuVisible(!profileMenuVisible);
+  };
+
+  // Function to toggle dropdown menus
   const toggleDropdown = (item) => {
     setIsDropdownOpen(prev => ({
       ...prev,
       [item]: !prev[item],
     }));
+  };
+
+  // Function to handle logout
+  const handleLogoutClick = () => {
+    setIsModalOpen(true);
+  };
+
+  // Function to confirm logout
+  const handleConfirmLogout = () => {
+    setIsModalOpen(false);
+    // Implement your logout logic here
+    console.log('User logged out');
+    // Redirect to login page or home page after logout
+  };
+
+  // Function to cancel logout
+  const handleCancelLogout = () => {
+    setIsModalOpen(false);
   };
 
   return (
@@ -20,18 +48,33 @@ const Sidebar = () => {
         className={`fixed top-0 right-0 transition-all duration-300 p-5 text-gray-800 shadow-lg z-50 flex items-center justify-between`}
         style={{ width: isSidebarOpen ? 'calc(100% - 16rem)' : '100%', backgroundColor: 'white' }}
       >
-        <img src='/logo.png' className='h-10' alt="Logo" />
+        <img src='/logo.png' className='h-10 cursor-pointer' alt="Logo" onClick={handleProfileClick} />
         <div className="flex items-center space-x-4">
-          <Link to="/profile" className="hover:text-gray-600">
-            <span className="material-icons mt-2 text-4xl text-gray-800">
+          <div className="relative">
+            <span
+              className="material-icons mt-2 text-4xl text-gray-800 cursor-pointer"
+              onClick={handleProfileClick}
+            >
               account_circle
             </span>
-          </Link>
+            {profileMenuVisible && (
+              <div className="absolute top-12 right-0 bg-white shadow-lg border border-gray-200 rounded-lg">
+                <Link to="/updateProfile" className="block px-4 py-2 text-gray-800 hover:bg-gray-100">Profile</Link>
+                <Link to="/settings" className="block px-4 py-2 text-gray-800 hover:bg-gray-100">Settings</Link>
+                <button
+                  onClick={handleLogoutClick}
+                  className="block px-4 py-2 w-full text-left text-gray-800 hover:bg-gray-100"
+                >
+                  Logout
+                </button>
+              </div>
+            )}
+          </div>
           <button
             onClick={toggleSidebar}
-            className={`pt-1 text-white ${isSidebarOpen ? 'bg-gray-700' : 'bg-gray-900'} rounded-full`}
+            className={`text-white ${isSidebarOpen ? 'bg-gray-800' : 'bg-gray-900'} rounded-full`}
           >
-            <span className="material-icons text-gray-100">
+            <span className="material-icons text-gray-100 p-1">
               {isSidebarOpen ? 'close' : 'menu'}
             </span>
           </button>
@@ -209,40 +252,101 @@ const Sidebar = () => {
               )}
             </li>
 
-             {/* Package Management Section with Dropdown */}
-             {/* <li>
+            {/* Package Management Section with Dropdown */}
+            <li>
               <button
-                onClick={() => toggleDropdown('Package management')}
+                onClick={() => toggleDropdown('package-management')}
                 className="flex items-center px-4 py-2 hover:bg-gray-100 w-full text-left"
               >
                 <span className={`material-icons mr-2 text-gray-800 ${!isSidebarOpen && 'text-2xl'}`}>payment</span>
-                {isSidebarOpen && 'Package management'}
-                <span className={`material-icons ml-auto transition-transform ${isDropdownOpen['Package management'] ? 'rotate-180' : 'rotate-0'}`}>
+                {isSidebarOpen && 'Package Management'}
+                <span className={`material-icons ml-auto transition-transform ${isDropdownOpen['package-management'] ? 'rotate-180' : 'rotate-0'}`}>
                   arrow_drop_down
                 </span>
               </button>
-              {isDropdownOpen['Package management'] && isSidebarOpen && (
+              {isDropdownOpen['package-management'] && isSidebarOpen && (
                 <div className='m-5'>
                   <ul className="pl-6 bg-gray-50">
                     <li>
-                      <Link to="/upi-wallet/configure" className="flex items-center px-4 py-2 text-gray-800 hover:bg-gray-100">
+                      <Link to="/package/add" className="flex items-center px-4 py-2 text-gray-800 hover:bg-gray-100">
                         Add Package
                       </Link>
                     </li>
                     <li>
-                      <Link to="/upi-wallet/transactions" className="flex items-center px-4 py-2 text-gray-800 hover:bg-gray-100">
+                      <Link to="/package/view" className="flex items-center px-4 py-2 text-gray-800 hover:bg-gray-100">
                         View Package
                       </Link>
                     </li>
                   </ul>
                 </div>
               )}
-            </li> */}
+            </li>
 
-            {/* Repeat similar blocks for other sections like Employee Management, Reports, etc. */}
+            {/* Main Settings Section with Dropdown */}
+            <li>
+              <button
+                onClick={() => toggleDropdown('main-setting')}
+                className="flex items-center px-4 py-2 hover:bg-gray-100 w-full text-left"
+              >
+                <SettingsIcon className={`mr-2 text-gray-800 ${!isSidebarOpen && 'text-2xl'}`} />
+                {isSidebarOpen && 'Main Setting'}
+                <ArrowDropDownIcon
+                  className={`ml-auto transition-transform ${isDropdownOpen['main-setting'] ? 'rotate-180' : 'rotate-0'}`}
+                />
+              </button>
+              {isDropdownOpen['main-setting'] && isSidebarOpen && (
+                <div className="m-5">
+                  <ul className="pl-6 bg-gray-50">
+                    <li>
+                      <Link to="/settings/payoutCharge" className="flex items-center px-4 py-2 text-gray-800 hover:bg-gray-100">
+                        Payout Charge
+                      </Link>
+                    </li>
+                    <li>
+                      <Link to="/settings/payinApi" className="flex items-center px-4 py-2 text-gray-800 hover:bg-gray-100">
+                        Payin API Switch
+                      </Link>
+                    </li>
+                    <li>
+                      <Link to="/settings/payoutApi" className="flex items-center px-4 py-2 text-gray-800 hover:bg-gray-100">
+                        Payout API Switch
+                      </Link>
+                    </li>
+                    <li>
+                      <Link to="/settings/account" className="flex items-center px-4 py-2 text-gray-800 hover:bg-gray-100">
+                        Account Open Charge
+                      </Link>
+                    </li>
+                  </ul>
+                </div>
+              )}
+            </li>
           </ul>
         </div>
       </div>
+
+      {/* Logout Confirmation Modal */}
+      {isModalOpen && (
+        <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg">
+            <p className="text-lg mb-4">Are you sure you want to logout?</p>
+            <div className="flex justify-end space-x-4">
+              <button
+                onClick={handleConfirmLogout}
+                className="px-4 py-2 bg-blue-500 text-white rounded-lg"
+              >
+                Yes
+              </button>
+              <button
+                onClick={handleCancelLogout}
+                className="px-4 py-2 bg-gray-500 text-white rounded-lg"
+              >
+                No
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
