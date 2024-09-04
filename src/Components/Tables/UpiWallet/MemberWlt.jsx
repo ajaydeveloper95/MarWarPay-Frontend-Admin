@@ -1,35 +1,56 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { useNavigate } from 'react-router-dom';
 import { Container, Typography, Table, TableBody, TableCell, TableContainer, Link, TableHead, TableRow, Paper, IconButton, Grid, TextField, Button, MenuItem, Select, InputLabel, FormControl, Box } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack'; // Import back arrow icon
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useSidebar } from '../../../Context/SidebarContext';
+import axios from 'axios';
 
-const membersData = [
-  { id: 1, memberId: 'M001', name: 'John Doe', beforeAmount: '$1000', crDrAmount: '$200', dateTime: '2023-08-31 10:00', type: 'Credit', description: 'Payment received', status: 'Completed' },
-  { id: 2, memberId: 'M002', name: 'Jane Smith', beforeAmount: '$800', crDrAmount: '-$100', dateTime: '2023-08-30 14:30', type: 'Debit', description: 'Bill payment', status: 'Completed' },
-  // Add more member objects as needed
-];
+const API_ENDPOINT = 'http://pulsesync11.com/api/v1/wallet/getAllTransaction';
+const ACCESS_TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NmM4NmI3NTk4NjEyMGE2NGEyOTQ2ZmEiLCJ1c2VyTmFtZSI6Im1haW51c2VyIiwibWVtYmVySWQiOiJNUEFQSTgzNjcwMiIsIm1lbWJlclR5cGUiOiJTdXBlckFkbWluIiwiaWF0IjoxNzI1NDMyMTg1LCJleHAiOjE3MjU1MTg1ODV9.y_Bjzk4_sQsopQqvWFdHW3hUxBH8p0LaV8JsNoBA97c';
 
 const MemberWlt = () => {
-  const navigate = useNavigate(); // Initialize useNavigate
-  const { isSidebarOpen } = useSidebar(); // Get sidebar state
-  const [searchQuery, setSearchQuery] = useState(''); // State for search query
-  const [date, setDate] = useState(''); // State for selected date
-  const [pageSize, setPageSize] = useState('all'); // State for items per page
-  const [currentPage, setCurrentPage] = useState(0); // State for current page
-  const [previousPage, setPreviousPage] = useState(0); // State for previous page
+  const navigate = useNavigate();
+  const { isSidebarOpen } = useSidebar();
+  const [searchQuery, setSearchQuery] = useState('');
+  const [date, setDate] = useState('');
+  const [pageSize, setPageSize] = useState('all');
+  const [currentPage, setCurrentPage] = useState(0);
+  const [previousPage, setPreviousPage] = useState(0);
+
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Reset page number when pageSize changes to handle "View All"
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const response = await axios.get(API_ENDPOINT, {
+          headers: {
+            Authorization: `Bearer ${ACCESS_TOKEN}`,
+          },
+        });
+        setData(response.data.data);
+        setLoading(false);
+      } catch (err) {
+        setError(err);
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  useEffect(() => {
     setCurrentPage(0);
     setPreviousPage(0);
   }, [pageSize]);
 
   // Filter members based on search query
-  const filteredMembers = membersData.filter((member) => {
-    const matchesName = member.name.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesName;
+  const filteredMembers = data.filter((member) => {
+    const matchesDescription = member.description.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesDescription;
   });
 
   // Determine the number of items to display
@@ -55,8 +76,11 @@ const MemberWlt = () => {
   };
 
   const handleBackButtonClick = () => {
-    navigate(-1); // Navigate to the previous page
+    navigate(-1);
   };
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error.message}</div>;
 
   return (
     <>
@@ -88,11 +112,11 @@ const MemberWlt = () => {
             </Grid>
             <Grid item xs={12} md={3}>
               <TextField
-                label="Search by Name"
+                label="Search by Description"
                 variant="outlined"
                 fullWidth
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)} // Update search query
+                onChange={(e) => setSearchQuery(e.target.value)}
               />
             </Grid>
             <Grid item xs={12} md={2}>
@@ -104,7 +128,7 @@ const MemberWlt = () => {
                   shrink: true,
                 }}
                 value={date}
-                onChange={(e) => setDate(e.target.value)} // Update date state
+                onChange={(e) => setDate(e.target.value)}
               />
             </Grid>
             <Grid item xs={12} md={2}>
@@ -132,9 +156,9 @@ const MemberWlt = () => {
                 <TableRow>
                   <TableCell sx={{ fontWeight: 'bold', fontSize: '16px', border: '1px solid rgba(224, 224, 224, 1)' }}>ID</TableCell>
                   <TableCell sx={{ fontWeight: 'bold', fontSize: '16px', border: '1px solid rgba(224, 224, 224, 1)' }}>MemberID</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', fontSize: '16px', border: '1px solid rgba(224, 224, 224, 1)' }}>Name</TableCell>
                   <TableCell sx={{ fontWeight: 'bold', fontSize: '16px', border: '1px solid rgba(224, 224, 224, 1)' }}>Before Amount</TableCell>
                   <TableCell sx={{ fontWeight: 'bold', fontSize: '16px', border: '1px solid rgba(224, 224, 224, 1)' }}>Cr/Dr Amount</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', fontSize: '16px', border: '1px solid rgba(224, 224, 224, 1)' }}>After Amount</TableCell>
                   <TableCell sx={{ fontWeight: 'bold', fontSize: '16px', border: '1px solid rgba(224, 224, 224, 1)' }}>Date Time</TableCell>
                   <TableCell sx={{ fontWeight: 'bold', fontSize: '16px', border: '1px solid rgba(224, 224, 224, 1)' }}>Type</TableCell>
                   <TableCell sx={{ fontWeight: 'bold', fontSize: '16px', border: '1px solid rgba(224, 224, 224, 1)' }}>Description</TableCell>
@@ -145,24 +169,24 @@ const MemberWlt = () => {
               <TableBody>
                 {paginatedMembers.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={10} sx={{ textAlign: 'center' }}>
-                      No members found.
+                    <TableCell colSpan={9} sx={{ textAlign: 'center' }}>
+                      No transactions found.
                     </TableCell>
                   </TableRow>
                 ) : (
-                  paginatedMembers.map((member) => (
-                    <TableRow key={member.id}>
-                      <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{member.id}</TableCell>
+                  paginatedMembers.map((member, index) => (
+                    <TableRow key={member._id}>
+                      <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{startIndex + index + 1}</TableCell>
                       <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{member.memberId}</TableCell>
-                      <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{member.name}</TableCell>
                       <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{member.beforeAmount}</TableCell>
-                      <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{member.crDrAmount}</TableCell>
-                      <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{member.dateTime}</TableCell>
-                      <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{member.type}</TableCell>
+                      <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{member.transactionAmount}</TableCell>
+                      <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{member.afterAmount}</TableCell>
+                      <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{new Date(member.createdAt).toLocaleString()}</TableCell>
+                      <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{member.transactionType}</TableCell>
                       <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{member.description}</TableCell>
-                      <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{member.status}</TableCell>
+                      <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{member.transactionStatus}</TableCell>
                       <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>
-                        <IconButton color="primary" component={Link} href={`/members/BalanceRpt/view/${member.id}`}>
+                        <IconButton color="primary" component={Link} href={`/members/BalanceRpt/view/${member._id}`}>
                           <VisibilityIcon />
                         </IconButton>
                       </TableCell>

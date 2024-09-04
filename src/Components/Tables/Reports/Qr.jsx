@@ -1,15 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom'; 
-import { Container, Typography, Table, TableBody, TableCell, TableContainer, Link, TableHead, TableRow, Paper, IconButton, Grid, TextField, Button, MenuItem, Select, InputLabel, FormControl, Box } from '@mui/material';
+import { Container, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, Grid, TextField, Button, MenuItem, Select, InputLabel, FormControl, Box } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useSidebar } from '../../../Context/SidebarContext';
+import axios from 'axios';
 
-const membersData = [
-  { id: 1, memberId: 'M001', txnID: 'T001', refID: 'R001', amount: '$1000', ip: '192.168.1.1', qr: 'QR001', dateTime: '2024-08-20T10:00:00', callback: 'Success' },
-  { id: 2, memberId: 'M002', txnID: 'T002', refID: 'R002', amount: '$800', ip: '192.168.1.2', qr: 'QR002', dateTime: '2024-08-25T14:30:00', callback: 'Success' },
-  // Add more member objects as needed
-];
+const API_ENDPOINT = 'http://pulsesync11.com/api/v1/payin/allPaymentGenerated';
+const ACCESS_TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NmM4NmI3NTk4NjEyMGE2NGEyOTQ2ZmEiLCJ1c2VyTmFtZSI6Im1haW51c2VyIiwibWVtYmVySWQiOiJNUEFQSTgzNjcwMiIsIm1lbWJlclR5cGUiOiJTdXBlckFkbWluIiwiaWF0IjoxNzI1NDMyMTg1LCJleHAiOjE3MjU1MTg1ODV9.y_Bjzk4_sQsopQqvWFdHW3hUxBH8p0LaV8JsNoBA97c';
 
 const Qr = () => {
   const navigate = useNavigate(); 
@@ -21,6 +19,29 @@ const Qr = () => {
   const [currentPage, setCurrentPage] = useState(0); 
   const [previousPage, setPreviousPage] = useState(0); 
   const [dropdownValue, setDropdownValue] = useState(''); 
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const response = await axios.get(API_ENDPOINT, {
+          headers: {
+            Authorization: `Bearer ${ACCESS_TOKEN}`,
+          },
+        });
+        setData(response.data.data); // Updated to use API data structure
+        setLoading(false);
+      } catch (err) {
+        setError(err);
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   useEffect(() => {
     setCurrentPage(0);
@@ -28,10 +49,10 @@ const Qr = () => {
   }, [pageSize]);
 
   // Filter members based on search query and date range
-  const filteredMembers = membersData.filter((member) => {
-    const matchesName = member.memberId.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesDate = (!startDate || new Date(member.dateTime) >= new Date(startDate)) &&
-                        (!endDate || new Date(member.dateTime) <= new Date(endDate));
+  const filteredMembers = data.filter((member) => {
+    const matchesName = member.userInfo.memberId.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesDate = (!startDate || new Date(member.createdAt) >= new Date(startDate)) &&
+                        (!endDate || new Date(member.createdAt) <= new Date(endDate));
     return matchesName && matchesDate;
   });
 
@@ -46,7 +67,7 @@ const Qr = () => {
 
   const handlePageChange = (direction) => {
     if (direction === 'next' && endIndex < filteredMembers.length) {
-      setPreviousPage(currentPage);
+      setPreviousPage(previousPage);
       setCurrentPage(currentPage + 1);
     } else if (direction === 'prev' && currentPage > 0) {
       setPreviousPage(currentPage);
@@ -201,39 +222,45 @@ const Qr = () => {
             <Table sx={{ borderCollapse: 'collapse' }}>
               <TableHead>
                 <TableRow>
-                  <TableCell sx={{ fontWeight: 'bold', fontSize: '16px', border: '1px solid rgba(224, 224, 224, 1)' }}>ID</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', fontSize: '16px', border: '1px solid rgba(224, 224, 224, 1)' }}>Member</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', fontSize: '16px', border: '1px solid rgba(224, 224, 224, 1)' }}>TxnID</TableCell>
+                <TableCell sx={{ fontWeight: 'bold', fontSize: '16px', border: '1px solid rgba(224, 224, 224, 1)' }}>ID</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', fontSize: '16px', border: '1px solid rgba(224, 224, 224, 1)' }}>Member ID</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', fontSize: '16px', border: '1px solid rgba(224, 224, 224, 1)' }}>txnID</TableCell>
                   <TableCell sx={{ fontWeight: 'bold', fontSize: '16px', border: '1px solid rgba(224, 224, 224, 1)' }}>RefID</TableCell>
                   <TableCell sx={{ fontWeight: 'bold', fontSize: '16px', border: '1px solid rgba(224, 224, 224, 1)' }}>Amount</TableCell>
                   <TableCell sx={{ fontWeight: 'bold', fontSize: '16px', border: '1px solid rgba(224, 224, 224, 1)' }}>IP</TableCell>
                   <TableCell sx={{ fontWeight: 'bold', fontSize: '16px', border: '1px solid rgba(224, 224, 224, 1)' }}>QR</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', fontSize: '16px', border: '1px solid rgba(224, 224, 224, 1)' }}>Date Time</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', fontSize: '16px', border: '1px solid rgba(224, 224, 224, 1)' }}>Callback</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', fontSize: '16px', border: '1px solid rgba(224, 224, 224, 1)' }}>Date</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', fontSize: '16px', border: '1px solid rgba(224, 224, 224, 1)' }}>Status</TableCell>
                   <TableCell sx={{ fontWeight: 'bold', fontSize: '16px', border: '1px solid rgba(224, 224, 224, 1)' }}>Action</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {paginatedMembers.length === 0 ? (
+                {loading ? (
                   <TableRow>
-                    <TableCell colSpan={10} sx={{ textAlign: 'center' }}>
-                      No members found.
+                    <TableCell colSpan={6} align="center">
+                      Loading...
+                    </TableCell>
+                  </TableRow>
+                ) : error ? (
+                  <TableRow>
+                    <TableCell colSpan={6} align="center">
+                      Error: {error.message}
                     </TableCell>
                   </TableRow>
                 ) : (
-                  paginatedMembers.map((member) => (
-                    <TableRow key={member.id}>
-                      <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{member.id}</TableCell>
-                      <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{member.memberId}</TableCell>
-                      <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{member.txnID}</TableCell>
-                      <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{member.refID}</TableCell>
+                  paginatedMembers.map((member, index) => (
+                    <TableRow key={member._id}>
+                     <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{startIndex + index + 1}</TableCell>
+                      <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{member.userInfo.memberId}</TableCell>
+                      <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{member.trxId}</TableCell>
+                      <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{member.refId}</TableCell>
                       <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{member.amount}</TableCell>
                       <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{member.ip}</TableCell>
-                      <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{member.qr}</TableCell>
-                      <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{new Date(member.dateTime).toLocaleString()}</TableCell>
-                      <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{member.callback}</TableCell>
+                      <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}><button>{member.qr}</button></TableCell>
+                      <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{new Date(member.createdAt).toLocaleDateString()}</TableCell>
+                      <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{member.callBackStatus==="Success" ? 'Success' : 'Failed'}</TableCell>
                       <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>
-                        <IconButton color="primary" component={Link} href={`/members/Qr/view/${member.id}`}>
+                        <IconButton color="primary">
                           <VisibilityIcon />
                         </IconButton>
                       </TableCell>
@@ -244,24 +271,26 @@ const Qr = () => {
             </Table>
           </TableContainer>
 
-          <Box display="flex" justifyContent="center" marginTop={2}>
-            <Button
-              variant="outlined"
-              color="primary"
-              onClick={() => handlePageChange('prev')}
-              disabled={previousPage === 0}
-            >
-              Previous
-            </Button>
-            <Button
-              variant="outlined"
-              color="primary"
-              onClick={() => handlePageChange('next')}
-              disabled={endIndex >= filteredMembers.length}
-            >
-              Next
-            </Button>
-          </Box>
+          <Grid container justifyContent="space-between" mt={2}>
+            <Grid item>
+              <Button onClick={() => handlePageChange('prev')} disabled={currentPage === 0}>
+                Previous
+              </Button>
+            </Grid>
+            <Grid item>
+              <Typography variant="body2">
+                Page {currentPage + 1} of {Math.ceil(filteredMembers.length / itemsToDisplay)}
+              </Typography>
+            </Grid>
+            <Grid item>
+              <Button
+                onClick={() => handlePageChange('next')}
+                disabled={endIndex >= filteredMembers.length}
+              >
+                Next
+              </Button>
+            </Grid>
+          </Grid>
         </Paper>
       </Container>
     </>

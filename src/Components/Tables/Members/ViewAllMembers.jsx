@@ -18,7 +18,7 @@ const ViewAllMembers = () => {
   const [date, setDate] = useState(''); // State for selected date
   const [pageSize, setPageSize] = useState('all'); // State for items per page
   const [currentPage, setCurrentPage] = useState(0); // State for current page
-  const [previousPage, setPreviousPage] = useState(0); // State for previous page
+  const [previousPage, setPreviousPage] = useState(0); // State for previous pagez
 
   useEffect(() => {
     // Reset page number when pageSize changes to handle "View All"

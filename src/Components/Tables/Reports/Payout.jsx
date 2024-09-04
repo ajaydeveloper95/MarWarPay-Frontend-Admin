@@ -21,73 +21,73 @@ import {
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useSidebar } from '../../../Context/SidebarContext';
+import axios from 'axios';
 
-// Sample data for table
-const membersData = [
-  {
-    id: 1,
-    memberId: 'M12345',
-    name: 'John Doe',
-    mobile: '123-456-7890',
-    accountNumber: '1234567890',
-    ifsc: 'ABC1234567',
-    amount: '$1000',
-    txnId: 'TXN001',
-    rrn: 'RRN001',
-    status: 'Success',
-    dateTime: '2023-08-01 10:00 AM',
-  },
-  {
-    id: 2,
-    memberId: 'M67890',
-    name: 'Jane Smith',
-    mobile: '987-654-3210',
-    accountNumber: '0987654321',
-    ifsc: 'XYZ9876543',
-    amount: '$800',
-    txnId: 'TXN002',
-    rrn: 'RRN002',
-    status: 'Failed',
-    dateTime: '2023-07-15 02:30 PM',
-  },
-  // Add more member objects as needed
-];
+const API_ENDPOINT = 'http://pulsesync11.com/api/v1/payout/allPayOutPayment';
+const ACCESS_TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NmM4NmI3NTk4NjEyMGE2NGEyOTQ2ZmEiLCJ1c2VyTmFtZSI6Im1haW51c2VyIiwibWVtYmVySWQiOiJNUEFQSTgzNjcwMiIsIm1lbWJlclR5cGUiOiJTdXBlckFkbWluIiwiaWF0IjoxNzI1NDMyMTg1LCJleHAiOjE3MjU1MTg1ODV9.y_Bjzk4_sQsopQqvWFdHW3hUxBH8p0LaV8JsNoBA97c';
 
 const Payout = () => {
   const navigate = useNavigate();
   const { isSidebarOpen } = useSidebar();
   const [searchQuery, setSearchQuery] = useState('');
   const [date, setDate] = useState('');
-  const [pageSize, setPageSize] = useState('all');
-  const [currentPage, setCurrentPage] = useState(0);
-  const [previousPage, setPreviousPage] = useState(0);
+  const [pageSize, setPageSize] = useState('25'); // Default to 25 items per page
+  const [currentPage, setCurrentPage] = useState(1); // Pagination starts at 1
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    setCurrentPage(0);
-    setPreviousPage(0);
-  }, [pageSize]);
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const response = await axios.get(API_ENDPOINT, {
+          headers: {
+            Authorization: `Bearer ${ACCESS_TOKEN}`,
+          },
+        });
+        setData(response.data.data.map((item, index) => ({
+          id: index + 1, // Sequential ID starting from 1
+          memberId: item.userInfo.memberId,
+          name: item.userInfo.fullName,
+          accountNumber: item.accountNumber,
+          ifsc: item.ifscCode,
+          amount: `${item.amount}`,
+          txnId: item.trxId,
+          rrn: 'N/A', // No RRN field in the response
+          status: item.isSuccess,
+          dateTime: new Date(item.createdAt).toISOString().split('T')[0], // Convert to 'YYYY-MM-DD'
+        })));
+        setLoading(false);
+      } catch (err) {
+        setError(err);
+        setLoading(false);
+      }
+    };
 
-  const filteredMembers = membersData.filter((member) => {
-    const matchesName = member.name.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesDate = date ? member.dateTime.startsWith(date) : true;
-    return matchesName && matchesDate;
+    fetchData();
+  }, []);
+
+  const filteredData = data.filter((item) => {
+    const matchesSearch = item.memberId.toLowerCase().includes(searchQuery.toLowerCase()) || item.name.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesDate = date ? item.dateTime.startsWith(date) : true;
+    return matchesSearch && matchesDate;
   });
 
-  const itemsToDisplay = pageSize === 'all' ? filteredMembers.length : parseInt(pageSize, 10);
-  const startIndex = currentPage * itemsToDisplay;
+  const itemsToDisplay = pageSize === 'all' ? filteredData.length : parseInt(pageSize, 10);
+  const startIndex = (currentPage - 1) * itemsToDisplay;
   const endIndex = startIndex + itemsToDisplay;
-  const paginatedMembers = filteredMembers.slice(startIndex, endIndex);
+  const paginatedData = filteredData.slice(startIndex, endIndex);
 
   const handlePageSizeChange = (event) => {
     setPageSize(event.target.value);
+    setCurrentPage(1); // Reset to first page when pageSize changes
   };
 
   const handlePageChange = (direction) => {
-    if (direction === 'next' && endIndex < filteredMembers.length) {
-      setPreviousPage(currentPage);
+    if (direction === 'next' && endIndex < filteredData.length) {
       setCurrentPage(currentPage + 1);
-    } else if (direction === 'prev' && currentPage > 0) {
-      setPreviousPage(currentPage);
+    } else if (direction === 'prev' && currentPage > 1) {
       setCurrentPage(currentPage - 1);
     }
   };
@@ -95,6 +95,9 @@ const Payout = () => {
   const handleBackButtonClick = () => {
     navigate(-1);
   };
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error.message}</div>;
 
   return (
     <>
@@ -127,7 +130,7 @@ const Payout = () => {
             </Grid>
             <Grid item xs={12} md={3}>
               <TextField
-                label="Search by Name"
+                label="Search by Member ID or Name"
                 variant="outlined"
                 fullWidth
                 value={searchQuery}
@@ -173,8 +176,7 @@ const Payout = () => {
                   <TableCell sx={{ fontWeight: 'bold', fontSize: '16px', border: '1px solid rgba(224, 224, 224, 1)' }}>ID</TableCell>
                   <TableCell sx={{ fontWeight: 'bold', fontSize: '16px', border: '1px solid rgba(224, 224, 224, 1)' }}>MemberID</TableCell>
                   <TableCell sx={{ fontWeight: 'bold', fontSize: '16px', border: '1px solid rgba(224, 224, 224, 1)' }}>Name</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', fontSize: '16px', border: '1px solid rgba(224, 224, 224, 1)' }}>Mobile</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', fontSize: '16px', border: '1px solid rgba(224, 224, 224, 1)' }}>A/c No.</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', fontSize: '16px', border: '1px solid rgba(224, 224, 224, 1)' }}>Account No.</TableCell>
                   <TableCell sx={{ fontWeight: 'bold', fontSize: '16px', border: '1px solid rgba(224, 224, 224, 1)' }}>IFSC</TableCell>
                   <TableCell sx={{ fontWeight: 'bold', fontSize: '16px', border: '1px solid rgba(224, 224, 224, 1)' }}>Amount</TableCell>
                   <TableCell sx={{ fontWeight: 'bold', fontSize: '16px', border: '1px solid rgba(224, 224, 224, 1)' }}>Txn ID</TableCell>
@@ -184,26 +186,25 @@ const Payout = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {paginatedMembers.length === 0 ? (
+                {paginatedData.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={11} sx={{ textAlign: 'center' }}>
-                      No members found.
+                    <TableCell colSpan={10} sx={{ textAlign: 'center' }}>
+                      No data found.
                     </TableCell>
                   </TableRow>
                 ) : (
-                  paginatedMembers.map((member) => (
-                    <TableRow key={member.id}>
-                      <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{member.id}</TableCell>
-                      <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{member.memberId}</TableCell>
-                      <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{member.name}</TableCell>
-                      <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{member.mobile}</TableCell>
-                      <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{member.accountNumber}</TableCell>
-                      <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{member.ifsc}</TableCell>
-                      <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{member.amount}</TableCell>
-                      <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{member.txnId}</TableCell>
-                      <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{member.rrn}</TableCell>
-                      <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{member.status}</TableCell>
-                      <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{member.dateTime}</TableCell>
+                  paginatedData.map((item) => (
+                    <TableRow key={item.id}>
+                      <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{item.id}</TableCell>
+                      <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{item.memberId}</TableCell>
+                      <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{item.name}</TableCell>
+                      <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{item.accountNumber}</TableCell>
+                      <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{item.ifsc}</TableCell>
+                      <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{item.amount}</TableCell>
+                      <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{item.txnId}</TableCell>
+                      <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{item.rrn}</TableCell>
+                      <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{item.status}</TableCell>
+                      <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{item.dateTime}</TableCell>
                     </TableRow>
                   ))
                 )}
@@ -216,18 +217,8 @@ const Payout = () => {
                 <Button
                   variant="contained"
                   color="primary"
-                  onClick={handleBackButtonClick}
-                  disabled={previousPage === 0}
-                >
-                  Back
-                </Button>
-              </Grid>
-              <Grid item>
-                <Button
-                  variant="contained"
-                  color="primary"
                   onClick={() => handlePageChange('prev')}
-                  disabled={currentPage === 0}
+                  disabled={currentPage === 1}
                 >
                   Previous
                 </Button>
@@ -237,7 +228,7 @@ const Payout = () => {
                   variant="contained"
                   color="primary"
                   onClick={() => handlePageChange('next')}
-                  disabled={endIndex >= filteredMembers.length}
+                  disabled={endIndex >= filteredData.length}
                 >
                   Next
                 </Button>

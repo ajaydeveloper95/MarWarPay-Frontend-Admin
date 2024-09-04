@@ -1,36 +1,78 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom'; 
-import { Container, Typography, Table, TableBody, TableCell, TableContainer, Link, TableHead, TableRow, Paper, IconButton, Grid, TextField, Button, MenuItem, Select, InputLabel, FormControl, Box } from '@mui/material';
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { useSidebar } from '../../../Context/SidebarContext';
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import {
+  Container,
+  Typography,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  Link,
+  TableHead,
+  TableRow,
+  Paper,
+  IconButton,
+  Grid,
+  TextField,
+  Button,
+  MenuItem,
+  Select,
+  InputLabel,
+  FormControl,
+  Box,
+} from "@mui/material";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { useSidebar } from "../../../Context/SidebarContext";
+import axios from "axios";
 
-const membersData = [
-  { id: 1, packageName: 'Basic Plan', status: 'Active', isDefault: true, created: '2023-08-31' },
-  { id: 2, packageName: 'Premium Plan', status: 'Inactive', isDefault: false, created: '2023-08-30' },
-  // Add more package objects as needed
-];
+const API_ENDPOINT = "http://pulsesync11.com/api/v1/package/allPackage";
+const ACCESS_TOKEN =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NmM4NmI3NTk4NjEyMGE2NGEyOTQ2ZmEiLCJ1c2VyTmFtZSI6Im1haW51c2VyIiwibWVtYmVySWQiOiJNUEFQSTgzNjcwMiIsIm1lbWJlclR5cGUiOiJTdXBlckFkbWluIiwiaWF0IjoxNzI1NDI2MTQ5LCJleHAiOjE3MjU1MTI1NDl9.6HOjL12kSvAAxwFR_kHPqYETKpRAvk7-nnt6Nc3DnTQ";
 
 const ViewPackage = () => {
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
   const { isSidebarOpen } = useSidebar();
-  const [searchQuery, setSearchQuery] = useState('');
-  const [date, setDate] = useState('');
-  const [pageSize, setPageSize] = useState('all');
+  const [searchQuery, setSearchQuery] = useState("");
+  const [date, setDate] = useState("");
+  const [pageSize, setPageSize] = useState("25");
   const [currentPage, setCurrentPage] = useState(0);
-  const [previousPage, setPreviousPage] = useState(0);
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    setCurrentPage(0);
-    setPreviousPage(0);
-  }, [pageSize]);
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const response = await axios.get(API_ENDPOINT, {
+          headers: {
+            Authorization: `Bearer ${ACCESS_TOKEN}`,
+          },
+        });
+        setData(response.data.data);
+        setLoading(false);
+      } catch (err) {
+        setError(err);
+        setLoading(false);
+      }
+    };
 
-  const filteredMembers = membersData.filter((member) => {
-    const matchesName = member.packageName.toLowerCase().includes(searchQuery.toLowerCase());
+    fetchData();
+  }, []);
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error.message}</div>;
+
+  const filteredMembers = data.filter((member) => {
+    const matchesName = member.packageName
+      .toLowerCase()
+      .includes(searchQuery.toLowerCase());
     return matchesName;
   });
 
-  const itemsToDisplay = pageSize === 'all' ? filteredMembers.length : parseInt(pageSize, 10);
+  const itemsToDisplay =
+    pageSize === "all" ? filteredMembers.length : parseInt(pageSize, 10);
 
   const startIndex = currentPage * itemsToDisplay;
   const endIndex = startIndex + itemsToDisplay;
@@ -38,14 +80,13 @@ const ViewPackage = () => {
 
   const handlePageSizeChange = (event) => {
     setPageSize(event.target.value);
+    setCurrentPage(0); // Reset to first page when page size changes
   };
 
   const handlePageChange = (direction) => {
-    if (direction === 'next' && endIndex < filteredMembers.length) {
-      setPreviousPage(currentPage);
+    if (direction === "next" && endIndex < filteredMembers.length) {
       setCurrentPage(currentPage + 1);
-    } else if (direction === 'prev' && currentPage > 0) {
-      setPreviousPage(currentPage);
+    } else if (direction === "prev" && currentPage > 0) {
       setCurrentPage(currentPage - 1);
     }
   };
@@ -59,11 +100,11 @@ const ViewPackage = () => {
       <Container
         maxWidth="xl"
         style={{
-          marginLeft: isSidebarOpen ? '16rem' : '10rem',
-          transition: 'margin-left 0.3s ease',
-          minWidth: '600px',
-          maxWidth: '80%',
-          marginTop: '8%'
+          marginLeft: isSidebarOpen ? "16rem" : "10rem",
+          transition: "margin-left 0.3s ease",
+          minWidth: "600px",
+          maxWidth: "80%",
+          marginTop: "8%",
         }}
       >
         <Paper sx={{ p: 2, boxShadow: 3 }}>
@@ -125,7 +166,7 @@ const ViewPackage = () => {
                   variant="contained"
                   color="primary"
                   fullWidth
-                  sx={{ height: '56px' }}
+                  sx={{ height: "56px" }}
                 >
                   Add Package
                 </Button>
@@ -135,39 +176,132 @@ const ViewPackage = () => {
 
           {/* Table Section */}
           <TableContainer component={Paper}>
-            <Table sx={{ borderCollapse: 'collapse' }}>
+            <Table sx={{ borderCollapse: "collapse" }}>
               <TableHead>
                 <TableRow>
-                  <TableCell sx={{ fontWeight: 'bold', fontSize: '16px', border: '1px solid rgba(224, 224, 224, 1)' }}>ID</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', fontSize: '16px', border: '1px solid rgba(224, 224, 224, 1)' }}>Package Name</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', fontSize: '16px', border: '1px solid rgba(224, 224, 224, 1)' }}>Status</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', fontSize: '16px', border: '1px solid rgba(224, 224, 224, 1)' }}>Is Default?</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', fontSize: '16px', border: '1px solid rgba(224, 224, 224, 1)' }}>Created</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', fontSize: '16px', border: '1px solid rgba(224, 224, 224, 1)' }}>Action</TableCell>
+                  <TableCell
+                    sx={{
+                      fontWeight: "bold",
+                      fontSize: "16px",
+                      border: "1px solid rgba(224, 224, 224, 1)",
+                    }}
+                  >
+                    #
+                  </TableCell>
+                  <TableCell
+                    sx={{
+                      fontWeight: "bold",
+                      fontSize: "16px",
+                      border: "1px solid rgba(224, 224, 224, 1)",
+                    }}
+                  >
+                    ID
+                  </TableCell>
+                  <TableCell
+                    sx={{
+                      fontWeight: "bold",
+                      fontSize: "16px",
+                      border: "1px solid rgba(224, 224, 224, 1)",
+                    }}
+                  >
+                    Package Name
+                  </TableCell>
+                  <TableCell
+                    sx={{
+                      fontWeight: "bold",
+                      fontSize: "16px",
+                      border: "1px solid rgba(224, 224, 224, 1)",
+                    }}
+                  >
+                    Status
+                  </TableCell>
+                  <TableCell
+                    sx={{
+                      fontWeight: "bold",
+                      fontSize: "16px",
+                      border: "1px solid rgba(224, 224, 224, 1)",
+                    }}
+                  >
+                    Is Default?
+                  </TableCell>
+                  <TableCell
+                    sx={{
+                      fontWeight: "bold",
+                      fontSize: "16px",
+                      border: "1px solid rgba(224, 224, 224, 1)",
+                    }}
+                  >
+                    Created
+                  </TableCell>
+                  <TableCell
+                    sx={{
+                      fontWeight: "bold",
+                      fontSize: "16px",
+                      border: "1px solid rgba(224, 224, 224, 1)",
+                    }}
+                  >
+                    Action
+                  </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {paginatedMembers.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={6} sx={{ textAlign: 'center' }}>
+                    <TableCell colSpan={7} sx={{ textAlign: "center" }}>
                       No packages found.
                     </TableCell>
                   </TableRow>
                 ) : (
-                  paginatedMembers.map((member) => (
-                    <TableRow key={member.id}>
-                      <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{member.id}</TableCell>
-                      <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{member.packageName}</TableCell>
-                      <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{member.status}</TableCell>
-                      <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{member.isDefault ? 'Yes' : 'No'}</TableCell>
-                      <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{member.created}</TableCell>
-                      <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>
-                        <IconButton color="primary" component={Link} href={`/members/BalanceRpt/view/${member.id}`}>
-                          <VisibilityIcon />
-                        </IconButton>
-                      </TableCell>
-                    </TableRow>
-                  ))
+                  paginatedMembers.map((member, index) => {
+                    // Calculate row number based on pagination
+                    const rowNumber = startIndex + index + 1;
+
+                    return (
+                      <TableRow key={member._id}>
+                        <TableCell
+                          sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
+                        >
+                          {rowNumber}
+                        </TableCell>
+                        <TableCell
+                          sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
+                        >
+                          {member._id}
+                        </TableCell>
+                        <TableCell
+                          sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
+                        >
+                          {member.packageName}
+                        </TableCell>
+                        <TableCell
+                          sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
+                        >
+                          {member.isActive ? "Active" : "Inactive"}
+                        </TableCell>
+                        <TableCell
+                          sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
+                        >
+                          {member.packagePayOutCharge > 0 ? "Yes" : "No"}
+                        </TableCell>
+                        <TableCell
+                          sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
+                        >
+                          {new Date(member.createdAt).toLocaleDateString()}
+                        </TableCell>
+                        <TableCell
+                          sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
+                        >
+                          <IconButton
+                            color="primary"
+                            component={Link}
+                            href={`/members/BalanceRpt/view/${member._id}`}
+                          >
+                            <VisibilityIcon />
+                          </IconButton>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })
                 )}
               </TableBody>
             </Table>
@@ -178,15 +312,15 @@ const ViewPackage = () => {
             <Button
               variant="outlined"
               color="primary"
-              onClick={() => handlePageChange('prev')}
-              disabled={previousPage === 0}
+              onClick={() => handlePageChange("prev")}
+              disabled={currentPage === 0}
             >
               Previous
             </Button>
             <Button
               variant="outlined"
               color="primary"
-              onClick={() => handlePageChange('next')}
+              onClick={() => handlePageChange("next")}
               disabled={endIndex >= filteredMembers.length}
             >
               Next

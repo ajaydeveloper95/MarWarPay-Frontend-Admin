@@ -1,15 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom'; 
-import { Container, Typography, Table, TableBody, TableCell, TableContainer, Link, TableHead, TableRow, Paper, IconButton, Grid, TextField, Button, MenuItem, Select, InputLabel, FormControl, Box } from '@mui/material';
+import { Container, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, Grid, TextField, Button, MenuItem, Select, InputLabel, FormControl, Box } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useSidebar } from '../../../Context/SidebarContext';
+import axios from 'axios';
 
-const membersData = [
-  { id: 1, memberId: 'M001', txnID: 'T001', bankRRN: 'BR001', amount: '$1000', charge: '$50', credit: '$950', vpaID: 'VPA001', description: 'Payment for invoice 123', dateTime: '2024-08-20T10:00:00', status: 'Success' },
-  { id: 2, memberId: 'M002', txnID: 'T002', bankRRN: 'BR002', amount: '$800', charge: '$40', credit: '$760', vpaID: 'VPA002', description: 'Refund for order 456', dateTime: '2024-08-25T14:30:00', status: 'Failed' },
-  // Add more member objects as needed
-];
+const API_ENDPOINT = 'http://pulsesync11.com/api/v1/payin/allSuccessPayIn';
+const ACCESS_TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NmM4NmI3NTk4NjEyMGE2NGEyOTQ2ZmEiLCJ1c2VyTmFtZSI6Im1haW51c2VyIiwibWVtYmVySWQiOiJNUEFQSTgzNjcwMiIsIm1lbWJlclR5cGUiOiJTdXBlckFkbWluIiwiaWF0IjoxNzI1NDI2MTQ5LCJleHAiOjE3MjU1MTI1NDl9.6HOjL12kSvAAxwFR_kHPqYETKpRAvk7-nnt6Nc3DnTQ';
 
 const Payin = () => {
   const navigate = useNavigate(); 
@@ -22,13 +20,50 @@ const Payin = () => {
   const [previousPage, setPreviousPage] = useState(0); 
   const [dropdownValue, setDropdownValue] = useState(''); 
 
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const response = await axios.get(API_ENDPOINT, {
+          headers: {
+            Authorization: `Bearer ${ACCESS_TOKEN}`,
+          },
+        });
+        // Adjust response data mapping here
+        setData(response.data.data.map(item => ({
+          id: item._id,
+          memberId: item.userInfo.memberId,
+          txnID: item.trxId,
+          bankRRN: item.bankRRN,
+          amount: `${item.amount}`,
+          charge: `${item.chargeAmount}`,
+          credit: `${item.finalAmount}`,
+          vpaID: item.vpaId,
+          description: item.payerName, // Use payerName for description
+          dateTime: new Date(item.createdAt).toISOString().split('T')[0], // Convert to 'YYYY-MM-DD'
+          status: item.isSuccess
+        })));
+        setLoading(false);
+      } catch (err) {
+        setError(err);
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
   useEffect(() => {
     setCurrentPage(0);
     setPreviousPage(0);
   }, [pageSize]);
 
   // Filter members based on search query and date range
-  const filteredMembers = membersData.filter((member) => {
+  const filteredMembers = data.filter((member) => {
     const matchesName = member.memberId.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesDate = (!startDate || new Date(member.dateTime) >= new Date(startDate)) &&
                         (!endDate || new Date(member.dateTime) <= new Date(endDate));
@@ -46,7 +81,7 @@ const Payin = () => {
 
   const handlePageChange = (direction) => {
     if (direction === 'next' && endIndex < filteredMembers.length) {
-      setPreviousPage(currentPage);
+      setPreviousPage(previousPage);
       setCurrentPage(currentPage + 1);
     } else if (direction === 'prev' && currentPage > 0) {
       setPreviousPage(currentPage);
@@ -57,6 +92,9 @@ const Payin = () => {
   const handleBackButtonClick = () => {
     navigate(-1); 
   };
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error.message}</div>;
 
   return (
     <>
@@ -174,36 +212,34 @@ const Payin = () => {
             </Grid>
             <Grid item xs={12} md={2}>
               <TextField
-                label="Start Date"
                 type="date"
+                label="Start Date"
+                variant="outlined"
                 fullWidth
-                InputLabelProps={{
-                  shrink: true,
-                }}
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
+                InputLabelProps={{ shrink: true }}
               />
             </Grid>
             <Grid item xs={12} md={2}>
               <TextField
-                label="End Date"
                 type="date"
+                label="End Date"
+                variant="outlined"
                 fullWidth
-                InputLabelProps={{
-                  shrink: true,
-                }}
                 value={endDate}
                 onChange={(e) => setEndDate(e.target.value)}
+                InputLabelProps={{ shrink: true }}
               />
             </Grid>
-            <Grid item xs={12} md={2}>
+            <Grid item xs={12} md={3}>
               <FormControl fullWidth>
-                <InputLabel id="page-size-label">Items Per Page</InputLabel>
+                <InputLabel id="page-size-label">Page Size</InputLabel>
                 <Select
                   labelId="page-size-label"
                   value={pageSize}
                   onChange={handlePageSizeChange}
-                  label="Items Per Page"
+                  label="Page Size"
                 >
                   <MenuItem value={25}>25</MenuItem>
                   <MenuItem value={50}>50</MenuItem>
@@ -212,34 +248,10 @@ const Payin = () => {
                 </Select>
               </FormControl>
             </Grid>
-            <Grid item xs={12} md={3}>
-              <Link href="/report/Qr">
-                <Button
-                  variant="contained"
-                  color="primary"
-                  fullWidth
-                  sx={{ height: '40px' }}
-                >
-                  Old UPI Collection
-                </Button>
-              </Link>
-            </Grid>
-            <Grid item xs={12} md={2}>
-              <Link href="">
-                <Button
-                  variant="contained"
-                  fullWidth
-                  sx={{ height: '40px', background :'green' }}
-                >
-                  Export
-                </Button>
-              </Link>
-            </Grid>
           </Grid>
-
           <TableContainer component={Paper}>
-            <Table sx={{ borderCollapse: 'collapse' }}>
-              <TableHead>
+            <Table>
+            <TableHead>
                 <TableRow>
                   <TableCell sx={{ fontWeight: 'bold', fontSize: '16px', border: '1px solid rgba(224, 224, 224, 1)' }}>ID</TableCell>
                   <TableCell sx={{ fontWeight: 'bold', fontSize: '16px', border: '1px solid rgba(224, 224, 224, 1)' }}>MemberID</TableCell>
@@ -256,54 +268,51 @@ const Payin = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {paginatedMembers.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={12} align="center">No records found.</TableCell>
+                {paginatedMembers.map((row,index) => (
+                  <TableRow key={row.id}>
+                    <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{startIndex + index + 1}</TableCell>
+                    <TableCell  sx={{  border: '1px solid rgba(224, 224, 224, 1)' }}>{row.memberId}</TableCell>
+                    <TableCell sx={{  border: '1px solid rgba(224, 224, 224, 1)' }}>{row.txnID}</TableCell>
+                    <TableCell sx={{  border: '1px solid rgba(224, 224, 224, 1)' }}>{row.bankRRN}</TableCell>
+                    <TableCell sx={{  border: '1px solid rgba(224, 224, 224, 1)' }}>{row.amount}</TableCell>
+                    <TableCell sx={{  border: '1px solid rgba(224, 224, 224, 1)' }}>{row.charge}</TableCell>
+                    <TableCell sx={{  border: '1px solid rgba(224, 224, 224, 1)' }}>{row.credit}</TableCell>
+                    <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{row.vpaID}</TableCell>
+                    <TableCell sx={{  border: '1px solid rgba(224, 224, 224, 1)' }}>{row.description}</TableCell>
+                    <TableCell sx={{  border: '1px solid rgba(224, 224, 224, 1)' }}>{row.dateTime}</TableCell>
+                    <TableCell sx={{  border: '1px solid rgba(224, 224, 224, 1)' }}>{row.status ? 'Success' : 'Failed'}</TableCell>
+                    <TableCell>
+                      <IconButton color="primary">
+                        <VisibilityIcon />
+                      </IconButton>
+                    </TableCell>
                   </TableRow>
-                ) : (
-                  paginatedMembers.map((member) => (
-                    <TableRow key={member.id}>
-                      <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{member.id}</TableCell>
-                      <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{member.memberId}</TableCell>
-                      <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{member.txnID}</TableCell>
-                      <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{member.bankRRN}</TableCell>
-                      <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{member.amount}</TableCell>
-                      <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{member.charge}</TableCell>
-                      <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{member.credit}</TableCell>
-                      <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{member.vpaID}</TableCell>
-                      <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{member.description}</TableCell>
-                      <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{member.dateTime}</TableCell>
-                      <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{member.status}</TableCell>
-                      <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>
-                        <IconButton color="primary" size="small">
-                          <VisibilityIcon />
-                        </IconButton>
-                      </TableCell>
-                    </TableRow>
-                  ))
-                )}
+                ))}
               </TableBody>
             </Table>
           </TableContainer>
-
-          <Box display="flex" justifyContent="center" marginTop={2}>
-            <Button
-              variant="outlined"
-              color="primary"
-              onClick={() => handlePageChange('prev')}
-              disabled={previousPage === 0}
-            >
-              Previous
-            </Button>
-            <Button
-              variant="outlined"
-              color="primary"
-              onClick={() => handlePageChange('next')}
-              disabled={endIndex >= filteredMembers.length}
-            >
-              Next
-            </Button>
-          </Box>
+          <Grid container justifyContent="space-between" mt={2}>
+            <Grid item>
+              <Button
+                variant="contained"
+                color="primary"
+                disabled={currentPage === 0}
+                onClick={() => handlePageChange('prev')}
+              >
+                Previous
+              </Button>
+            </Grid>
+            <Grid item>
+              <Button
+                variant="contained"
+                color="primary"
+                disabled={endIndex >= filteredMembers.length}
+                onClick={() => handlePageChange('next')}
+              >
+                Next
+              </Button>
+            </Grid>
+          </Grid>
         </Paper>
       </Container>
     </>
