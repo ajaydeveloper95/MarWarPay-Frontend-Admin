@@ -24,6 +24,9 @@ import { useSidebar } from '../../../Context/SidebarContext';
 
 const AddPackage = () => {
   const [packageName, setPackageName] = useState('');
+  const [packageInfo, setPackageInfo] = useState('');
+  const [packagePayOutCharge, setPackagePayOutCharge] = useState('');
+  const [packagePayInCharge, setPackagePayInCharge] = useState('');
   const [status, setStatus] = useState('Active');
   const [isDefault, setIsDefault] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -39,6 +42,9 @@ const AddPackage = () => {
 
     // Reset form fields
     setPackageName('');
+    setPackageInfo('');
+    setPackagePayOutCharge('');
+    setPackagePayInCharge('');
     setStatus('Active');
     setIsDefault(false);
   };
@@ -96,6 +102,35 @@ const AddPackage = () => {
               />
             </Grid>
             <Grid item xs={12} sm={6}>
+              <TextField
+                label="Package Info"
+                variant="outlined"
+                fullWidth
+                value={packageInfo}
+                onChange={(e) => setPackageInfo(e.target.value)}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                label="Package Pay Out Charge"
+                variant="outlined"
+                fullWidth
+                type="number"
+                value={packagePayOutCharge}
+                onChange={(e) => setPackagePayOutCharge(e.target.value)}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                label="Package Pay In Charge"
+                variant="outlined"
+                fullWidth
+                type="number"
+                value={packagePayInCharge}
+                onChange={(e) => setPackagePayInCharge(e.target.value)}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
               <FormControl fullWidth variant="outlined" required>
                 <InputLabel id="status-label">Status</InputLabel>
                 <Select
@@ -118,9 +153,10 @@ const AddPackage = () => {
                     color="primary"
                   />
                 }
-                label=" Is Default ?"
+                label="Is Default?"
               />
             </Grid>
+            
             <Grid item xs={12} display="flex" justifyContent="flex-end" spacing={2}>
               <Button type="submit" variant="contained" color="primary" sx={{ mr: 2 }}>
                 Submit

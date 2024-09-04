@@ -6,8 +6,8 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack'; // Import back arrow 
 import { useSidebar } from '../../../Context/SidebarContext';
 
 const membersData = [
-  { id: 1, name: 'John Doe', email: 'john@example.com', phone: '123-456-7890', selfBalance: '$1000', downlineBalance: '$500', created: '2023-08-01', status: 'Active' },
-  { id: 2, name: 'Jane Smith', email: 'jane@example.com', phone: '987-654-3210', selfBalance: '$800', downlineBalance: '$300', created: '2023-07-15', status: 'Inactive' },
+  { id: 1,memberId: 'M001', name: 'John Doe', email: 'john@example.com', phone: '123-456-7890', selfBalance: '$1000', downlineBalance: '$500', created: '2023-08-01', status: 'Active', password: '1234', package: '$2000', transaction: '1234', wallet: '$300' },
+  { id: 2,memberId: 'M002', name: 'Jane Smith', email: 'jane@example.com', phone: '987-654-3210', selfBalance: '$800', downlineBalance: '$300', created: '2023-07-15', status: 'Inactive' , password: '1234', package: '$2000', transaction: '1234', wallet: '$300'},
   // Add more member objects as needed
 ];
 
@@ -195,6 +195,7 @@ const ViewAllMembers = () => {
               <TableHead>
                 <TableRow>
                   <TableCell sx={{ fontWeight: 'bold', fontSize: '16px', border: '1px solid rgba(224, 224, 224, 1)' }}>ID</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', fontSize: '16px', border: '1px solid rgba(224, 224, 224, 1)' }}>MemberID</TableCell>
                   <TableCell sx={{ fontWeight: 'bold', fontSize: '16px', border: '1px solid rgba(224, 224, 224, 1)' }}>Name</TableCell>
                   <TableCell sx={{ fontWeight: 'bold', fontSize: '16px', border: '1px solid rgba(224, 224, 224, 1)' }}>Details</TableCell>
                   <TableCell sx={{ fontWeight: 'bold', fontSize: '16px', border: '1px solid rgba(224, 224, 224, 1)' }}>Self Balance</TableCell>
@@ -215,20 +216,41 @@ const ViewAllMembers = () => {
                   paginatedMembers.map((member) => (
                     <TableRow key={member.id}>
                       <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{member.id}</TableCell>
+                      <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{member.memberId}</TableCell>
                       <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{member.name}</TableCell>
                       <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>
-                        <Table size="small" sx={{ borderCollapse: 'collapse', width: '100%' }}>
-                          <TableBody>
-                            <TableRow>
-                              <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)', fontWeight: 'bold' }}>Email:</TableCell>
-                              <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{member.email}</TableCell>
-                            </TableRow>
-                            <TableRow>
-                              <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)', fontWeight: 'bold' }}>Phone:</TableCell>
-                              <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{member.phone}</TableCell>
-                            </TableRow>
-                          </TableBody>
-                        </Table>
+                      <Table size="small" sx={{ borderCollapse: 'collapse', width: '100%' }}>
+                        <TableBody>
+                          <TableRow>
+                            <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)', fontWeight: 'bold' }}>User name:</TableCell>
+                            <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{member.email}</TableCell>
+                          </TableRow>
+                          <TableRow>
+                            <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)', fontWeight: 'bold' }}>Password:</TableCell>
+                            <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{member.password}</TableCell>
+                          </TableRow>
+                          <TableRow>
+                            <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)', fontWeight: 'bold' }}>Transaction Password:</TableCell>
+                            <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{member.transaction}</TableCell>
+                          </TableRow>
+                          <TableRow>
+                            <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)', fontWeight: 'bold' }}>Phone:</TableCell>
+                            <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{member.phone}</TableCell>
+                          </TableRow>
+                          <TableRow>
+                            <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)', fontWeight: 'bold' }}>Email:</TableCell>
+                            <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{member.email}</TableCell>
+                          </TableRow>
+                          <TableRow>
+                            <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)', fontWeight: 'bold' }}>Package:</TableCell>
+                            <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{member.package}</TableCell>
+                          </TableRow>
+                          <TableRow>
+                            <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)', fontWeight: 'bold' }}>Minimum Wallet:</TableCell>
+                            <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{member.wallet}</TableCell>
+                          </TableRow>
+                        </TableBody>
+                      </Table>
                       </TableCell>
                       <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{member.selfBalance}</TableCell>
                       <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{member.downlineBalance}</TableCell>

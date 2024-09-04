@@ -18,7 +18,6 @@ import AddPackage from './Components/Tables/Package/AddPackage';
 import ViewPackage from './Components/Tables/Package/ViewPackage';
 import PayoutCharge from './Components/Tables/Setting/PayoutCharge';
 import DashBoard from './Pages/DashBoard';
-import { ThemeProvider } from './Context/ThemeContext';
 import Footer from './Components/footer/Footer';
 import Profile from './Components/profile/Profile';
 // Import other components and pages
@@ -26,7 +25,6 @@ import Profile from './Components/profile/Profile';
 function App() {
   return (
     <SidebarProvider>
-      <ThemeProvider>
       <Router>
         <Sidebar/>
         <Routes>
@@ -66,7 +64,6 @@ function App() {
         </Routes>
         <Footer/>
       </Router>
-      </ThemeProvider>
     </SidebarProvider>
       
   );

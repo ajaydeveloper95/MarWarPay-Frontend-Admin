@@ -80,7 +80,7 @@ const Transfer = () => {
           <ArrowBackIcon />
         </IconButton>
         <Typography variant="h5" component="h1" gutterBottom>
-          UPI-Wallet to E-Wallet Transfer
+          UPI to E-Wallet Transfer
         </Typography>
 
         <form onSubmit={handleSubmit} noValidate autoComplete="off">
