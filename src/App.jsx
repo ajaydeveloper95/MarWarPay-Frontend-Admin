@@ -20,6 +20,7 @@ import PayoutCharge from './Components/Tables/Setting/PayoutCharge';
 import DashBoard from './Pages/DashBoard';
 import Footer from './Components/footer/Footer';
 import Profile from './Components/profile/Profile';
+import PayoutGenerate from './Components/Tables/Reports/PayoutGenerate';
 // Import other components and pages
 
 function App() {
@@ -44,6 +45,7 @@ function App() {
 
            {/* here Report table route define */}
            <Route path="/report/payout" element={<Payout/>} />
+           <Route path="/report/payoutGenerate" element={<PayoutGenerate/>} />
            <Route path="/report/balance" element={<BalanceRpt/>} />
            <Route path="/report/Qr" element={<Qr/>} />
            <Route path="/report/payin" element={<Payin/>} />

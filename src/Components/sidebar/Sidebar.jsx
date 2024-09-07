@@ -203,6 +203,11 @@ const Sidebar = () => {
                       </Link>
                     </li>
                     <li>
+                      <Link to="/report/payoutGenerate" className="flex items-center px-4 py-2 text-gray-800 hover:bg-gray-100">
+                      Payout Generate
+                      </Link>
+                    </li>
+                    <li>
                       <Link to="/report/Qr" className="flex items-center px-4 py-2 text-gray-800 hover:bg-gray-100">
                         QR Report
                       </Link>

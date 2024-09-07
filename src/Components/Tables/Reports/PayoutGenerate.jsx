@@ -27,7 +27,7 @@ import { accessToken,domainBase } from '../../../helpingFile';
 const API_ENDPOINT = `${domainBase}api/v1/payout/allPayOutPayment`;
 const ACCESS_TOKEN = accessToken;
 
-const Payout = () => {
+const PayoutGenerate = () => {
   const navigate = useNavigate();
   const { isSidebarOpen } = useSidebar();
   const [searchQuery, setSearchQuery] = useState('');
@@ -49,16 +49,15 @@ const Payout = () => {
         });
         console.log(response.data.data)
         setData(response.data.data.map((item, index) => ({
-          id: index + 1, // Sequential ID starting from 1
+          id: index + 1, 
           memberId: item.userInfo.memberId,
           name: item.userInfo.fullName,
           accountNumber: item.accountNumber,
           ifsc: item.ifscCode,
           amount: `${item.amount}`,
           txnId: item.trxId,
-          rrn: item.bankRRN, // No RRN field in the response
           status: item.isSuccess,
-          dateTime: new Date(item.createdAt).toISOString().split('T')[0], // Convert to 'YYYY-MM-DD'
+          dateTime: new Date(item.createdAt).toISOString().split('T')[0], 
         })));
         setLoading(false);
       } catch (err) {
@@ -84,7 +83,7 @@ const Payout = () => {
 
   const handlePageSizeChange = (event) => {
     setPageSize(event.target.value);
-    setCurrentPage(1); // Reset to first page when pageSize changes
+    setCurrentPage(1); 
   };
 
   const handlePageChange = (direction) => {
@@ -126,7 +125,7 @@ const Payout = () => {
                 </Grid>
                 <Grid item>
                   <Typography variant="h5" component="h1" gutterBottom>
-                    Payout Histroy
+                    Payout Genarate
                   </Typography>
                 </Grid>
               </Grid>
@@ -182,10 +181,7 @@ const Payout = () => {
                   <TableCell sx={{ fontWeight: 'bold', fontSize: '16px', border: '1px solid rgba(224, 224, 224, 1)' }}>Account No.</TableCell>
                   <TableCell sx={{ fontWeight: 'bold', fontSize: '16px', border: '1px solid rgba(224, 224, 224, 1)' }}>IFSC</TableCell>
                   <TableCell sx={{ fontWeight: 'bold', fontSize: '16px', border: '1px solid rgba(224, 224, 224, 1)' }}>Amount</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', fontSize: '16px', border: '1px solid rgba(224, 224, 224, 1)' }}>Charge Amt</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', fontSize: '16px', border: '1px solid rgba(224, 224, 224, 1)' }}>Final Amt</TableCell>
                   <TableCell sx={{ fontWeight: 'bold', fontSize: '16px', border: '1px solid rgba(224, 224, 224, 1)' }}>Txn ID</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', fontSize: '16px', border: '1px solid rgba(224, 224, 224, 1)' }}>RRN</TableCell>
                   <TableCell sx={{ fontWeight: 'bold', fontSize: '16px', border: '1px solid rgba(224, 224, 224, 1)' }}>Status</TableCell>
                   <TableCell sx={{ fontWeight: 'bold', fontSize: '16px', border: '1px solid rgba(224, 224, 224, 1)' }}>Date Time</TableCell>
                 </TableRow>
@@ -206,10 +202,7 @@ const Payout = () => {
                       <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{item.accountNumber}</TableCell>
                       <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{item.ifsc}</TableCell>
                       <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{item.amount}</TableCell>
-                      <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{item.chargeAmount}</TableCell>
-                      <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{item.fnalAmount}</TableCell>
                       <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{item.txnId}</TableCell>
-                      <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{item.rrn}</TableCell>
                       <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{item.status}</TableCell>
                       <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{item.dateTime}</TableCell>
                     </TableRow>
@@ -248,4 +241,4 @@ const Payout = () => {
   );
 };
 
-export default Payout;
+export default PayoutGenerate;
