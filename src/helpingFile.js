@@ -1,0 +1,3 @@
+export const accessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NmM4NmI3NTk4NjEyMGE2NGEyOTQ2ZmEiLCJ1c2VyTmFtZSI6Im1haW51c2VyIiwibWVtYmVySWQiOiJNUEFQSTgzNjcwMiIsIm1lbWJlclR5cGUiOiJTdXBlckFkbWluIiwiaWF0IjoxNzI1NzAxMTMzLCJleHAiOjE3MjU3ODc1MzN9.mqwzai1xk9W_zsU2_Mp9uCwUGRqcnRQ15_0C1F7Tf4g';
+export const domainBase1 = "http://pulsesync11.com/";
+export const domainBase = "http://localhost:5000/";

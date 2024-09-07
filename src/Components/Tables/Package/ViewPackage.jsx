@@ -25,10 +25,10 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useSidebar } from "../../../Context/SidebarContext";
 import axios from "axios";
+import { accessToken,domainBase } from '../../../helpingFile';
 
-const API_ENDPOINT = "http://pulsesync11.com/api/v1/package/allPackage";
-const ACCESS_TOKEN =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NmM4NmI3NTk4NjEyMGE2NGEyOTQ2ZmEiLCJ1c2VyTmFtZSI6Im1haW51c2VyIiwibWVtYmVySWQiOiJNUEFQSTgzNjcwMiIsIm1lbWJlclR5cGUiOiJTdXBlckFkbWluIiwiaWF0IjoxNzI1NDI2MTQ5LCJleHAiOjE3MjU1MTI1NDl9.6HOjL12kSvAAxwFR_kHPqYETKpRAvk7-nnt6Nc3DnTQ";
+const API_ENDPOINT = `${domainBase}api/v1/package/allPackage`;
+const ACCESS_TOKEN = accessToken;
 
 const ViewPackage = () => {
   const navigate = useNavigate();
@@ -195,7 +195,7 @@ const ViewPackage = () => {
                       border: "1px solid rgba(224, 224, 224, 1)",
                     }}
                   >
-                    ID
+                    Package Name
                   </TableCell>
                   <TableCell
                     sx={{
@@ -204,7 +204,16 @@ const ViewPackage = () => {
                       border: "1px solid rgba(224, 224, 224, 1)",
                     }}
                   >
-                    Package Name
+                    PayOut Cr.
+                  </TableCell>
+                  <TableCell
+                    sx={{
+                      fontWeight: "bold",
+                      fontSize: "16px",
+                      border: "1px solid rgba(224, 224, 224, 1)",
+                    }}
+                  >
+                    PayIn Cr.
                   </TableCell>
                   <TableCell
                     sx={{
@@ -266,12 +275,17 @@ const ViewPackage = () => {
                         <TableCell
                           sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
                         >
-                          {member._id}
+                          {member.packageName}
                         </TableCell>
                         <TableCell
                           sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
                         >
-                          {member.packageName}
+                          {member.packagePayOutCharge}
+                        </TableCell>
+                        <TableCell
+                          sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
+                        >
+                          {member.packagePayInCharge}
                         </TableCell>
                         <TableCell
                           sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}

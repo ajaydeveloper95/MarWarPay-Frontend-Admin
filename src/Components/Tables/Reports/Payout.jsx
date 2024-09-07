@@ -22,9 +22,10 @@ import {
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useSidebar } from '../../../Context/SidebarContext';
 import axios from 'axios';
+import { accessToken,domainBase } from '../../../helpingFile';
 
-const API_ENDPOINT = 'http://pulsesync11.com/api/v1/payout/allPayOutPayment';
-const ACCESS_TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NmM4NmI3NTk4NjEyMGE2NGEyOTQ2ZmEiLCJ1c2VyTmFtZSI6Im1haW51c2VyIiwibWVtYmVySWQiOiJNUEFQSTgzNjcwMiIsIm1lbWJlclR5cGUiOiJTdXBlckFkbWluIiwiaWF0IjoxNzI1NDMyMTg1LCJleHAiOjE3MjU1MTg1ODV9.y_Bjzk4_sQsopQqvWFdHW3hUxBH8p0LaV8JsNoBA97c';
+const API_ENDPOINT = `${domainBase}api/v1/payout/allPayOutPayment`;
+const ACCESS_TOKEN = accessToken;
 
 const Payout = () => {
   const navigate = useNavigate();
