@@ -22,6 +22,7 @@ import Footer from './Components/footer/Footer';
 import Profile from './Components/profile/Profile';
 import PayoutGenerate from './Components/Tables/Reports/PayoutGenerate';
 import EditMember from './Components/Tables/Updates/EditMember';
+import Login from './Components/Login/Login';
 // Import other components and pages
 
 function App() {
@@ -31,8 +32,10 @@ function App() {
         <Sidebar/>
         <Routes>
 
+      <Route path="/" element={<Login/>} />
            {/* here dashboard table route define */}
-           <Route path="/" element={<DashBoard/>} />
+           <Route path="/dashboard" element={<DashBoard/>} />
+           
            <Route path='/updateProfile' element={<Profile />} />
 
           {/* here member table route define */}
