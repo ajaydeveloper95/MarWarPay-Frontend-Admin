@@ -80,8 +80,8 @@ const Users = () => {
     navigate(-1);
   };
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error.message}</div>;
+  // if (loading) return <div>Loading...</div>;
+  // if (error) return <div>Error: {error.message}</div>;
 
   return (
     <>
@@ -220,10 +220,16 @@ const Users = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {paginatedUsers.length === 0 ? (
+              {loading ? (
                   <TableRow>
-                    <TableCell colSpan={7} align="center">
-                      No Users Found
+                    <TableCell colSpan={6} align="center">
+                      Loading...
+                    </TableCell>
+                  </TableRow>
+                ) : error ? (
+                  <TableRow>
+                    <TableCell colSpan={6} align="center">
+                      Error: {error.message}
                     </TableCell>
                   </TableRow>
                 ) : (

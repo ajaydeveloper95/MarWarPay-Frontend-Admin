@@ -94,8 +94,8 @@ const Payin = () => {
     navigate(-1); 
   };
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error.message}</div>;
+  // if (loading) return <div>Loading...</div>;
+  // if (error) return <div>Error: {error.message}</div>;
 
   return (
     <>
@@ -269,7 +269,20 @@ const Payin = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {paginatedMembers.map((row,index) => (
+              {loading ? (
+                  <TableRow>
+                    <TableCell colSpan={6} align="center">
+                      Loading...
+                    </TableCell>
+                  </TableRow>
+                ) : error ? (
+                  <TableRow>
+                    <TableCell colSpan={6} align="center">
+                      Error: {error.message}
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                paginatedMembers.map((row,index) => (
                   <TableRow key={row.id}>
                     <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{startIndex + index + 1}</TableCell>
                     <TableCell  sx={{  border: '1px solid rgba(224, 224, 224, 1)' }}>{row.memberId}</TableCell>
@@ -288,6 +301,7 @@ const Payin = () => {
                       </IconButton>
                     </TableCell>
                   </TableRow>
+                )
                 ))}
               </TableBody>
             </Table>

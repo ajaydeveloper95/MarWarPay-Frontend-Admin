@@ -80,8 +80,8 @@ const MemberWlt = () => {
     navigate(-1);
   };
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error.message}</div>;
+  // if (loading) return <div>Loading...</div>;
+  // if (error) return <div>Error: {error.message}</div>;
 
   return (
     <>
@@ -168,10 +168,16 @@ const MemberWlt = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {paginatedMembers.length === 0 ? (
+              {loading ? (
                   <TableRow>
-                    <TableCell colSpan={9} sx={{ textAlign: 'center' }}>
-                      No transactions found.
+                    <TableCell colSpan={6} align="center">
+                      Loading...
+                    </TableCell>
+                  </TableRow>
+                ) : error ? (
+                  <TableRow>
+                    <TableCell colSpan={6} align="center">
+                      Error: {error.message}
                     </TableCell>
                   </TableRow>
                 ) : (

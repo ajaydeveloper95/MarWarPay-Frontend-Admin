@@ -21,33 +21,62 @@ import {
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useNavigate } from 'react-router-dom';
 import { useSidebar } from '../../../Context/SidebarContext';
+import axios from "axios";
+import { accessToken,domainBase } from '../../../helpingFile';
+
+const API_ENDPOINT = `${domainBase}api/v1/package/addPackage`;
+const ACCESS_TOKEN = accessToken;
 
 const AddPackage = () => {
   const [packageName, setPackageName] = useState('');
   const [packageInfo, setPackageInfo] = useState('');
   const [packagePayOutCharge, setPackagePayOutCharge] = useState('');
   const [packagePayInCharge, setPackagePayInCharge] = useState('');
-  const [status, setStatus] = useState('Active');
+  const [status, setStatus] = useState(true);
   const [isDefault, setIsDefault] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [error, setError] = useState(null);
 
   const navigate = useNavigate();
   const { isSidebarOpen } = useSidebar();
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-
-    // Display the success dialog
-    setIsDialogOpen(true);
-
-    // Reset form fields
-    setPackageName('');
-    setPackageInfo('');
-    setPackagePayOutCharge('');
-    setPackagePayInCharge('');
-    setStatus('Active');
-    setIsDefault(false);
+  
+    try {
+      // Make the POST request to the API endpoint
+      await axios.post(API_ENDPOINT, {
+        packageName,
+        packageInfo,
+        packagePayOutCharge,
+        packagePayInCharge,
+        isActive: status,
+        // isDefault,
+      }, {
+        headers: {
+          Authorization: `Bearer ${ACCESS_TOKEN}`,
+        },
+      });
+  
+      // Display the success dialog
+      setIsDialogOpen(true);
+  
+      // Reset form fields after a successful POST request
+      setPackageName('');
+      setPackageInfo('');
+      setPackagePayOutCharge('');
+      setPackagePayInCharge('');
+      setStatus(true);
+      setIsDefault(false);
+  
+      console.log('Data posted successfully!');
+    } catch (err) {
+      console.error('Error posting data:', err);
+      setError(err);
+    }
   };
+
+  if (error) return <div>Error: {error.message}</div>;
 
   const handleCloseDialog = () => {
     setIsDialogOpen(false);
@@ -139,8 +168,8 @@ const AddPackage = () => {
                   onChange={(e) => setStatus(e.target.value)}
                   label="Status"
                 >
-                  <MenuItem value="Active">Active</MenuItem>
-                  <MenuItem value="Deactive">Deactive</MenuItem>
+                  <MenuItem value={true}>Active</MenuItem>
+                  <MenuItem value={false}>Deactive</MenuItem>
                 </Select>
               </FormControl>
             </Grid>
@@ -159,7 +188,7 @@ const AddPackage = () => {
             
             <Grid item xs={12} display="flex" justifyContent="flex-end" spacing={2}>
               <Button type="submit" variant="contained" color="primary" sx={{ mr: 2 }}>
-                Submit
+                Add Package
               </Button>
               <Button variant="outlined" color="secondary" onClick={handleCancel}>
                 Cancel

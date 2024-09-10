@@ -19,6 +19,11 @@ import {
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useNavigate } from 'react-router-dom';
 import { useSidebar } from '../../../Context/SidebarContext';
+import axios from "axios";
+import { accessToken,domainBase } from '../../../helpingFile';
+
+const API_ENDPOINT = `${domainBase}api/v1/user/addUser`;
+const ACCESS_TOKEN = accessToken;
 
 const AddMembers = () => {
   const [memberType, setMemberType] = useState(''); 
@@ -35,34 +40,81 @@ const AddMembers = () => {
   const [minimumWallet, setMinimumWallet] = useState('');
   const [status, setStatus] = useState('');
   const [isDialogOpen, setIsDialogOpen] = useState(false); // State for success dialog
+  const [error, setError] = useState(null);
+  const [submitting, setSubmitting] = useState(null);
 
   const navigate = useNavigate();
   const { isSidebarOpen } = useSidebar();
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
+  // const handleSubmit = (event) => {
+  //   event.preventDefault();
     
-    console.log('Member added:', {
-      memberType,
-      name,
-      email,
-      role,
-      phone,
-      password,
-      transactionPassword,
-      country,
-      state,
-      city,
-      packageType,
-      minimumWallet,
-      status,
-    });
+  //   console.log('Member added:', {
+  //     memberType,
+  //     name,
+  //     email,
+  //     role,
+  //     phone,
+  //     password,
+  //     transactionPassword,
+  //     country,
+  //     state,
+  //     city,
+  //     packageType,
+  //     minimumWallet,
+  //     status,
+  //   });
 
-    // Show success dialog
-    setIsDialogOpen(true);
+  //   // Show success dialog
+  //   setIsDialogOpen(true);
 
-    // Reset form fields
-    setMemberType('');
+  //   // Reset form fields
+  //   setMemberType('');
+  //   setName('');
+  //   setEmail('');
+  //   setRole('');
+  //   setPhone('');
+  //   setPassword('');
+  //   setTransactionPassword('');
+  //   setCountry('');
+  //   setState('');
+  //   setCity('');
+  //   setPackageType('');
+  //   setMinimumWallet('');
+  //   setStatus('');
+  // };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    setSubmitting(true);
+  
+    try {
+      // Make the POST request to the API endpoint
+      await axios.post(`${API_ENDPOINT}/package/addMember`, {
+        memberType,
+            name,
+            email,
+            role,
+            phone,
+            password,
+            transactionPassword,
+            country,
+            state,
+            city,
+            packageType,
+            minimumWallet,
+            status,
+      }, {
+        headers: {
+          Authorization: `Bearer ${ACCESS_TOKEN}`,
+        },
+      });
+  
+      // Show success dialog
+      setIsDialogOpen(true);
+  
+      // Reset form fields after a successful POST request
+      setMemberType('');
     setName('');
     setEmail('');
     setRole('');
@@ -75,7 +127,18 @@ const AddMembers = () => {
     setPackageType('');
     setMinimumWallet('');
     setStatus('');
+  
+      console.log('Data posted successfully!');
+      navigate('/success/page');  // Adjust the navigation path as needed
+      setSubmitting(false);
+    } catch (err) {
+      console.error('Error posting data:', err);
+      setError(err);
+    }
   };
+
+  if (error) return <div>Error: {error.message}</div>;
+  
 
   const handleCloseDialog = () => {
     setIsDialogOpen(false);
@@ -266,7 +329,7 @@ const AddMembers = () => {
               </FormControl>
             </Grid>
             <Grid item xs={12}>
-              <Button type="submit" variant="contained" color="primary">
+              <Button type="submit" variant="contained" color="primary" disabled={submitting}>
                 Add Member
               </Button>
             </Grid>
