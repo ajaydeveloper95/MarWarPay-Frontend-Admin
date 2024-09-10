@@ -266,7 +266,25 @@ const Users = () => {
                       </Table>
                     </TableCell>
                     <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{user.createdAt}</TableCell>
-                    <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{user.isActive ? 'true' : 'false'}</TableCell>
+                    <TableCell
+                        sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
+                      >
+                        {user.isActive ? (
+                          <Button
+                           
+                          sx={{ color: "green", text: 'bold'}}
+                          >
+                            true
+                          </Button>
+                        ) : (
+                          <Button
+                            
+                          sx={{ color: "red", text: 'bold'}}
+                          >
+                            false
+                          </Button>
+                        )}
+                      </TableCell>
                     <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>
                       <IconButton color="primary">
                         <VisibilityIcon />

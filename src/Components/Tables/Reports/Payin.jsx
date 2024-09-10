@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom'; 
-import { Container, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, Grid, TextField, Button, MenuItem, Select, InputLabel, FormControl, Box } from '@mui/material';
+import { Container, Typography, Table, TableBody, TableCell,Dialog,DialogContent,DialogActions, DialogTitle,TableContainer, TableHead, TableRow, Paper, IconButton, Grid, TextField, Button, MenuItem, Select, InputLabel, FormControl, Box } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useSidebar } from '../../../Context/SidebarContext';
 import axios from 'axios';
 import { accessToken,domainBase } from '../../../helpingFile';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle'; // Icon for success
+import CancelIcon from '@mui/icons-material/Cancel'; // Icon for failure
 
 const API_ENDPOINT = `${domainBase}api/v1/payin/allSuccessPayIn`;
 const ACCESS_TOKEN = accessToken;
@@ -24,6 +26,9 @@ const Payin = () => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogMessage, setDialogMessage] = useState('');
+  const [dialogSeverity, setDialogSeverity] = useState('info');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -92,6 +97,16 @@ const Payin = () => {
 
   const handleBackButtonClick = () => {
     navigate(-1); 
+  };
+
+  const handleViewClick = (status) => {
+    setDialogMessage(status === 'Success' ? 'Transaction successfully completed' : 'Txn in pending or not completed.');
+    setDialogSeverity(status === 'Success' ? 'success' : 'error');
+    setDialogOpen(true);
+  };
+
+  const handleDialogClose = () => {
+    setDialogOpen(false);
   };
 
   // if (loading) return <div>Loading...</div>;
@@ -294,9 +309,25 @@ const Payin = () => {
                     <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{row.vpaID}</TableCell>
                     <TableCell sx={{  border: '1px solid rgba(224, 224, 224, 1)' }}>{row.description}</TableCell>
                     <TableCell sx={{  border: '1px solid rgba(224, 224, 224, 1)' }}>{row.dateTime}</TableCell>
-                    <TableCell sx={{  border: '1px solid rgba(224, 224, 224, 1)' }}>{row.status ? 'Success' : 'Failed'}</TableCell>
+                    <TableCell
+                        sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
+                      >
+                        {row.status==="Success" ? (
+                          <Button
+                          sx={{ color: "green", text: 'bold'}}
+                          >
+                            Success
+                          </Button>
+                        ) : (
+                          <Button
+                          sx={{ color: "red", text: 'bold'}}
+                          >
+                            Failed
+                          </Button>
+                        )}
+                      </TableCell>
                     <TableCell>
-                      <IconButton color="primary">
+                      <IconButton color="primary" onClick={() => handleViewClick(row.status)}>
                         <VisibilityIcon />
                       </IconButton>
                     </TableCell>
@@ -330,6 +361,38 @@ const Payin = () => {
           </Grid>
         </Paper>
       </Container>
+
+            {/* Dialog for showing messages */}
+            <Dialog
+        open={dialogOpen}
+        onClose={handleDialogClose}
+        PaperProps={{
+          sx: {
+            width: '500px',
+            maxWidth: '90%',
+            padding: 2,
+            borderRadius: 2,
+            boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.2)',
+          },
+        }}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title" sx={{ textAlign: 'center'}}>
+        {dialogSeverity === 'success' ? <CheckCircleIcon sx={{ fontSize: 50, color: 'green', mb: 2 }} /> : <CancelIcon sx={{ fontSize: 50, color: 'red', mb: 2 }} />}
+        </DialogTitle>
+        <DialogContent sx={{ textAlign: 'center' }}>
+          <Typography variant="h6" sx={{ color: dialogSeverity === 'error' ? 'red' : 'green' }}>
+           
+            {dialogMessage}
+          </Typography>
+        </DialogContent>
+        <DialogActions sx={{ justifyContent: 'end' }}>
+          <Button onClick={handleDialogClose} sx={{color: 'white', background: 'blue'}}>
+            Ok
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 };

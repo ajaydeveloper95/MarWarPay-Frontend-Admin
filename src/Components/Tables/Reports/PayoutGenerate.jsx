@@ -209,7 +209,24 @@ const PayoutGenerate = () => {
                       <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{item.ifsc}</TableCell>
                       <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{item.amount}</TableCell>
                       <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{item.txnId}</TableCell>
-                      <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{item.status}</TableCell>
+                      <TableCell
+                        sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
+                      >
+                        {item.status==="Success" ? (
+                          <Button
+                            sx={{ color: "green", text: 'bold'}}
+                           
+                          >
+                            Success
+                          </Button>
+                        ) : (
+                          <Button
+                          sx={{ color: "red", text: 'bold'}} 
+                          >
+                            Failed
+                          </Button>
+                        )}
+                      </TableCell>
                       <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{item.dateTime}</TableCell>
                     </TableRow>
                   ))

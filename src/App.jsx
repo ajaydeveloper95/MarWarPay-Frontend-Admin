@@ -21,6 +21,7 @@ import DashBoard from './Pages/DashBoard';
 import Footer from './Components/footer/Footer';
 import Profile from './Components/profile/Profile';
 import PayoutGenerate from './Components/Tables/Reports/PayoutGenerate';
+import EditMember from './Components/Tables/Updates/EditMember';
 // Import other components and pages
 
 function App() {
@@ -37,6 +38,8 @@ function App() {
           {/* here member table route define */}
           <Route path="/members/addMembers" element={<AddMembers/>} />
           <Route path="/members/all_members" element={<ViewAllMembers/>} />
+          <Route path="/member/EditMember/:memberId" element={<EditMember/>} />
+
           <Route path="/members/master_distributor" element={<MasterDistributor/>} />
           <Route path="/members/retailer" element={<Retailer/>} />
           <Route path="/members/distributor" element={<Distributor/>} />

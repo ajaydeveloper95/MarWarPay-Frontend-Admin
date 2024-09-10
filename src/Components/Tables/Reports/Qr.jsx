@@ -1,28 +1,33 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom'; 
-import { Container, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, Grid, TextField, Button, MenuItem, Select, InputLabel, FormControl, Box } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+import { Container, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, Grid, TextField, Button, MenuItem, Select, InputLabel, FormControl, Box, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle'; // Icon for success
+import CancelIcon from '@mui/icons-material/Cancel'; // Icon for failure
 import { useSidebar } from '../../../Context/SidebarContext';
 import axios from 'axios';
-import { accessToken,domainBase } from '../../../helpingFile';
+import { accessToken, domainBase } from '../../../helpingFile';
 
 const API_ENDPOINT = `${domainBase}api/v1/payin/allPaymentGenerated`;
 const ACCESS_TOKEN = accessToken;
 
 const Qr = () => {
-  const navigate = useNavigate(); 
-  const { isSidebarOpen } = useSidebar(); 
-  const [searchQuery, setSearchQuery] = useState(''); 
-  const [startDate, setStartDate] = useState(''); 
-  const [endDate, setEndDate] = useState(''); 
-  const [pageSize, setPageSize] = useState('all'); 
-  const [currentPage, setCurrentPage] = useState(0); 
-  const [previousPage, setPreviousPage] = useState(0); 
-  const [dropdownValue, setDropdownValue] = useState(''); 
+  const navigate = useNavigate();
+  const { isSidebarOpen } = useSidebar();
+  const [searchQuery, setSearchQuery] = useState('');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+  const [pageSize, setPageSize] = useState('all');
+  const [currentPage, setCurrentPage] = useState(0);
+  const [previousPage, setPreviousPage] = useState(0);
+  const [dropdownValue, setDropdownValue] = useState('');
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogMessage, setDialogMessage] = useState('');
+  const [dialogSeverity, setDialogSeverity] = useState('info');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -77,7 +82,17 @@ const Qr = () => {
   };
 
   const handleBackButtonClick = () => {
-    navigate(-1); 
+    navigate(-1);
+  };
+
+  const handleViewClick = (status) => {
+    setDialogMessage(status === 'Success' ? 'Transaction successfully completed' : 'Txn in pending or not completed.');
+    setDialogSeverity(status === 'Success' ? 'success' : 'error');
+    setDialogOpen(true);
+  };
+
+  const handleDialogClose = () => {
+    setDialogOpen(false);
   };
 
   return (
@@ -223,7 +238,7 @@ const Qr = () => {
             <Table sx={{ borderCollapse: 'collapse' }}>
               <TableHead>
                 <TableRow>
-                <TableCell sx={{ fontWeight: 'bold', fontSize: '16px', border: '1px solid rgba(224, 224, 224, 1)' }}>ID</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', fontSize: '16px', border: '1px solid rgba(224, 224, 224, 1)' }}>#</TableCell>
                   <TableCell sx={{ fontWeight: 'bold', fontSize: '16px', border: '1px solid rgba(224, 224, 224, 1)' }}>Member ID</TableCell>
                   <TableCell sx={{ fontWeight: 'bold', fontSize: '16px', border: '1px solid rgba(224, 224, 224, 1)' }}>txnID</TableCell>
                   <TableCell sx={{ fontWeight: 'bold', fontSize: '16px', border: '1px solid rgba(224, 224, 224, 1)' }}>RefID</TableCell>
@@ -238,30 +253,48 @@ const Qr = () => {
               <TableBody>
                 {loading ? (
                   <TableRow>
-                    <TableCell colSpan={6} align="center">
+                    <TableCell colSpan={10} align="center">
                       Loading...
                     </TableCell>
                   </TableRow>
                 ) : error ? (
                   <TableRow>
-                    <TableCell colSpan={6} align="center">
+                    <TableCell colSpan={10} align="center">
                       Error: {error.message}
                     </TableCell>
                   </TableRow>
                 ) : (
                   paginatedMembers.map((member, index) => (
                     <TableRow key={member._id}>
-                     <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{startIndex + index + 1}</TableCell>
+                      <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{startIndex + index + 1}</TableCell>
                       <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{member.userInfo.memberId}</TableCell>
                       <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{member.trxId}</TableCell>
                       <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{member.refId}</TableCell>
                       <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{member.amount}</TableCell>
                       <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{member.ip}</TableCell>
-                      <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}><button>{member.qr}</button></TableCell>
+                      <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}><Button sx={{color: 'white', background: 'lightBlue'}}>view QR</Button></TableCell>
                       <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{new Date(member.createdAt).toLocaleDateString()}</TableCell>
-                      <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{member.callBackStatus==="Success" ? 'Success' : 'Failed'}</TableCell>
+                      <TableCell
+                        sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
+                      >
+                        {member.callBackStatus==="Success" ? (
+                          <Button
+                          
+                            sx={{ color: "green", text: 'bold'}}
+                          >
+                            Success
+                          </Button>
+                        ) : (
+                          <Button
+                            
+                            sx={{ color: "red", text: 'bold'}}
+                          >
+                            Failed
+                          </Button>
+                        )}
+                      </TableCell>
                       <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>
-                        <IconButton color="primary">
+                        <IconButton color="primary" onClick={() => handleViewClick(member.callBackStatus)}>
                           <VisibilityIcon />
                         </IconButton>
                       </TableCell>
@@ -294,6 +327,38 @@ const Qr = () => {
           </Grid>
         </Paper>
       </Container>
+
+      {/* Dialog for showing messages */}
+      <Dialog
+        open={dialogOpen}
+        onClose={handleDialogClose}
+        PaperProps={{
+          sx: {
+            width: '500px',
+            maxWidth: '90%',
+            padding: 2,
+            borderRadius: 2,
+            boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.2)',
+          },
+        }}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title" sx={{ textAlign: 'center'}}>
+        {dialogSeverity === 'success' ? <CheckCircleIcon sx={{ fontSize: 50, color: 'green', mb: 2 }} /> : <CancelIcon sx={{ fontSize: 50, color: 'red', mb: 2 }} />}
+        </DialogTitle>
+        <DialogContent sx={{ textAlign: 'center' }}>
+          <Typography variant="h6" sx={{ color: dialogSeverity === 'error' ? 'red' : 'green' }}>
+           
+            {dialogMessage}
+          </Typography>
+        </DialogContent>
+        <DialogActions sx={{ justifyContent: 'end' }}>
+          <Button onClick={handleDialogClose} sx={{color: 'white', background: 'blue'}}>
+            Ok
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 };

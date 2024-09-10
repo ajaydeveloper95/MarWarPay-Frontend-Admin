@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Container, Typography, Table, TableBody, TableCell, TableContainer, Link, TableHead, TableRow, Paper, IconButton, Grid, TextField, Button, MenuItem, Select, InputLabel, FormControl, Box } from '@mui/material';
-import VisibilityIcon from '@mui/icons-material/Visibility';
+import { Container, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, Grid, TextField, Button, MenuItem, Select, InputLabel, FormControl, Box } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useSidebar } from '../../../Context/SidebarContext';
 import axios from 'axios';
@@ -164,7 +163,6 @@ const MemberWlt = () => {
                   <TableCell sx={{ fontWeight: 'bold', fontSize: '16px', border: '1px solid rgba(224, 224, 224, 1)' }}>Type</TableCell>
                   <TableCell sx={{ fontWeight: 'bold', fontSize: '16px', border: '1px solid rgba(224, 224, 224, 1)' }}>Description</TableCell>
                   <TableCell sx={{ fontWeight: 'bold', fontSize: '16px', border: '1px solid rgba(224, 224, 224, 1)' }}>Status</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', fontSize: '16px', border: '1px solid rgba(224, 224, 224, 1)' }}>Action</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -189,13 +187,40 @@ const MemberWlt = () => {
                       <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{member.transactionAmount}</TableCell>
                       <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{member.afterAmount}</TableCell>
                       <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{new Date(member.createdAt).toLocaleString()}</TableCell>
-                      <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{member.transactionType}</TableCell>
+                      <TableCell
+                        sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
+                      >
+                        {member.transactionType==="Cr." ? (
+                          <Button
+                            sx={{ color: "green", text: 'bold' }}
+                          >
+                            Cr.
+                          </Button>
+                        ) : (
+                          <Button
+                            sx={{ color: "red", text: 'bold' }}
+                          >
+                            Dr.
+                          </Button>
+                        )}
+                      </TableCell>
                       <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{member.description}</TableCell>
-                      <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{member.transactionStatus}</TableCell>
-                      <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>
-                        <IconButton color="primary" component={Link} href={`/members/BalanceRpt/view/${member._id}`}>
-                          <VisibilityIcon />
-                        </IconButton>
+                      <TableCell
+                        sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
+                      >
+                        {member.transactionStatus==="Success" ? (
+                          <Button
+                            sx={{ color: "green", text: 'bold'}}
+                          >
+                            Success
+                          </Button>
+                        ) : (
+                          <Button
+                            sx={{ color: "red", text: 'bold'}}
+                          >
+                            Failed
+                          </Button>
+                        )}
                       </TableCell>
                     </TableRow>
                   ))

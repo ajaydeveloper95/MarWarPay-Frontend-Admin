@@ -294,15 +294,43 @@ const ViewPackage = () => {
                           {member.packagePayInCharge}
                         </TableCell>
                         <TableCell
-                          sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
-                        >
-                          {member.isActive ? "Active" : "Inactive"}
-                        </TableCell>
-                        <TableCell
-                          sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
-                        >
-                          {member.packagePayOutCharge > 0 ? "Yes" : "No"}
-                        </TableCell>
+                        sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
+                      >
+                        {member.isActive ? (
+                          <Button
+                            
+                            sx={{ color: "green", text: 'bold'}}
+                          >
+                            Active
+                          </Button>
+                        ) : (
+                          <Button
+                            
+                            sx={{ color: "red", text: 'bold'}}
+                          >
+                            Deactive
+                          </Button>
+                        )}
+                      </TableCell>
+                      <TableCell
+                        sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
+                      >
+                        {member.packagePayOutCharge > 0 ? (
+                          <Button
+                          sx={{ color: "green", text: 'bold'}}
+                          >
+                            Yes
+                          </Button>
+                        ) : (
+                          <Button
+                          sx={{ color: "red", text: 'bold'}}
+                          >
+                            No
+                          </Button>
+                        )}
+                      </TableCell>
+                      
+                        
                         <TableCell
                           sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
                         >
