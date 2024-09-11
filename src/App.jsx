@@ -23,57 +23,61 @@ import Profile from './Components/profile/Profile';
 import PayoutGenerate from './Components/Tables/Reports/PayoutGenerate';
 import EditMember from './Components/Tables/Updates/EditMember';
 import Login from './Components/Login/Login';
-// Import other components and pages
 
 function App() {
   return (
     <SidebarProvider>
       <Router>
-        <Sidebar/>
         <Routes>
+          {/* Default route to show only Login page */}
+          <Route path="/" element={<Login />} />
 
-      <Route path="/" element={<Login/>} />
-           {/* here dashboard table route define */}
-           <Route path="/dashboard" element={<DashBoard/>} />
-           
-           <Route path='/updateProfile' element={<Profile />} />
+          {/* Grouped routes that should only be accessible after login */}
+          <Route
+            path="/*"
+            element={
+              <>
+                <Sidebar />
+                <Routes>
+                  {/* Dashboard route */}
+                  <Route path="dashboard" element={<DashBoard />} />
+                  <Route path="updateProfile" element={<Profile />} />
 
-          {/* here member table route define */}
-          <Route path="/members/addMembers" element={<AddMembers/>} />
-          <Route path="/members/all_members" element={<ViewAllMembers/>} />
-          <Route path="/member/EditMember/:memberId" element={<EditMember/>} />
+                  {/* Member routes */}
+                  <Route path="members/addMembers" element={<AddMembers />} />
+                  <Route path="members/all_members" element={<ViewAllMembers />} />
+                  <Route path="member/EditMember/:memberId" element={<EditMember />} />
+                  <Route path="members/master_distributor" element={<MasterDistributor />} />
+                  <Route path="members/retailer" element={<Retailer />} />
+                  <Route path="members/distributor" element={<Distributor />} />
+                  <Route path="members/api_member" element={<ApiMember />} />
+                  <Route path="members/users" element={<Users />} />
 
-          <Route path="/members/master_distributor" element={<MasterDistributor/>} />
-          <Route path="/members/retailer" element={<Retailer/>} />
-          <Route path="/members/distributor" element={<Distributor/>} />
-          <Route path="/members/api_member" element={<ApiMember/>} />
-          <Route path="/members/users" element={<Users/>} />
+                  {/* Report routes */}
+                  <Route path="report/payout" element={<Payout />} />
+                  <Route path="report/payoutGenerate" element={<PayoutGenerate />} />
+                  <Route path="report/balance" element={<BalanceRpt />} />
+                  <Route path="report/Qr" element={<Qr />} />
+                  <Route path="report/payin" element={<Payin />} />
 
-           {/* here Report table route define */}
-           <Route path="/report/payout" element={<Payout/>} />
-           <Route path="/report/payoutGenerate" element={<PayoutGenerate/>} />
-           <Route path="/report/balance" element={<BalanceRpt/>} />
-           <Route path="/report/Qr" element={<Qr/>} />
-           <Route path="/report/payin" element={<Payin/>} />
+                  {/* UPI wallet routes */}
+                  <Route path="upi-wallet/configure" element={<MemberWlt />} />
+                  <Route path="upi-wallet/transactions" element={<Transfer />} />
 
-           {/* here UPI wallet table route define */}
-           <Route path="/upi-wallet/configure" element={<MemberWlt/>} />
-           <Route path="/upi-wallet/transactions" element={<Transfer/>} />
+                  {/* Package Management routes */}
+                  <Route path="package/add" element={<AddPackage />} />
+                  <Route path="package/view" element={<ViewPackage />} />
 
-           {/* here Package Management table route define */}
-           <Route path="/package/add" element={<AddPackage/>} />
-           <Route path="/package/view" element={<ViewPackage/>} />
-
-           {/* here Package Management table route define */}
-           <Route path="/settings/payoutCharge" element={<PayoutCharge/>} />
-           {/* <Route path="/package/view" element={<ViewPackage/>} /> */}
-
-          
+                  {/* Settings route */}
+                  <Route path="settings/payoutCharge" element={<PayoutCharge />} />
+                </Routes>
+                <Footer />
+              </>
+            }
+          />
         </Routes>
-        <Footer/>
       </Router>
     </SidebarProvider>
-      
   );
 }
 

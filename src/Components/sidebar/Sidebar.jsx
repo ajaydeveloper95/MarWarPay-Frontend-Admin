@@ -1,14 +1,19 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useSidebar } from '../../Context/SidebarContext';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import SettingsIcon from '@mui/icons-material/Settings';
+import axios from 'axios';
+import { domainBase } from '../../helpingFile';
+
+const API_ENDPOINT_LOGOUT = `${domainBase}api/v1/user/logout`;
 
 const Sidebar = () => {
   const { isSidebarOpen, toggleSidebar } = useSidebar();
   const [isDropdownOpen, setIsDropdownOpen] = useState({});
   const [profileMenuVisible, setProfileMenuVisible] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const navigate = useNavigate();
 
   // Function to toggle the profile menu
   const handleProfileClick = () => {
@@ -23,23 +28,43 @@ const Sidebar = () => {
     }));
   };
 
-  // Function to handle logout
   const handleLogoutClick = () => {
     setIsModalOpen(true);
   };
 
-  // Function to confirm logout
-  const handleConfirmLogout = () => {
-    setIsModalOpen(false);
-    // Implement your logout logic here
-    console.log('User logged out');
-    // Redirect to login page or home page after logout
-  };
+ // Function to confirm logout
+ const handleConfirmLogout = async () => {
+  setIsModalOpen(false);
+  try {
+    const token = localStorage.getItem('accessToken');
+    
+    // Ensure token is present before making the request
+    if (!token) {
+      throw new Error("No access token found.");
+    }
+
+    await axios.get(API_ENDPOINT_LOGOUT, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+
+    // Clear tokens from localStorage
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
+    localStorage.removeItem('expirationTime');
+    navigate('/');
+
+  } catch (err) {
+    console.error('Logout error:', err.response ? err.response.data : err.message);
+  }
+};
 
   // Function to cancel logout
   const handleCancelLogout = () => {
     setIsModalOpen(false);
   };
+
 
   return (
     <div>
@@ -62,7 +87,7 @@ const Sidebar = () => {
                 <Link to="/updateProfile" className="block px-4 py-2 text-gray-800 hover:bg-gray-100">Profile</Link>
                 <Link to="/settings" className="block px-4 py-2 text-gray-800 hover:bg-gray-100">Settings</Link>
                 <button
-                  onClick={handleLogoutClick}
+                   onClick={handleLogoutClick}
                   className="block px-4 py-2 w-full text-left text-gray-800 hover:bg-gray-100"
                 >
                   Logout
@@ -332,21 +357,22 @@ const Sidebar = () => {
 
       {/* Logout Confirmation Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg">
-            <p className="text-lg mb-4">Are you sure you want to logout?</p>
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-gray-800 bg-opacity-50">
+          <div className="bg-white rounded-lg shadow-lg p-6">
+            <h2 className="text-lg font-semibold mb-4">Confirm Logout</h2>
+            <p className="mb-4">Are you sure you want to logout?</p>
             <div className="flex justify-end space-x-4">
               <button
-                onClick={handleConfirmLogout}
-                className="px-4 py-2 bg-blue-500 text-white rounded-lg"
+                onClick={handleCancelLogout}
+                className="bg-gray-300 px-4 py-2 rounded"
               >
-                Yes
+                Cancel
               </button>
               <button
-                onClick={handleCancelLogout}
-                className="px-4 py-2 bg-gray-500 text-white rounded-lg"
+                onClick={handleConfirmLogout}
+                className="bg-red-500 text-white px-4 py-2 rounded"
               >
-                No
+                Logout
               </button>
             </div>
           </div>
