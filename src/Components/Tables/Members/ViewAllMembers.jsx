@@ -27,7 +27,7 @@ import { useSidebar } from "../../../Context/SidebarContext";
 import { accessToken, domainBase } from "../../../helpingFile";
 import axios from "axios";
 
-const API_ENDPOINT = `${domainBase}api/v1/user/getUsers`;
+const API_ENDPOINT = `${domainBase}apiAdmin/v1/user/getUsers`;
 const ACCESS_TOKEN = accessToken;
 
 const ViewAllMembers = () => {
@@ -543,7 +543,7 @@ const ViewAllMembers = () => {
                       >
                         <IconButton
                           color="primary"
-                          onClick={() => handleViewMember(user.memberId)}
+                          onClick={() => handleViewMember(user._id)}
                         >
                           <VisibilityIcon />
                         </IconButton>

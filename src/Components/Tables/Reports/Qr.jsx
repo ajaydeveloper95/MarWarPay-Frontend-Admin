@@ -9,7 +9,7 @@ import { useSidebar } from '../../../Context/SidebarContext';
 import axios from 'axios';
 import { accessToken, domainBase } from '../../../helpingFile';
 
-const API_ENDPOINT = `${domainBase}api/v1/payin/allPaymentGenerated`;
+const API_ENDPOINT = `${domainBase}apiAdmin/v1/payin/allPaymentGenerated`;
 const ACCESS_TOKEN = accessToken;
 
 const Qr = () => {

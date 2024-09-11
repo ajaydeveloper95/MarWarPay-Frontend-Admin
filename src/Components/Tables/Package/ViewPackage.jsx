@@ -27,7 +27,7 @@ import { useSidebar } from "../../../Context/SidebarContext";
 import axios from "axios";
 import { accessToken,domainBase } from '../../../helpingFile';
 
-const API_ENDPOINT = `${domainBase}api/v1/package/allPackage`;
+const API_ENDPOINT = `${domainBase}apiAdmin/v1/package/allPackage`;
 const ACCESS_TOKEN = accessToken;
 
 const ViewPackage = () => {

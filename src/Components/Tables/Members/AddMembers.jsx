@@ -22,7 +22,7 @@ import { useSidebar } from '../../../Context/SidebarContext';
 import axios from "axios";
 import { accessToken,domainBase } from '../../../helpingFile';
 
-const API_ENDPOINT = `${domainBase}api/v1/user/addUser`;
+const API_ENDPOINT = `${domainBase}apiAdmin/v1/user/addUser`;
 const ACCESS_TOKEN = accessToken;
 
 const AddMembers = () => {
@@ -90,7 +90,7 @@ const AddMembers = () => {
   
     try {
       // Make the POST request to the API endpoint
-      await axios.post(`${API_ENDPOINT}/package/addMember`, {
+      await axios.post(API_ENDPOINT, {
         memberType,
             name,
             email,

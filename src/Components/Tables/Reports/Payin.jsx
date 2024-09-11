@@ -9,7 +9,7 @@ import { accessToken,domainBase } from '../../../helpingFile';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'; // Icon for success
 import CancelIcon from '@mui/icons-material/Cancel'; // Icon for failure
 
-const API_ENDPOINT = `${domainBase}api/v1/payin/allSuccessPayIn`;
+const API_ENDPOINT = `${domainBase}apiAdmin/v1/payin/allSuccessPayIn`;
 const ACCESS_TOKEN = accessToken;
 
 const Payin = () => {

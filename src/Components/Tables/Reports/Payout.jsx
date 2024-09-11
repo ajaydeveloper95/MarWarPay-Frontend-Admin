@@ -24,7 +24,7 @@ import { useSidebar } from "../../../Context/SidebarContext";
 import axios from "axios";
 import { accessToken, domainBase } from "../../../helpingFile";
 
-const API_ENDPOINT = `${domainBase}api/v1/payout/allPayOutPayment`;
+const API_ENDPOINT = `${domainBase}apiAdmin/v1/payout/allPayOutOnSuccess`;
 const ACCESS_TOKEN = accessToken;
 
 const Payout = () => {
@@ -56,6 +56,8 @@ const Payout = () => {
             accountNumber: item.accountNumber,
             ifsc: item.ifscCode,
             amount: `${item.amount}`,
+            chargeAmount: item.chargeAmount,
+            finalAmount: item.finalAmount,
             txnId: item.trxId,
             rrn: item.bankRRN, // No RRN field in the response
             status: item.isSuccess,
@@ -207,7 +209,7 @@ const Payout = () => {
                   >
                     Name
                   </TableCell>
-                  <TableCell
+                  {/* <TableCell
                     sx={{
                       fontWeight: "bold",
                       fontSize: "16px",
@@ -215,8 +217,8 @@ const Payout = () => {
                     }}
                   >
                     Account No.
-                  </TableCell>
-                  <TableCell
+                  </TableCell> */}
+                  {/* <TableCell
                     sx={{
                       fontWeight: "bold",
                       fontSize: "16px",
@@ -224,7 +226,7 @@ const Payout = () => {
                     }}
                   >
                     IFSC
-                  </TableCell>
+                  </TableCell> */}
                   <TableCell
                     sx={{
                       fontWeight: "bold",
@@ -321,16 +323,16 @@ const Payout = () => {
                       >
                         {item.name}
                       </TableCell>
-                      <TableCell
+                      {/* <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
                       >
                         {item.accountNumber}
-                      </TableCell>
-                      <TableCell
+                      </TableCell> */}
+                      {/* <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
                       >
                         {item.ifsc}
-                      </TableCell>
+                      </TableCell> */}
                       <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
                       >
@@ -344,7 +346,7 @@ const Payout = () => {
                       <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
                       >
-                        {item.fnalAmount}
+                        {item.finalAmount}
                       </TableCell>
                       <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}

@@ -21,7 +21,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { domainBase } from "../../helpingFile";
 
-const API_ENDPOINT = `${domainBase}api/v1/user/login`;
+const API_ENDPOINT = `${domainBase}apiAdmin/v1/user/login`;
 
 const Login = () => {
   const [username, setUsername] = useState("");

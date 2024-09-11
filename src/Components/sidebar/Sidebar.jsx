@@ -6,7 +6,7 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import axios from 'axios';
 import { domainBase } from '../../helpingFile';
 
-const API_ENDPOINT_LOGOUT = `${domainBase}api/v1/user/logout`;
+const API_ENDPOINT_LOGOUT = `${domainBase}apiAdmin/v1/user/logout`;
 
 const Sidebar = () => {
   const { isSidebarOpen, toggleSidebar } = useSidebar();
@@ -116,7 +116,7 @@ const Sidebar = () => {
             <img src="/logo.png" alt="Logo" className="h-30 mt-3" />
             {/* Dashboard */}
             <li>
-              <Link to="/" className="flex items-center px-4 py-2 hover:bg-gray-100">
+              <Link to="/dashboard" className="flex items-center px-4 py-2 hover:bg-gray-100">
                 <span className={`material-icons mr-2 text-gray-800 ${!isSidebarOpen && 'text-2xl'}`}>dashboard</span>
                 {isSidebarOpen && 'Dashboard'}
               </Link>
@@ -147,26 +147,26 @@ const Sidebar = () => {
                         View All Member
                       </Link>
                     </li>
-                    <li>
+                    {/* <li>
                       <Link to="" className="flex items-center px-4 py-2 text-gray-800 hover:bg-gray-100">
                         Master Distributor
                       </Link>
-                    </li>
-                    <li>
+                    </li> */}
+                    {/* <li>
                       <Link to="" className="flex items-center px-4 py-2 text-gray-800 hover:bg-gray-100">
                         Distributor
                       </Link>
-                    </li>
-                    <li>
+                    </li> */}
+                    {/* <li>
                       <Link to="" className="flex items-center px-4 py-2 text-gray-800 hover:bg-gray-100">
                         Retailer
                       </Link>
-                    </li>
-                    <li>
+                    </li> */}
+                    {/* <li>
                       <Link to="" className="flex items-center px-4 py-2 text-gray-800 hover:bg-gray-100">
                         API Members
                       </Link>
-                    </li>
+                    </li> */}
                     <li>
                       <Link to="/members/users" className="flex items-center px-4 py-2 text-gray-800 hover:bg-gray-100">
                         Users
@@ -178,7 +178,7 @@ const Sidebar = () => {
             </li>
 
             {/* Invoice Management with Dropdown */}
-            <li>
+            {/* <li>
               <button
                 onClick={() => toggleDropdown('invoice-management')}
                 className="flex items-center px-4 py-2 hover:bg-gray-100 w-full text-left"
@@ -205,7 +205,7 @@ const Sidebar = () => {
                   </ul>
                 </div>
               )}
-            </li>
+            </li> */}
 
             {/* Report Section with Dropdown */}
             <li>
@@ -242,11 +242,11 @@ const Sidebar = () => {
                         Payin Report
                       </Link>
                     </li>
-                    <li>
+                    {/* <li>
                       <Link to="/report/balance" className="flex items-center px-4 py-2 text-gray-800 hover:bg-gray-100">
                         Balance
                       </Link>
-                    </li>
+                    </li> */}
                   </ul>
                 </div>
               )}
@@ -326,7 +326,7 @@ const Sidebar = () => {
               </button>
               {isDropdownOpen['main-setting'] && isSidebarOpen && (
                 <div className="m-5">
-                  <ul className="pl-6 bg-gray-50">
+                  {/* <ul className="pl-6 bg-gray-50">
                     <li>
                       <Link to="/settings/payoutCharge" className="flex items-center px-4 py-2 text-gray-800 hover:bg-gray-100">
                         Payout Charge
@@ -347,7 +347,7 @@ const Sidebar = () => {
                         Account Open Charge
                       </Link>
                     </li>
-                  </ul>
+                  </ul> */}
                 </div>
               )}
             </li>

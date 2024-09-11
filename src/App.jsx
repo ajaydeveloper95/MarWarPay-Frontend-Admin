@@ -40,13 +40,13 @@ function App() {
                 <Sidebar />
                 <Routes>
                   {/* Dashboard route */}
-                  <Route path="dashboard" element={<DashBoard />} />
-                  <Route path="updateProfile" element={<Profile />} />
+                  <Route path="/dashboard" element={<DashBoard />} />
+                  <Route path="/updateProfile" element={<Profile />} />
 
                   {/* Member routes */}
                   <Route path="members/addMembers" element={<AddMembers />} />
                   <Route path="members/all_members" element={<ViewAllMembers />} />
-                  <Route path="member/EditMember/:memberId" element={<EditMember />} />
+                  <Route path="member/EditMember/:id" element={<EditMember />} />
                   <Route path="members/master_distributor" element={<MasterDistributor />} />
                   <Route path="members/retailer" element={<Retailer />} />
                   <Route path="members/distributor" element={<Distributor />} />
