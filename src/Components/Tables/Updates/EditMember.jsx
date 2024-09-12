@@ -100,7 +100,7 @@ const EditMember = () => {
     return <div>Loading...</div>;
   }
 
-  const { addresh = {} } = userData;
+  const { addresh = '' } = userData;
   const {
     country = '',
   } = addresh;

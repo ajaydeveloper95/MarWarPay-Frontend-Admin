@@ -91,6 +91,10 @@ const ViewPackage = () => {
     }
   };
 
+  const handleViewPackage = (_id) => {
+    navigate(`/package/EditPackage/${_id}`);
+  };
+
   const handleBackButtonClick = () => {
     navigate(-1);
   };
@@ -342,7 +346,7 @@ const ViewPackage = () => {
                           <IconButton
                             color="primary"
                             component={Link}
-                            href={`/members/BalanceRpt/view/${member._id}`}
+                            onClick={() => handleViewPackage(member._id)}
                           >
                             <VisibilityIcon />
                           </IconButton>

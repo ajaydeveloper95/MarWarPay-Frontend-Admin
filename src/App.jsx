@@ -23,6 +23,7 @@ import Profile from './Components/profile/Profile';
 import PayoutGenerate from './Components/Tables/Reports/PayoutGenerate';
 import EditMember from './Components/Tables/Updates/EditMember';
 import Login from './Components/Login/Login';
+import EditPackage from './Components/Tables/Updates/EditPackage';
 
 function App() {
   return (
@@ -67,6 +68,7 @@ function App() {
                   {/* Package Management routes */}
                   <Route path="package/add" element={<AddPackage />} />
                   <Route path="package/view" element={<ViewPackage />} />
+                  <Route path="/package/EditPackage/:id" element={<EditPackage />} />
 
                   {/* Settings route */}
                   <Route path="settings/payoutCharge" element={<PayoutCharge />} />
