@@ -13,7 +13,7 @@ function Footer() {
           
         }}
       >
-        Copyright © Marwarpay info Solutions Private Limited 2021
+        Copyright © Marwarpay info Solutions Private Limited 2024
       </Typography>
   );
 }

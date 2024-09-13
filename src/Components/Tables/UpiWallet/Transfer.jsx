@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   TextField,
   MenuItem,
@@ -19,22 +19,93 @@ import {
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useNavigate } from 'react-router-dom';
 import { useSidebar } from '../../../Context/SidebarContext';
+import axios from 'axios';
+import { accessToken, domainBase } from '../../../helpingFile';
+
+const API_GET_USERS_ENDPOINT = `${domainBase}apiAdmin/v1/utility/getUserWithUpiWallet`;
+const API_TRANSFER_ENDPOINT = `${domainBase}apiAdmin/v1/wallet/upiToEwallet`; // Updated with your base URL
+const ACCESS_TOKEN = accessToken;
 
 const Transfer = () => {
   const [member, setMember] = useState('');
   const [availableBalance, setAvailableBalance] = useState('');
   const [transferAmount, setTransferAmount] = useState('');
   const [description, setDescription] = useState('');
-  const [isDialogOpen, setIsDialogOpen] = useState(false); // State for dialog
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const navigate = useNavigate();
   const { isSidebarOpen } = useSidebar();
 
-  const handleSubmit = (event) => {
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const response = await axios.get(API_GET_USERS_ENDPOINT, {
+          headers: {
+            Authorization: `Bearer ${ACCESS_TOKEN}`,
+          },
+        });
+        setData(response.data.data);
+      } catch (err) {
+        setError(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const handleMemberChange = (e) => {
+    const selectedMemberId = e.target.value;
+    setMember(selectedMemberId);
+
+    // Find the selected member from the data and set the available balance
+    const selectedMember = data.find((item) => item._id === selectedMemberId);
+    if (selectedMember) {
+      setAvailableBalance(selectedMember.upiWalletBalance);
+    } else {
+      setAvailableBalance('');
+    }
+  };
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
-    // Display the success dialog
-    setIsDialogOpen(true);
+    // Validate transfer amount
+    if (parseFloat(transferAmount) > parseFloat(availableBalance)) {
+      alert('Transfer amount cannot exceed the available balance.');
+      return;
+    }
+
+    if (parseFloat(transferAmount) <= 10) {
+      alert('Transfer amount must be greater than 10.');
+      return;
+    }
+
+    // API Call to transfer the amount
+    try {
+      const response = await axios.post(
+        `${API_TRANSFER_ENDPOINT}/${member}`, // Use member ID in the endpoint
+        { transactionAmount: parseFloat(transferAmount) }, // Request body
+        {
+          headers: {
+            Authorization: `Bearer ${ACCESS_TOKEN}`,
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        // Display the success dialog
+        setIsDialogOpen(true);
+      }
+    } catch (err) {
+      alert('An error occurred while processing the transaction.');
+      console.log(err)
+    }
 
     // Reset form fields
     setMember('');
@@ -50,6 +121,10 @@ const Transfer = () => {
   const handleCancel = () => {
     navigate(-1); // Navigate to the previous page
   };
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error.message}</div>;
+
 
   return (
     <Container
@@ -91,12 +166,14 @@ const Transfer = () => {
                 <Select
                   labelId="member-label"
                   value={member}
-                  onChange={(e) => setMember(e.target.value)}
+                  onChange={handleMemberChange}
                   label="Member"
                 >
-                  <MenuItem value="Member1">Member 1</MenuItem>
-                  <MenuItem value="Member2">Member 2</MenuItem>
-                  <MenuItem value="Member3">Member 3</MenuItem>
+                  {data.map((item) => (
+                    <MenuItem key={item._id} value={item._id}>
+                      {item.fullName}
+                    </MenuItem>
+                  ))}
                 </Select>
               </FormControl>
             </Grid>
@@ -106,7 +183,6 @@ const Transfer = () => {
                 variant="outlined"
                 fullWidth
                 value={availableBalance}
-                onChange={(e) => setAvailableBalance(e.target.value)}
                 disabled
               />
             </Grid>

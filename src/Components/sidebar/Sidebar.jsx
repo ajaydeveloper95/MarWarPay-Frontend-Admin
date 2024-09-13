@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useSidebar } from '../../Context/SidebarContext';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import SettingsIcon from '@mui/icons-material/Settings';
+import NotificationsIcon from '@mui/icons-material/Notifications';
 import axios from 'axios';
 import { domainBase } from '../../helpingFile';
 
@@ -75,7 +76,12 @@ const Sidebar = () => {
       >
         <img src='/logo.png' className='h-10 cursor-pointer' alt="Logo" onClick={handleProfileClick} />
         <div className="flex items-center space-x-4">
+        <NotificationsIcon
+            className="text-gray-800 cursor-pointer mt-2 text-4xl"
+            onClick={() => console.log('Notification Clicked')} // Replace with actual notification handler
+          />
           <div className="relative">
+          
             <span
               className="material-icons mt-2 text-4xl text-gray-800 cursor-pointer"
               onClick={handleProfileClick}
@@ -312,6 +318,41 @@ const Sidebar = () => {
               )}
             </li>
 
+             {/* Package Management Section with Dropdown */}
+             <li>
+              <button
+                onClick={() => toggleDropdown('support')}
+                className="flex items-center px-4 py-2 hover:bg-gray-100 w-full text-left"
+              >
+                <span className={`material-icons mr-2 text-gray-800 ${!isSidebarOpen && 'text-2xl'}`}>support Ticket</span>
+                {isSidebarOpen && 'Support'}
+                <span className={`material-icons ml-auto transition-transform ${isDropdownOpen['support'] ? 'rotate-180' : 'rotate-0'}`}>
+                  arrow_drop_down
+                </span>
+              </button>
+              {isDropdownOpen['support'] && isSidebarOpen && (
+                <div className='m-5'>
+                  <ul className="pl-6 bg-gray-50">
+                    <li>
+                      <Link to="/support/pandingTicket" className="flex items-center px-4 py-2 text-gray-800 hover:bg-gray-100">
+                        Panding Ticket
+                      </Link>
+                    </li>
+                    <li>
+                      <Link to="/support/allTicket" className="flex items-center px-4 py-2 text-gray-800 hover:bg-gray-100">
+                        All Tickets
+                      </Link>
+                    </li>
+                    <li>
+                      <Link to="/support/ticketStatus" className="flex items-center px-4 py-2 text-gray-800 hover:bg-gray-100">
+                        Update Ticket Status
+                      </Link>
+                    </li>
+                  </ul>
+                </div>
+              )}
+            </li>
+
             {/* Main Settings Section with Dropdown */}
             <li>
               <button
@@ -351,6 +392,8 @@ const Sidebar = () => {
                 </div>
               )}
             </li>
+            
+
           </ul>
         </div>
       </div>

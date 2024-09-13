@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 import {
   Container,
   Typography,
@@ -11,25 +11,32 @@ import {
   InputLabel,
   Select,
   MenuItem,
-} from '@mui/material';
-import { useNavigate, useParams } from 'react-router-dom';
-import { useSidebar } from '../../../Context/SidebarContext';
-import axios from 'axios';
-import { accessToken } from "../../../helpingFile";
+} from "@mui/material";
+import { useNavigate, useParams } from "react-router-dom";
+import { useSidebar } from "../../../Context/SidebarContext";
+import axios from "axios";
+import { accessToken, domainBase } from "../../../helpingFile";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 const ACCESS_TOKEN = accessToken;
+const PACKAGE_API_ENDPOINT = `${domainBase}apiAdmin/v1/utility/getPackageList`;
 
 const EditMember = () => {
   const navigate = useNavigate();
   const { isSidebarOpen } = useSidebar();
   const [userData, setUserData] = useState({});
+  const [userData1, setUserData1] = useState({});
   const [loading, setLoading] = useState(true);
+  const [packages, setPackages] = useState([]);
   const { id } = useParams();
 
   useEffect(() => {
     const fetchUserData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5000/apiAdmin/v1/user/userProfile/${id}`, {
+          `http://localhost:5000/apiAdmin/v1/user/userProfile/${id}`,
+          {
             headers: {
               Authorization: `Bearer ${ACCESS_TOKEN}`,
             },
@@ -39,59 +46,88 @@ const EditMember = () => {
           setUserData(response.data.data);
         }
       } catch (error) {
-        console.error('Error fetching user data:', error);
+        console.error("Error fetching user data:", error);
       } finally {
         setLoading(false);
       }
     };
 
+    const fetchPackages = async () => {
+      try {
+        const response = await axios.get(PACKAGE_API_ENDPOINT, {
+          headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
+        });
+
+        if (response.status === 200) {
+          setPackages(response.data.data); // Set package data
+        }
+      } catch (err) {
+        console.error("Error fetching package data:", err);
+      }
+    };
+
     fetchUserData();
+    fetchPackages();
   }, [id]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
- await axios.post(
+    try {
+      const response = await axios.post(
         `http://localhost:5000/apiAdmin/v1/user/updateUser/${userData._id}`,
-        userData, {
+        userData1,
+        {
           headers: {
             Authorization: `Bearer ${ACCESS_TOKEN}`,
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
         }
-      ).then((data)=>{
-        console.log(data,"on success")
-        // if (response.data.statusCode === 200) {
-        //   alert('User updated successfully');
-        //   navigate('/members/all_members');
-        // } else {
-        //   alert('Failed to update user');
-        // }
-      }).catch((err)=>{
-        console.error('Error updating user data:', err);
-      })
+      );
+      if (response.status === 200) {
+        toast.success("Updated successfully!");
+      }
+    } catch (err) {
+      console.error("Error updating user data:", err);
+      toast.error("Error updating user data. Please try again.");
+    }
   };
 
   const handleBackButtonClick = () => {
-    navigate('/members/all_members');
+    navigate("/members/all_members");
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    const updatedValue = name === "isActive" ? value === "true" : value;
+    setUserData1((prevData) => ({
+      ...prevData,
+      [name]: updatedValue,
+    }));
     setUserData((prevData) => ({
       ...prevData,
-      [name]: value,
+      [name]: updatedValue,
     }));
   };
 
-  console.log(userData)
+  const onhandle2 = (data) => {
+    const { name } = data.target;
+    setUserData1((value) => ({
+      ...value,
+      [name]: data.target.value,
+    }));
+    setUserData((val) => ({
+      ...val,
+      [name]: data.target.value,
+    }));
+  };
 
-  const handleAddressChange = (e) => {
-    const { name, value } = e.target;
+  const handlePackageChange = (e) => {
+    const { value } = e.target;
     setUserData((prevData) => ({
       ...prevData,
-      addresh: {
-        ...prevData.addresh,
-        [name]: value,
+      package: {
+        ...prevData.package,
+        packageId: value,
       },
     }));
   };
@@ -100,20 +136,15 @@ const EditMember = () => {
     return <div>Loading...</div>;
   }
 
-  const { addresh = '' } = userData;
-  const {
-    country = '',
-  } = addresh;
-
   return (
     <Container
       maxWidth="xl"
       style={{
-        marginLeft: isSidebarOpen ? '16rem' : '10rem',
-        transition: 'margin-left 0.3s ease',
-        minWidth: '600px',
-        maxWidth: '80%',
-        marginTop: '8%',
+        marginLeft: isSidebarOpen ? "16rem" : "10rem",
+        transition: "margin-left 0.3s ease",
+        minWidth: "600px",
+        maxWidth: "80%",
+        marginTop: "8%",
       }}
     >
       <Paper sx={{ p: 2, boxShadow: 3 }}>
@@ -136,8 +167,8 @@ const EditMember = () => {
                 name="userName"
                 variant="outlined"
                 fullWidth
-                value={userData.userName || ''}
-                onChange={handleChange}
+                value={userData.userName || ""}
+                onChange={onhandle2}
               />
             </Grid>
             <Grid item xs={12} md={6}>
@@ -147,8 +178,11 @@ const EditMember = () => {
                 type="password"
                 variant="outlined"
                 fullWidth
-                value={userData.password || ''}
-                onChange={handleChange}
+                value={userData.password || ""}
+                InputProps={{
+                  readOnly: true, // Make the field read-only
+                }}
+                
               />
             </Grid>
             <Grid item xs={12} md={6}>
@@ -158,8 +192,10 @@ const EditMember = () => {
                 type="password"
                 variant="outlined"
                 fullWidth
-                value={userData.trxPassword || ''}
-                onChange={handleChange}
+                value={userData.trxPassword || ""}
+                InputProps={{
+                  readOnly: true, // Make the field read-only
+                }}
               />
             </Grid>
             <Grid item xs={12} md={6}>
@@ -168,8 +204,9 @@ const EditMember = () => {
                 name="mobileNumber"
                 variant="outlined"
                 fullWidth
-                value={userData.mobileNumber || ''}
-                onChange={handleChange}
+                value={userData.mobileNumber || ""}
+                onChange={onhandle2}
+                inputProps={{ maxLength: 10 }} // Ensure phone number is 10 digits
               />
             </Grid>
             <Grid item xs={12} md={6}>
@@ -179,19 +216,26 @@ const EditMember = () => {
                 type="email"
                 variant="outlined"
                 fullWidth
-                value={userData.email || ''}
-                onChange={handleChange}
+                value={userData.email || ""}
+                onChange={onhandle2}
               />
             </Grid>
-            <Grid item xs={12} md={6}>
-              <TextField
-                label="Package"
-                name="package"
-                variant="outlined"
-                fullWidth
-                value={userData.package || ''}
-                onChange={handleChange}
-              />
+            <Grid item xs={12} sm={6} md={4}>
+              <FormControl fullWidth variant="outlined" required>
+                <InputLabel id="package-type-label">Package Type</InputLabel>
+                <Select
+                  labelId="package-type-label"
+                  value={userData.package || ""}
+                  onChange={handlePackageChange}
+                  label="Package Type"
+                >
+                  {packages.map((pkg) => (
+                    <MenuItem key={pkg._id} value={pkg._id}>
+                      {pkg.packageName}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
             </Grid>
             <Grid item xs={12} md={6}>
               <TextField
@@ -199,8 +243,8 @@ const EditMember = () => {
                 name="minWalletBalance"
                 variant="outlined"
                 fullWidth
-                value={userData.minWalletBalance || ''}
-                onChange={handleChange}
+                value={userData.minWalletBalance || ""}
+                onChange={onhandle2}
               />
             </Grid>
             <Grid item xs={12} md={6}>
@@ -209,8 +253,10 @@ const EditMember = () => {
                 name="EwalletBalance"
                 variant="outlined"
                 fullWidth
-                value={userData.EwalletBalance || ''}
-                onChange={handleChange}
+                value={userData.EwalletBalance || ""}
+                InputProps={{
+                  readOnly: true, // Make the field read-only
+                }}
               />
             </Grid>
             <Grid item xs={12} md={6}>
@@ -219,30 +265,24 @@ const EditMember = () => {
                 name="upiWalletBalance"
                 variant="outlined"
                 fullWidth
-                value={userData.upiWalletBalance || ''}
-                onChange={handleChange}
+                value={userData.upiWalletBalance || ""}
+                InputProps={{
+                  readOnly: true, // Make the field read-only
+                }}
               />
             </Grid>
-            <Grid item xs={12} md={6}>
-              <TextField
-                label="Country"
-                name="country"
-                variant="outlined"
-                fullWidth
-                value={country || ''}
-                onChange={handleAddressChange}
-              />
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <FormControl fullWidth>
-                <InputLabel>Status</InputLabel>
+            <Grid item xs={12} sm={6}>
+              <FormControl fullWidth variant="outlined" required>
+                <InputLabel id="status-label">Status</InputLabel>
                 <Select
+                  labelId="status-label"
                   name="isActive"
-                  value={userData.isActive ? 'Active' : 'Deactive'}
-                  onChange={(e) => handleChange({ target: { name: 'isActive', value: e.target.value === 'Active' } })}
+                  value={userData.isActive ? "true" : "false"}
+                  onChange={handleChange}
+                  label="Status"
                 >
-                  <MenuItem value="Active">Active</MenuItem>
-                  <MenuItem value="Deactive">Deactive</MenuItem>
+                  <MenuItem value="true">Active</MenuItem>
+                  <MenuItem value="false">Deactive</MenuItem>
                 </Select>
               </FormControl>
             </Grid>
@@ -266,6 +306,7 @@ const EditMember = () => {
           </Box>
         </form>
       </Paper>
+      <ToastContainer />
     </Container>
   );
 };

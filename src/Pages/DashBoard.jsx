@@ -17,6 +17,7 @@ import ApiIcon from "@mui/icons-material/Api";
 import { useSidebar } from "../Context/SidebarContext";
 import { Pie } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
+import './Dashboard.css'
 
 // Register Chart.js components
 ChartJS.register(ArcElement, Tooltip, Legend);
