@@ -4,6 +4,7 @@ import { useSidebar } from '../../Context/SidebarContext';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import SettingsIcon from '@mui/icons-material/Settings';
 import NotificationsIcon from '@mui/icons-material/Notifications';
+import Brightness4Icon from '@mui/icons-material/Brightness4';
 import axios from 'axios';
 import { domainBase } from '../../helpingFile';
 
@@ -13,6 +14,7 @@ const Sidebar = () => {
   const { isSidebarOpen, toggleSidebar } = useSidebar();
   const [isDropdownOpen, setIsDropdownOpen] = useState({});
   const [profileMenuVisible, setProfileMenuVisible] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -20,6 +22,11 @@ const Sidebar = () => {
   const handleProfileClick = () => {
     setProfileMenuVisible(!profileMenuVisible);
   };
+
+    // Toggle dark mode
+    const toggleTheme = () => {
+      setIsDarkMode(prevMode => !prevMode);
+    };
 
   // Function to toggle dropdown menus
   const toggleDropdown = (item) => {
@@ -77,8 +84,12 @@ const Sidebar = () => {
         <img src='/logo.png' className='h-10 cursor-pointer' alt="Logo" onClick={handleProfileClick} />
         <div className="flex items-center space-x-4">
         <NotificationsIcon
-            className="text-gray-800 cursor-pointer mt-2 text-4xl"
+            className="text-gray-800 cursor-pointer text-4xl"
             onClick={() => console.log('Notification Clicked')} // Replace with actual notification handler
+          />
+           <Brightness4Icon
+            className={`cursor-pointer text-4xl ${isDarkMode ? 'text-yellow-400' : 'text-gray-800'}`}
+            onClick={toggleTheme}
           />
           <div className="relative">
           
@@ -324,8 +335,8 @@ const Sidebar = () => {
                 onClick={() => toggleDropdown('support')}
                 className="flex items-center px-4 py-2 hover:bg-gray-100 w-full text-left"
               >
-                <span className={`material-icons mr-2 text-gray-800 ${!isSidebarOpen && 'text-2xl'}`}>support Ticket</span>
-                {isSidebarOpen && 'Support'}
+                <span className={`material-icons mr-2 text-gray-800 ${!isSidebarOpen && 'text-2xl'}`}>support</span>
+                {isSidebarOpen && 'Support Ticket'}
                 <span className={`material-icons ml-auto transition-transform ${isDropdownOpen['support'] ? 'rotate-180' : 'rotate-0'}`}>
                   arrow_drop_down
                 </span>
@@ -341,11 +352,6 @@ const Sidebar = () => {
                     <li>
                       <Link to="/support/allTicket" className="flex items-center px-4 py-2 text-gray-800 hover:bg-gray-100">
                         All Tickets
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to="/support/ticketStatus" className="flex items-center px-4 py-2 text-gray-800 hover:bg-gray-100">
-                        Update Ticket Status
                       </Link>
                     </li>
                   </ul>

@@ -27,7 +27,7 @@ import EditPackage from './Components/Tables/Updates/EditPackage';
 import PrivateRoute from './Components/PrivateRoute'; // Import the PrivateRoute component
 import Panding from './Components/Tables/Support/Panding';
 import ViewAll from './Components/Tables/Support/ViewAll';
-import { Update } from '@mui/icons-material';
+import EditTicket from './Components/Tables/Updates/EditTicket';
 
 function App() {
   return (
@@ -78,7 +78,7 @@ function App() {
                     {/* Support routes */}
                     <Route path="/support/pandingTicket" element={<Panding />} />
                     <Route path="/support/allTicket" element={<ViewAll />} />
-                    <Route path="/support/ticketStatus" element={<Update />} />
+                    <Route path="/ticket/ViewTicket/:id" element={<EditTicket />} />
 
                     {/* Settings route */}
                     <Route path="settings/payoutCharge" element={<PayoutCharge />} />
