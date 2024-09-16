@@ -303,14 +303,14 @@ const ViewPackage = () => {
                         {member.isActive ? (
                           <Button
                             
-                            sx={{ color: "green", text: 'bold'}}
+                            sx={{ color: "green", text: 'bold', textTransform: "lowercase"}}
                           >
                             Active
                           </Button>
                         ) : (
                           <Button
                             
-                            sx={{ color: "red", text: 'bold'}}
+                            sx={{ color: "red", text: 'bold', textTransform: "lowercase"}}
                           >
                             Deactive
                           </Button>
@@ -321,13 +321,13 @@ const ViewPackage = () => {
                       >
                         {member.packagePayOutCharge > 0 ? (
                           <Button
-                          sx={{ color: "green", text: 'bold'}}
+                          sx={{ color: "green", text: 'bold', textTransform: "lowercase"}}
                           >
                             Yes
                           </Button>
                         ) : (
                           <Button
-                          sx={{ color: "red", text: 'bold'}}
+                          sx={{ color: "red", text: 'bold', textTransform: "lowercase"}}
                           >
                             No
                           </Button>

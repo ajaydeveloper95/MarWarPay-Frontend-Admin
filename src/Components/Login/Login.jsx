@@ -107,6 +107,7 @@ const Login = () => {
         sx={{
           display: "flex",
           alignItems: "center",
+          width: '50%',
           justifyContent: "center",
         }}
       >

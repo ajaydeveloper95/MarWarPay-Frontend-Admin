@@ -25,7 +25,7 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useSidebar } from "../../../Context/SidebarContext";
 import axios from "axios";
-import { accessToken, domainBase } from '../../../helpingFile';
+import { accessToken, domainBase } from "../../../helpingFile";
 
 const API_ENDPOINT = `${domainBase}apiAdmin/v1/support/allGenTicket`;
 const ACCESS_TOKEN = accessToken;
@@ -156,18 +156,6 @@ const ViewAll = () => {
                 <MenuItem value="all">View All</MenuItem>
               </Select>
             </FormControl>
-          </Grid>
-          <Grid item xs={12} md={2}>
-            <Link href="/ticket/add">
-              <Button
-                variant="contained"
-                color="primary"
-                fullWidth
-                sx={{ height: "56px" }}
-              >
-                Add Ticket
-              </Button>
-            </Link>
           </Grid>
         </Grid>
 
@@ -303,16 +291,25 @@ const ViewAll = () => {
                       <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
                       >
-                        {ticket.isStatus ? (
-                          <Button sx={{ color: "green", fontWeight: 'bold' }}>
-                           Panding
+                        {ticket.isStatus === "Pending" ? (
+                          <Button sx={{ color: "orange" , textTransform: "lowercase"}}>
+                            Pending
                           </Button>
-                        ) : (
-                          <Button sx={{ color: "red", fontWeight: 'bold' }}>
+                        ) : ticket.isStatus === "Resolved" ? (
+                          <Button sx={{ color: "green" , textTransform: "lowercase"}}>
                             Resolved
                           </Button>
+                        ) : ticket.isStatus === "Rejected" ? (
+                          <Button sx={{ color: "red", textTransform: "lowercase"}}>
+                            Rejected
+                          </Button>
+                        ) : (
+                          <Button sx={{ color: "gray", textTransform: "lowercase"}}>
+                            Unknown Status
+                          </Button> // Optional: Handle unexpected statuses
                         )}
                       </TableCell>
+
                       <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
                       >

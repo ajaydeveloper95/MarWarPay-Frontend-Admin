@@ -363,13 +363,13 @@ const Payout = () => {
                       >
                         {item.status==="Success" ? (
                           <Button
-                          sx={{ color: "green", text: 'bold'}}
+                          sx={{ color: "green", text: 'bold', textTransform: "lowercase"}}
                           >
                             Success
                           </Button>
                         ) : (
                           <Button
-                          sx={{ color: "red", text: 'bold'}}
+                          sx={{ color: "red", text: 'bold', textTransform: "lowercase"}}
                           >
                             Failed
                           </Button>

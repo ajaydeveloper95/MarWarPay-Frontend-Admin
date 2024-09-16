@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import {
   Container,
   Typography,
-  TextField,
   Button,
   Grid,
   Paper,
@@ -11,6 +10,10 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
 } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
@@ -28,12 +31,11 @@ const EditTicket = () => {
   const navigate = useNavigate();
   const { isSidebarOpen } = useSidebar();
   const [ticketData, setTicketData] = useState({
-    subject: "",
-    relatedTo: "",
-    message: "",
     isStatus: "",
   });
   const [loading, setLoading] = useState(true);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [newStatus, setNewStatus] = useState("");
 
   useEffect(() => {
     const fetchTicket = async () => {
@@ -63,15 +65,20 @@ const EditTicket = () => {
       ...prevData,
       [name]: value,
     }));
+    setNewStatus(value); // Set new status for dialog
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setOpenDialog(true); // Open dialog to confirm update
+  };
+
+  const handleConfirmUpdate = async () => {
+    setOpenDialog(false);
 
     // Adjust the request body according to API requirements
     const updatedData = {
-      // Include only the fields that are allowed by the API
-      isStatus: ticketData.isStatus,
+      isStatus: newStatus,
     };
 
     try {
@@ -83,7 +90,7 @@ const EditTicket = () => {
       });
       if (response.status === 200) {
         toast.success("Ticket updated successfully!");
-        navigate("/viewAllTickets");
+        navigate("/support/allTicket");
       } else {
         toast.error("Failed to update the ticket.");
       }
@@ -91,6 +98,10 @@ const EditTicket = () => {
       console.error("Error updating ticket:", error);
       toast.error("Error updating ticket. Please try again.");
     }
+  };
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
   };
 
   const handleBackButtonClick = () => {
@@ -123,44 +134,6 @@ const EditTicket = () => {
         </Box>
         <form onSubmit={handleSubmit}>
           <Grid container spacing={2}>
-            <Grid item xs={12} md={6}>
-              <TextField
-                label="Subject"
-                name="subject"
-                variant="outlined"
-                fullWidth
-                value={ticketData.subject || ""}
-                onChange={handleChange}
-                required
-              />
-            </Grid>
-
-            <Grid item xs={12} md={6}>
-              <TextField
-                label="Related To"
-                name="relatedTo"
-                variant="outlined"
-                fullWidth
-                value={ticketData.relatedTo || ""}
-                onChange={handleChange}
-                required
-              />
-            </Grid>
-
-            <Grid item xs={12}>
-              <TextField
-                label="Message"
-                name="message"
-                variant="outlined"
-                multiline
-                rows={4}
-                fullWidth
-                value={ticketData.message || ""}
-                onChange={handleChange}
-                required
-              />
-            </Grid>
-
             <Grid item xs={12} sm={6}>
               <FormControl fullWidth variant="outlined" required>
                 <InputLabel id="status-label">Status</InputLabel>
@@ -197,6 +170,28 @@ const EditTicket = () => {
           </Box>
         </form>
       </Paper>
+
+      {/* Confirmation Dialog */}
+      <Dialog
+        open={openDialog}
+        onClose={handleCloseDialog}
+        aria-labelledby="confirm-dialog-title"
+        aria-describedby="confirm-dialog-description"
+      >
+        <DialogTitle id="confirm-dialog-title">Confirm Update</DialogTitle>
+        <DialogContent>
+          <Typography id="confirm-dialog-description">
+            Are you sure you want to update the ticket status to `{newStatus}`?
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog}>Cancel</Button>
+          <Button onClick={handleConfirmUpdate} color="primary">
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
+
       <ToastContainer />
     </Container>
   );

@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import {
   Container,
   Typography,
@@ -18,59 +17,48 @@ import {
   Select,
   InputLabel,
   FormControl,
-  Box,
-  Link,
 } from "@mui/material";
-import VisibilityIcon from "@mui/icons-material/Visibility";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useSidebar } from "../../../Context/SidebarContext";
 import axios from "axios";
-import { accessToken, domainBase } from '../../../helpingFile';
+import { accessToken,domainBase } from '../../../helpingFile';
 
-const API_ENDPOINT = `${domainBase}apiAdmin/v1/support/allPendingTicket`;
+const API_ENDPOINT = `${domainBase}apiAdmin/v1/wallet/getAllTransactionEwallet`;
 const ACCESS_TOKEN = accessToken;
 
-const Panding = () => {
-  const navigate = useNavigate();
+const My_Wllt = () => {
   const { isSidebarOpen } = useSidebar();
   const [searchQuery, setSearchQuery] = useState("");
   const [date, setDate] = useState("");
   const [pageSize, setPageSize] = useState("25");
   const [currentPage, setCurrentPage] = useState(0);
-  const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [transactions, setTransactions] = useState([]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const response = await axios.get(API_ENDPOINT, {
-          headers: {
+    // Fetch data from API
+    axios.get(API_ENDPOINT, {
+        headers: {
             Authorization: `Bearer ${ACCESS_TOKEN}`,
           },
-        });
-        setData(response.data.data);
-        setLoading(false);
-      } catch (err) {
-        setError(err);
-        setLoading(false);
-      }
-    };
-
-    fetchData();
+    })
+      .then((response) => {
+        setTransactions(response.data.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+      });
   }, []);
 
-  const filteredTickets = data.filter((ticket) =>
-    ticket.TicketID.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredData = transactions.filter((item) =>
+    item.userInfo.memberId.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const itemsToDisplay =
-    pageSize === "all" ? filteredTickets.length : parseInt(pageSize, 10);
+    pageSize === "all" ? filteredData.length : parseInt(pageSize, 10);
 
   const startIndex = currentPage * itemsToDisplay;
   const endIndex = startIndex + itemsToDisplay;
-  const paginatedTickets = filteredTickets.slice(startIndex, endIndex);
+  const paginatedData = filteredData.slice(startIndex, endIndex);
 
   const handlePageSizeChange = (event) => {
     setPageSize(event.target.value);
@@ -78,20 +66,13 @@ const Panding = () => {
   };
 
   const handlePageChange = (direction) => {
-    if (direction === "next" && endIndex < filteredTickets.length) {
+    if (direction === "next" && endIndex < filteredData.length) {
       setCurrentPage(currentPage + 1);
     } else if (direction === "prev" && currentPage > 0) {
       setCurrentPage(currentPage - 1);
     }
   };
 
-  const handleViewTicket = (_id) => {
-    navigate(`/ticket/ViewTicket/${_id}`);
-  };
-
-  const handleBackButtonClick = () => {
-    navigate(-1);
-  };
 
   return (
     <Container
@@ -109,20 +90,20 @@ const Panding = () => {
           <Grid item xs={12} md={3}>
             <Grid container alignItems="center" spacing={1}>
               <Grid item>
-                <IconButton color="primary" onClick={handleBackButtonClick}>
+                <IconButton color="primary">
                   <ArrowBackIcon />
                 </IconButton>
               </Grid>
               <Grid item>
                 <Typography variant="h5" component="h1" gutterBottom>
-                  Panding Tickets
+                  My E-Wallet
                 </Typography>
               </Grid>
             </Grid>
           </Grid>
           <Grid item xs={12} md={3}>
             <TextField
-              label="Search by Ticket ID"
+              label="Search by Member ID"
               variant="outlined"
               fullWidth
               value={searchQuery}
@@ -180,7 +161,7 @@ const Panding = () => {
                     border: "1px solid rgba(224, 224, 224, 1)",
                   }}
                 >
-                  Member
+                  MemberID
                 </TableCell>
                 <TableCell
                   sx={{
@@ -189,7 +170,7 @@ const Panding = () => {
                     border: "1px solid rgba(224, 224, 224, 1)",
                   }}
                 >
-                  TicketID
+                  Name
                 </TableCell>
                 <TableCell
                   sx={{
@@ -198,7 +179,7 @@ const Panding = () => {
                     border: "1px solid rgba(224, 224, 224, 1)",
                   }}
                 >
-                  Subject
+                  Before Amount
                 </TableCell>
                 <TableCell
                   sx={{
@@ -207,7 +188,7 @@ const Panding = () => {
                     border: "1px solid rgba(224, 224, 224, 1)",
                   }}
                 >
-                  Related To
+                  Cr/Dr Amount
                 </TableCell>
                 <TableCell
                   sx={{
@@ -216,7 +197,34 @@ const Panding = () => {
                     border: "1px solid rgba(224, 224, 224, 1)",
                   }}
                 >
-                  Last Update
+                  After Amount
+                </TableCell>
+                <TableCell
+                  sx={{
+                    fontWeight: "bold",
+                    fontSize: "16px",
+                    border: "1px solid rgba(224, 224, 224, 1)",
+                  }}
+                >
+                  Date Time
+                </TableCell>
+                <TableCell
+                  sx={{
+                    fontWeight: "bold",
+                    fontSize: "16px",
+                    border: "1px solid rgba(224, 224, 224, 1)",
+                  }}
+                >
+                  Type
+                </TableCell>
+                <TableCell
+                  sx={{
+                    fontWeight: "bold",
+                    fontSize: "16px",
+                    border: "1px solid rgba(224, 224, 224, 1)",
+                  }}
+                >
+                  Description
                 </TableCell>
                 <TableCell
                   sx={{
@@ -227,129 +235,122 @@ const Panding = () => {
                 >
                   Status
                 </TableCell>
-                <TableCell
-                  sx={{
-                    fontWeight: "bold",
-                    fontSize: "16px",
-                    border: "1px solid rgba(224, 224, 224, 1)",
-                  }}
-                >
-                  Action
-                </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {loading ? (
-                <TableRow>
-                  <TableCell colSpan={8} align="center">
-                    Loading...
-                  </TableCell>
-                </TableRow>
-              ) : error ? (
-                <TableRow>
-                  <TableCell colSpan={8} align="center">
-                    Error: {error.message}
-                  </TableCell>
-                </TableRow>
-              ) : (
-                paginatedTickets.map((ticket, index) => {
-                  // Calculate row number based on pagination
-                  const rowNumber = startIndex + index + 1;
+              {paginatedData.map((transaction, index) => {
+                const rowNumber = startIndex + index + 1;
 
-                  return (
-                    <TableRow key={ticket._id}>
-                      <TableCell
+                return (
+                  <TableRow key={transaction._id}>
+                    <TableCell
+                      sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
+                    >
+                      {rowNumber}
+                    </TableCell>
+                    <TableCell
+                      sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
+                    >
+                      {transaction.userInfo.memberId}
+                    </TableCell>
+                    <TableCell
+                      sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
+                    >
+                      {transaction.userInfo.userName}
+                    </TableCell>
+                    <TableCell
+                      sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
+                    >
+                      {transaction.beforeAmount}
+                    </TableCell>
+                    <TableCell
+                      sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
+                    >
+                      {transaction.transactionAmount}
+                    </TableCell>
+                    <TableCell
+                      sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
+                    >
+                      {transaction.afterAmount}
+                    </TableCell>
+                    <TableCell
+                      sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
+                    >
+                      {new Date(transaction.createdAt).toLocaleString()}
+                    </TableCell>
+
+                    <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
                       >
-                        {rowNumber}
-                      </TableCell>
-                      <TableCell
-                        sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
-                      >
-                        {ticket.userInfo.userName}
-                      </TableCell>
-                      <TableCell
-                        sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
-                      >
-                        {ticket.TicketID}
-                      </TableCell>
-                      <TableCell
-                        sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
-                      >
-                        {ticket.subject}
-                      </TableCell>
-                      <TableCell
-                        sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
-                      >
-                        {ticket.relatedTo}
-                      </TableCell>
-                      <TableCell
-                        sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
-                      >
-                        {new Date(ticket.createdAt).toLocaleDateString()}
-                      </TableCell>
-                      <TableCell
-                        sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
-                      >
-                        {ticket.isStatus === "Pending" ? (
-                          <Button sx={{ color: "orange" , textTransform: "lowercase"}}>
-                            Pending
-                          </Button>
-                        ) : ticket.isStatus === "Resolved" ? (
-                          <Button sx={{ color: "green" , textTransform: "lowercase"}}>
-                            Resolved
-                          </Button>
-                        ) : ticket.isStatus === "Rejected" ? (
-                          <Button sx={{ color: "red", textTransform: "lowercase"}}>
-                            Rejected
+                        {transaction.transactionType==="Cr." ? (
+                          <Button
+                            sx={{ color: "green", text: 'bold' }}
+                          >
+                            Cr.
                           </Button>
                         ) : (
-                          <Button sx={{ color: "gray", textTransform: "lowercase"}}>
-                            Unknown Status
-                          </Button> // Optional: Handle unexpected statuses
+                          <Button
+                            sx={{ color: "red", text: 'bold' }}
+                          >
+                            Dr.
+                          </Button>
                         )}
                       </TableCell>
-                      <TableCell
+                    <TableCell
+                      sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
+                    >
+                      {transaction.description}
+                    </TableCell>
+                    <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
                       >
-                        <IconButton
-                          color="primary"
-                          component={Link}
-                          onClick={() => handleViewTicket(ticket._id)}
-                        >
-                          <VisibilityIcon />
-                        </IconButton>
+                        {transaction.transactionStatus ? (
+                          <Button
+                            
+                            sx={{ color: "green", text: 'bold', textTransform: "lowercase"}}
+                          >
+                            Active
+                          </Button>
+                        ) : (
+                          <Button
+                            
+                            sx={{ color: "red", text: 'bold', textTransform: "lowercase"}}
+                          >
+                            Deactive
+                          </Button>
+                        )}
                       </TableCell>
-                    </TableRow>
-                  );
-                })
-              )}
+                  </TableRow>
+                );
+              })}
             </TableBody>
           </Table>
         </TableContainer>
 
-        {/* Pagination Section */}
-        <Box display="flex" justifyContent="center" marginTop={2}>
-          <Button
-            variant="outlined"
-            color="primary"
-            onClick={() => handlePageChange("prev")}
-            disabled={currentPage === 0}
-          >
-            Previous
-          </Button>
-          <Button
-            variant="outlined"
-            color="primary"
-            onClick={() => handlePageChange("next")}
-            disabled={endIndex >= filteredTickets.length}
-          >
-            Next
-          </Button>
-        </Box>
+        {/* Pagination Controls */}
+        <Grid container justifyContent="space-between" mt={2}>
+          <Grid item>
+            <Button
+              variant="contained"
+              onClick={() => handlePageChange("prev")}
+              disabled={currentPage === 0}
+            >
+              Previous
+            </Button>
+          </Grid>
+          <Grid item>
+            <Button
+              variant="contained"
+              onClick={() => handlePageChange("next")}
+              disabled={endIndex >= filteredData.length}
+            >
+              Next
+            </Button>
+          </Grid>
+        </Grid>
       </Paper>
     </Container>
   );
 };
 
-export default Panding;
+export default My_Wllt;

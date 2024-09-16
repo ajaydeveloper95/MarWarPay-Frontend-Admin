@@ -10,6 +10,7 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle'; // Icon for succe
 import CancelIcon from '@mui/icons-material/Cancel'; // Icon for failure
 
 const API_ENDPOINT = `${domainBase}apiAdmin/v1/payin/allSuccessPayIn`;
+const USER_LIST_API = 'http://localhost:5000/apiAdmin/v1/utility/getUserList';
 const ACCESS_TOKEN = accessToken;
 
 const Payin = () => {
@@ -29,6 +30,7 @@ const Payin = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [dialogMessage, setDialogMessage] = useState('');
   const [dialogSeverity, setDialogSeverity] = useState('info');
+  const [userList, setUserList] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -60,7 +62,22 @@ const Payin = () => {
       }
     };
 
+    const fetchUserList = async () => {
+      try {
+        const response = await axios.get(USER_LIST_API, {
+          headers: {
+            Authorization: `Bearer ${ACCESS_TOKEN}`,
+          },
+        });
+        setUserList(response.data.data); // Store user data
+      } catch (err) {
+        setError(err);
+      }
+    };
+
     fetchData();
+    fetchUserList();
+
   }, []);
 
   useEffect(() => {
@@ -212,20 +229,22 @@ const Payin = () => {
               />
             </Grid>
             <Grid item xs={12} md={2}>
-              <FormControl fullWidth>
-                <InputLabel id="dropdown-label">All Users</InputLabel>
-                <Select
-                  labelId="dropdown-label"
-                  value={dropdownValue}
-                  onChange={(e) => setDropdownValue(e.target.value)}
-                  label="Dropdown Label"
-                >
-                  <MenuItem value="option1">Option 1</MenuItem>
-                  <MenuItem value="option2">Option 2</MenuItem>
-                  <MenuItem value="option3">Option 3</MenuItem>
-                </Select>
-              </FormControl>
-            </Grid>
+          <FormControl fullWidth>
+            <InputLabel id="dropdown-label">All Users</InputLabel>
+            <Select
+              labelId="dropdown-label"
+              value={dropdownValue}
+              onChange={(e) => setDropdownValue(e.target.value)}
+              label="All Users"
+            >
+              {userList.map((user) => (
+                <MenuItem key={user._id} value={user.memberId}>
+                  {`${user.fullName} (${user.memberId})`}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Grid>
             <Grid item xs={12} md={2}>
               <TextField
                 type="date"
@@ -314,13 +333,13 @@ const Payin = () => {
                       >
                         {row.status==="Success" ? (
                           <Button
-                          sx={{ color: "green", text: 'bold'}}
+                          sx={{ color: "green", text: 'bold', textTransform: "lowercase"}}
                           >
                             Success
                           </Button>
                         ) : (
                           <Button
-                          sx={{ color: "red", text: 'bold'}}
+                          sx={{ color: "red", text: 'bold', textTransform: "lowercase"}}
                           >
                             Failed
                           </Button>

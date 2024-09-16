@@ -182,7 +182,7 @@ const MemberWlt = () => {
                   paginatedMembers.map((member, index) => (
                     <TableRow key={member._id}>
                       <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{startIndex + index + 1}</TableCell>
-                      <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{member.memberId}</TableCell>
+                      <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{member.userInfo.memberId}</TableCell>
                       <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{member.beforeAmount}</TableCell>
                       <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{member.transactionAmount}</TableCell>
                       <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{member.afterAmount}</TableCell>
@@ -192,13 +192,13 @@ const MemberWlt = () => {
                       >
                         {member.transactionType==="Cr." ? (
                           <Button
-                            sx={{ color: "green", text: 'bold' }}
+                            sx={{ color: "green", text: 'bold', textTransform: "lowercase" }}
                           >
                             Cr.
                           </Button>
                         ) : (
                           <Button
-                            sx={{ color: "red", text: 'bold' }}
+                            sx={{ color: "red", text: 'bold', textTransform: "lowercase" }}
                           >
                             Dr.
                           </Button>
@@ -210,13 +210,13 @@ const MemberWlt = () => {
                       >
                         {member.transactionStatus==="Success" ? (
                           <Button
-                            sx={{ color: "green", text: 'bold'}}
+                            sx={{ color: "green", text: 'bold', textTransform: "lowercase"}}
                           >
                             Success
                           </Button>
                         ) : (
                           <Button
-                            sx={{ color: "red", text: 'bold'}}
+                            sx={{ color: "red", text: 'bold', textTransform: "lowercase"}}
                           >
                             Failed
                           </Button>

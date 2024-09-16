@@ -28,6 +28,10 @@ import PrivateRoute from './Components/PrivateRoute'; // Import the PrivateRoute
 import Panding from './Components/Tables/Support/Panding';
 import ViewAll from './Components/Tables/Support/ViewAll';
 import EditTicket from './Components/Tables/Updates/EditTicket';
+import My_Wllt from './Components/Tables/E_wallet/My_wllt';
+import MemberWllt from './Components/Tables/E_wallet/MemberWllt';
+import Cr from './Components/Tables/E_wallet/Cr';
+import Dr from './Components/Tables/E_wallet/Dr';
 
 function App() {
   return (
@@ -69,6 +73,13 @@ function App() {
                     {/* UPI wallet routes */}
                     <Route path="upi-wallet/configure" element={<MemberWlt />} />
                     <Route path="upi-wallet/transactions" element={<Transfer />} />
+
+                    {/* UPI wallet routes */}
+                    <Route path="/ewallet-management/my-wallet" element={<My_Wllt />} />
+                    <Route path="/ewallet-management/member-wallet" element={<MemberWllt />} />
+                    <Route path="/ewallet-management/credit-fund" element={<Cr />} />
+                    <Route path="/ewallet-management/debit-fund" element={<Dr />} />
+                    
 
                     {/* Package Management routes */}
                     <Route path="package/add" element={<AddPackage />} />

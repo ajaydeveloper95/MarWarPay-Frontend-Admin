@@ -272,16 +272,16 @@ const Users = () => {
                         {user.isActive ? (
                           <Button
                            
-                          sx={{ color: "green", text: 'bold'}}
+                          sx={{ color: "green", text: 'bold', textTransform: "lowercase"}}
                           >
-                            true
+                            Active
                           </Button>
                         ) : (
                           <Button
                             
-                          sx={{ color: "red", text: 'bold'}}
+                          sx={{ color: "red", text: 'bold', textTransform: "lowercase"}}
                           >
-                            false
+                            Deactive
                           </Button>
                         )}
                       </TableCell>
