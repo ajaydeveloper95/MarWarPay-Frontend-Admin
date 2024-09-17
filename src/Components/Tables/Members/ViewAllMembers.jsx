@@ -60,7 +60,6 @@ const ViewAllMembers = () => {
       });
   };
 
-  console.log(usersData);
 
   useEffect(() => {
     setCurrentPage(0);
@@ -130,7 +129,7 @@ const ViewAllMembers = () => {
                 boxShadow: "5px 0 10px -3px rgba(0, 128, 128, 0.6)",
               }}
             >
-              <Typography variant="h6" sx={{ color: "blue" }}>
+              <Typography variant="h6" sx={{ color: "teal" }}>
                 TOTAL BALANCE
               </Typography>
               <Typography>₹</Typography>
@@ -145,7 +144,7 @@ const ViewAllMembers = () => {
                 boxShadow: "5px 0 10px -3px rgba(0, 128, 128, 0.6)",
               }}
             >
-              <Typography variant="h6" sx={{ color: "blue" }}>
+              <Typography variant="h6" sx={{ color: "teal" }}>
                 TOTAL DOWNLINE BALANCE
               </Typography>
               <Typography>₹</Typography>
@@ -164,16 +163,17 @@ const ViewAllMembers = () => {
         }}
       >
         <Paper sx={{ p: 2, boxShadow: 3 }}>
-          <Grid container alignItems="center" spacing={1} mb={2}>
-            <Grid item xs={12} md={3}>
-              <Grid container alignItems="center" spacing={1}>
-                <Grid item>
+        <Grid item>
                   <IconButton color="primary" onClick={handleBackButtonClick}>
                     <ArrowBackIcon />
                   </IconButton>
                 </Grid>
+          <Grid container alignItems="center" spacing={1} mb={2}>
+            <Grid item xs={12} md={3}>
+              <Grid container alignItems="center" spacing={1}>
+                
                 <Grid item>
-                  <Typography variant="h5" component="h1" gutterBottom>
+                  <Typography variant="h4" component="h1" gutterBottom sx={{color: 'teal'}}>
                     Members
                   </Typography>
                 </Grid>
@@ -223,7 +223,7 @@ const ViewAllMembers = () => {
                   variant="contained"
                   color="primary"
                   fullWidth
-                  sx={{ height: "56px" }}
+                  sx={{ height: "56px", background: 'teal' }}
                 >
                   Add Member
                 </Button>

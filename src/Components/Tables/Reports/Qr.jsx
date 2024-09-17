@@ -48,7 +48,6 @@ const Qr = () => {
       }
     };
 
-
     const fetchUserList = async () => {
       try {
         const response = await axios.get(USER_LIST_API, {
@@ -71,12 +70,13 @@ const Qr = () => {
     setPreviousPage(0);
   }, [pageSize]);
 
-  // Filter members based on search query and date range
+  // Filter members based on search query, date range, and selected user
   const filteredMembers = data.filter((member) => {
     const matchesName = member.userInfo.memberId.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesDate = (!startDate || new Date(member.createdAt) >= new Date(startDate)) &&
                         (!endDate || new Date(member.createdAt) <= new Date(endDate));
-    return matchesName && matchesDate;
+    const matchesUser = !dropdownValue || member.userInfo.memberId === dropdownValue;
+    return matchesName && matchesDate && matchesUser;
   });
 
   const itemsToDisplay = pageSize === 'all' ? filteredMembers.length : parseInt(pageSize, 10);
@@ -134,7 +134,7 @@ const Qr = () => {
                 boxShadow: '5px 0 10px -3px rgba(0, 128, 128, 0.6)',
               }}
             >
-              <Typography variant="h6" sx={{ color: 'blue' }}>
+              <Typography variant="h6" sx={{ color: 'teal' }}>
                 TOTAL BALANCE
               </Typography>
               <Typography>₹</Typography>
@@ -149,7 +149,7 @@ const Qr = () => {
                 boxShadow: '5px 0 10px -3px rgba(0, 128, 128, 0.6)',
               }}
             >
-              <Typography variant="h6" sx={{ color: 'blue' }}>
+              <Typography variant="h6" sx={{ color: 'teal' }}>
                 TOTAL DOWNLINE BALANCE
               </Typography>
               <Typography>₹</Typography>
@@ -177,7 +177,7 @@ const Qr = () => {
                   </IconButton>
                 </Grid>
                 <Grid item>
-                  <Typography variant="h5" component="h1" gutterBottom>
+                  <Typography variant="h4" component="h1" gutterBottom sx={{color: 'teal'}}>
                     UPI QR History
                   </Typography>
                 </Grid>
@@ -185,7 +185,7 @@ const Qr = () => {
             </Grid>
           </Grid>
           <Grid container alignItems="center" spacing={1} mb={2}>
-            <Grid item xs={12} md={3}>
+            <Grid item xs={12} md={4}>
               <TextField
                 label="Search by Member ID"
                 variant="outlined"
@@ -195,22 +195,25 @@ const Qr = () => {
               />
             </Grid>
             <Grid item xs={12} md={2}>
-          <FormControl fullWidth>
-            <InputLabel id="dropdown-label">All Users</InputLabel>
-            <Select
-              labelId="dropdown-label"
-              value={dropdownValue}
-              onChange={(e) => setDropdownValue(e.target.value)}
-              label="All Users"
-            >
-              {userList.map((user) => (
-                <MenuItem key={user._id} value={user.memberId}>
-                  {`${user.fullName} (${user.memberId})`}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        </Grid>
+              <FormControl fullWidth>
+                <InputLabel id="dropdown-label">All Users</InputLabel>
+                <Select
+                  labelId="dropdown-label"
+                  value={dropdownValue}
+                  onChange={(e) => setDropdownValue(e.target.value)}
+                  label="All Users"
+                >
+                  <MenuItem value="">
+                    <em>All Users</em>
+                  </MenuItem>
+                  {userList.map((user) => (
+                    <MenuItem key={user._id} value={user.memberId}>
+                      {`${user.fullName} (${user.memberId})`}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
             <Grid item xs={12} md={2}>
               <TextField
                 label="Start Date"
@@ -237,144 +240,121 @@ const Qr = () => {
             </Grid>
             <Grid item xs={12} md={2}>
               <FormControl fullWidth>
-                <InputLabel id="page-size-label">Items Per Page</InputLabel>
+                <InputLabel>page</InputLabel>
                 <Select
-                  labelId="page-size-label"
+                label="page"
                   value={pageSize}
                   onChange={handlePageSizeChange}
-                  label="Items Per Page"
                 >
-                  <MenuItem value={25}>25</MenuItem>
-                  <MenuItem value={50}>50</MenuItem>
-                  <MenuItem value={100}>100</MenuItem>
+                  <MenuItem value="25">25</MenuItem>
+                  <MenuItem value="50">50</MenuItem>
+                  <MenuItem value="100">100</MenuItem>
+                  <MenuItem value="500">500</MenuItem>
                   <MenuItem value="all">View All</MenuItem>
                 </Select>
               </FormControl>
             </Grid>
           </Grid>
-
           <TableContainer component={Paper}>
-            <Table sx={{ borderCollapse: 'collapse' }}>
+            <Table>
               <TableHead>
                 <TableRow>
                   <TableCell sx={{ fontWeight: 'bold', fontSize: '16px', border: '1px solid rgba(224, 224, 224, 1)' }}>#</TableCell>
                   <TableCell sx={{ fontWeight: 'bold', fontSize: '16px', border: '1px solid rgba(224, 224, 224, 1)' }}>Member ID</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', fontSize: '16px', border: '1px solid rgba(224, 224, 224, 1)' }}>txnID</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', fontSize: '16px', border: '1px solid rgba(224, 224, 224, 1)' }}>RefID</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', fontSize: '16px', border: '1px solid rgba(224, 224, 224, 1)' }}>TxnID</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', fontSize: '16px', border: '1px solid rgba(224, 224, 224, 1)' }}>RfxID</TableCell>
                   <TableCell sx={{ fontWeight: 'bold', fontSize: '16px', border: '1px solid rgba(224, 224, 224, 1)' }}>Amount</TableCell>
                   <TableCell sx={{ fontWeight: 'bold', fontSize: '16px', border: '1px solid rgba(224, 224, 224, 1)' }}>IP</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', fontSize: '16px', border: '1px solid rgba(224, 224, 224, 1)' }}>QR</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', fontSize: '16px', border: '1px solid rgba(224, 224, 224, 1)' }}>QR Code</TableCell>
                   <TableCell sx={{ fontWeight: 'bold', fontSize: '16px', border: '1px solid rgba(224, 224, 224, 1)' }}>Date</TableCell>
                   <TableCell sx={{ fontWeight: 'bold', fontSize: '16px', border: '1px solid rgba(224, 224, 224, 1)' }}>Status</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', fontSize: '16px', border: '1px solid rgba(224, 224, 224, 1)' }}>Action</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', fontSize: '16px', border: '1px solid rgba(224, 224, 224, 1)' }}>Actions</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {loading ? (
+              {loading ? (
                   <TableRow>
-                    <TableCell colSpan={10} align="center">
+                    <TableCell colSpan={6} align="center">
                       Loading...
                     </TableCell>
                   </TableRow>
                 ) : error ? (
                   <TableRow>
-                    <TableCell colSpan={10} align="center">
+                    <TableCell colSpan={6} align="center">
                       Error: {error.message}
                     </TableCell>
                   </TableRow>
                 ) : (
-                  paginatedMembers.map((member, index) => (
-                    <TableRow key={member._id}>
-                      <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{startIndex + index + 1}</TableCell>
-                      <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{member.userInfo.memberId}</TableCell>
-                      <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{member.trxId}</TableCell>
-                      <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{member.refId}</TableCell>
-                      <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{member.amount}</TableCell>
-                      <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{member.ip}</TableCell>
-                      <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}><Button sx={{color: 'white', background: 'lightBlue'}}>view QR</Button></TableCell>
-                      <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{new Date(member.createdAt).toLocaleDateString()}</TableCell>
-                      <TableCell
-                        sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
+              paginatedMembers.map((member, index) => (
+                  <TableRow key={member._id}>
+                    <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{startIndex + index + 1}</TableCell>
+                    <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{member.userInfo.memberId}</TableCell>
+                    <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{member.trxId}</TableCell>
+                    <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{member.refId}</TableCell>
+                    <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{member.amount}</TableCell>
+                    <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{member.ip}</TableCell>
+                    <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>
+                      <Button sx={{ color: 'white', background: 'lightBlue' }}>View QR</Button>
+                    </TableCell>
+                    <TableCell>{new Date(member.createdAt).toLocaleDateString()}</TableCell>
+                    <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>
+                      <Button
+                        sx={{
+                          color: member.callBackStatus === 'Success' ? 'green' : 'red',
+                          fontWeight: 'bold',
+                          textTransform: 'lowercase'
+                        }}
                       >
-                        {member.callBackStatus==="Success" ? (
-                          <Button
-                          
-                            sx={{ color: "green", text: 'bold', textTransform: "lowercase"}}
-                          >
-                            Success
-                          </Button>
-                        ) : (
-                          <Button
-                            
-                            sx={{ color: "red", text: 'bold', textTransform: "lowercase"}}
-                          >
-                            Failed
-                          </Button>
-                        )}
-                      </TableCell>
-                      <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>
-                        <IconButton color="primary" onClick={() => handleViewClick(member.callBackStatus)}>
-                          <VisibilityIcon />
-                        </IconButton>
-                      </TableCell>
-                    </TableRow>
-                  ))
-                )}
+                        {member.callBackStatus === 'Success' ? 'Success' : 'Failed'}
+                      </Button>
+                    </TableCell>
+                    <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>
+                      <IconButton color="primary" onClick={() => handleViewClick(member.callBackStatus)}>
+                        <VisibilityIcon />
+                      </IconButton>
+                    </TableCell>
+                  </TableRow>
+                )))}
               </TableBody>
             </Table>
           </TableContainer>
-
           <Grid container justifyContent="space-between" mt={2}>
             <Grid item>
-              <Button onClick={() => handlePageChange('prev')} disabled={currentPage === 0}>
+              <Button
+                variant="contained"
+                color="primary"
+                disabled={currentPage === 0}
+                onClick={() => handlePageChange('prev')}
+              >
                 Previous
               </Button>
             </Grid>
             <Grid item>
-              <Typography variant="body2">
-                Page {currentPage + 1} of {Math.ceil(filteredMembers.length / itemsToDisplay)}
-              </Typography>
-            </Grid>
-            <Grid item>
               <Button
-                onClick={() => handlePageChange('next')}
+                variant="contained"
+                color="primary"
                 disabled={endIndex >= filteredMembers.length}
+                onClick={() => handlePageChange('next')}
               >
                 Next
               </Button>
             </Grid>
+           
           </Grid>
         </Paper>
       </Container>
 
-      {/* Dialog for showing messages */}
-      <Dialog
-        open={dialogOpen}
-        onClose={handleDialogClose}
-        PaperProps={{
-          sx: {
-            width: '500px',
-            maxWidth: '90%',
-            padding: 2,
-            borderRadius: 2,
-            boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.2)',
-          },
-        }}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title" sx={{ textAlign: 'center'}}>
-        {dialogSeverity === 'success' ? <CheckCircleIcon sx={{ fontSize: 50, color: 'green', mb: 2 }} /> : <CancelIcon sx={{ fontSize: 50, color: 'red', mb: 2 }} />}
-        </DialogTitle>
-        <DialogContent sx={{ textAlign: 'center' }}>
-          <Typography variant="h6" sx={{ color: dialogSeverity === 'error' ? 'red' : 'green' }}>
-           
+      <Dialog open={dialogOpen} onClose={handleDialogClose}>
+        <DialogTitle>{dialogSeverity === 'success' ? 'Success' : 'Error'}</DialogTitle>
+        <DialogContent>
+          <Typography variant="body1" color={dialogSeverity === 'success' ? 'green' : 'red'}>
+            {dialogSeverity === 'success' ? <CheckCircleIcon /> : <CancelIcon />}
             {dialogMessage}
           </Typography>
         </DialogContent>
-        <DialogActions sx={{ justifyContent: 'end' }}>
-          <Button onClick={handleDialogClose} sx={{color: 'white', background: 'blue'}}>
-            Ok
+        <DialogActions>
+          <Button onClick={handleDialogClose} color="primary">
+            Close
           </Button>
         </DialogActions>
       </Dialog>

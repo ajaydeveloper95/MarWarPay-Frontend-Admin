@@ -47,7 +47,6 @@ const PayoutGenerate = () => {
             Authorization: `Bearer ${ACCESS_TOKEN}`,
           },
         });
-        console.log(response.data.data)
         setData(response.data.data.map((item, index) => ({
           id: index + 1, 
           memberId: item.userInfo.memberId,
@@ -71,7 +70,7 @@ const PayoutGenerate = () => {
   }, []);
 
   const filteredData = data.filter((item) => {
-    const matchesSearch = item.memberId.toLowerCase().includes(searchQuery.toLowerCase()) || item.name.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesSearch = item.memberId.toLowerCase().includes(searchQuery.toLowerCase()) || item.txnId.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesDate = date ? item.dateTime.startsWith(date) : true;
     return matchesSearch && matchesDate;
   });
@@ -116,7 +115,7 @@ const PayoutGenerate = () => {
         <Paper sx={{ p: 2, boxShadow: 3 }}>
           {/* Header Section */}
           <Grid container alignItems="center" spacing={1} mb={2}>
-            <Grid item xs={12} md={3}>
+            <Grid item xs={12} md={5}>
               <Grid container alignItems="center" spacing={1}>
                 <Grid item>
                   <IconButton color="primary" onClick={handleBackButtonClick}>
@@ -124,7 +123,7 @@ const PayoutGenerate = () => {
                   </IconButton>
                 </Grid>
                 <Grid item>
-                  <Typography variant="h5" component="h1" gutterBottom>
+                  <Typography variant="h4" component="h1" gutterBottom sx={{color: 'teal'}}>
                     Payout Genarate
                   </Typography>
                 </Grid>
@@ -132,7 +131,7 @@ const PayoutGenerate = () => {
             </Grid>
             <Grid item xs={12} md={3}>
               <TextField
-                label="Search by Member ID or Name"
+                label="Search by Member ID or txnID"
                 variant="outlined"
                 fullWidth
                 value={searchQuery}

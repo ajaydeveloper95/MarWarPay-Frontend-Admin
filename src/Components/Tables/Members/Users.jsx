@@ -34,7 +34,6 @@ const Users = () => {
             Authorization: `Bearer ${ACCESS_TOKEN}`,
           },
         })
-        console.log(response)
         setUsersData(response.data.data);
         setLoading(false);
       } catch (err) {
@@ -96,32 +95,66 @@ const Users = () => {
         }}
       >
         <Grid container spacing={2} mb={2}>
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} md={3}>
             <Box
               sx={{
-                p: 2,
+                p: 4,
                 borderRadius: 2,
                 backgroundColor: 'background.paper',
                 boxShadow: '5px 0 10px -3px rgba(0, 128, 128, 0.6)',
+                minHeight: "150px",
               }}
             >
-              <Typography variant="h6" sx={{ color: 'blue' }}>
-                TOTAL BALANCE
+              <Typography variant="h6" sx={{ color: 'teal' }}>
+                Total E-Wallet Balance
               </Typography>
               <Typography>₹</Typography>
             </Box>
           </Grid>
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} md={3}>
             <Box
               sx={{
-                p: 2,
+                p: 4,
                 borderRadius: 2,
                 backgroundColor: 'background.paper',
                 boxShadow: '5px 0 10px -3px rgba(0, 128, 128, 0.6)',
+                minHeight: "150px",
               }}
             >
-              <Typography variant="h6" sx={{ color: 'blue' }}>
-                TOTAL DOWNLINE BALANCE
+              <Typography variant="h6" sx={{ color: 'teal' }}>
+                Total UPI-Wallet Balance
+              </Typography>
+              <Typography>₹</Typography>
+            </Box>
+          </Grid>
+          <Grid item xs={12} md={3}>
+            <Box
+              sx={{
+                p: 4,
+                borderRadius: 2,
+                backgroundColor: 'background.paper',
+                boxShadow: '5px 0 10px -3px rgba(0, 128, 128, 0.6)',
+                minHeight: "150px",
+              }}
+            >
+              <Typography variant="h6" sx={{ color: 'teal' }}>
+                Total Active Users
+              </Typography>
+              <Typography>₹</Typography>
+            </Box>
+          </Grid>
+          <Grid item xs={12} md={3}>
+            <Box
+              sx={{
+                p: 4,
+                borderRadius: 2,
+                backgroundColor: 'background.paper',
+                boxShadow: '5px 0 10px -3px rgba(0, 128, 128, 0.6)',
+                minHeight: "150px",
+              }}
+            >
+              <Typography variant="h6" sx={{ color: 'teal' }}>
+                Total Deactive Users
               </Typography>
               <Typography>₹</Typography>
             </Box>
@@ -148,7 +181,7 @@ const Users = () => {
                   </IconButton>
                 </Grid>
                 <Grid item>
-                  <Typography variant="h5" component="h1" gutterBottom>
+                  <Typography variant="h4" component="h1" gutterBottom sx={{color : 'teal'}}>
                     Users
                   </Typography>
                 </Grid>
@@ -198,7 +231,7 @@ const Users = () => {
                   variant="contained"
                   color="primary"
                   fullWidth
-                  sx={{ height: '56px' }}
+                  sx={{ height: '56px', background: 'teal' }}
                 >
                   Add Member
                 </Button>

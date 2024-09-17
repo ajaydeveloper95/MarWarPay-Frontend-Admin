@@ -19,9 +19,9 @@ import {
   InputLabel,
   FormControl,
   Box,
-  Link,
+  // Link,
 } from "@mui/material";
-import VisibilityIcon from "@mui/icons-material/Visibility";
+// import VisibilityIcon from "@mui/icons-material/Visibility";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useSidebar } from "../../../Context/SidebarContext";
 import axios from "axios";
@@ -50,7 +50,7 @@ const ViewAll = () => {
             Authorization: `Bearer ${ACCESS_TOKEN}`,
           },
         });
-        setData(response.data.data);
+        setData(response.data.data || []);
         setLoading(false);
       } catch (err) {
         setError(err);
@@ -85,9 +85,9 @@ const ViewAll = () => {
     }
   };
 
-  const handleViewTicket = (_id) => {
-    navigate(`/ticket/ViewTicket/${_id}`);
-  };
+  // const handleViewTicket = (_id) => {
+  //   navigate(`/ticket/ViewTicket/${_id}`);
+  // };
 
   const handleBackButtonClick = () => {
     navigate(-1);
@@ -105,16 +105,16 @@ const ViewAll = () => {
       }}
     >
       <Paper sx={{ p: 2, boxShadow: 3 }}>
+        <Grid item>
+          <IconButton color="primary" onClick={handleBackButtonClick}>
+            <ArrowBackIcon />
+          </IconButton>
+        </Grid>
         <Grid container alignItems="center" spacing={1} mb={2}>
-          <Grid item xs={12} md={3}>
+          <Grid item xs={12} md={5}>
             <Grid container alignItems="center" spacing={1}>
               <Grid item>
-                <IconButton color="primary" onClick={handleBackButtonClick}>
-                  <ArrowBackIcon />
-                </IconButton>
-              </Grid>
-              <Grid item>
-                <Typography variant="h5" component="h1" gutterBottom>
+                <Typography variant="h4" component="h1" gutterBottom sx={{ color: 'teal' }}>
                   All Tickets
                 </Typography>
               </Grid>
@@ -134,9 +134,7 @@ const ViewAll = () => {
               label="Select Date"
               type="date"
               fullWidth
-              InputLabelProps={{
-                shrink: true,
-              }}
+              InputLabelProps={{ shrink: true }}
               value={date}
               onChange={(e) => setDate(e.target.value)}
             />
@@ -227,7 +225,7 @@ const ViewAll = () => {
                 >
                   Status
                 </TableCell>
-                <TableCell
+                {/* <TableCell
                   sx={{
                     fontWeight: "bold",
                     fontSize: "16px",
@@ -235,7 +233,7 @@ const ViewAll = () => {
                   }}
                 >
                   Action
-                </TableCell>
+                </TableCell> */}
               </TableRow>
             </TableHead>
             <TableBody>
@@ -249,6 +247,12 @@ const ViewAll = () => {
                 <TableRow>
                   <TableCell colSpan={8} align="center">
                     Error: {error.message}
+                  </TableCell>
+                </TableRow>
+              ) : filteredTickets.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={8} align="center">
+                    No data available.
                   </TableCell>
                 </TableRow>
               ) : (
@@ -292,25 +296,25 @@ const ViewAll = () => {
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
                       >
                         {ticket.isStatus === "Pending" ? (
-                          <Button sx={{ color: "orange" , textTransform: "lowercase"}}>
+                          <Button sx={{ color: "orange", textTransform: "lowercase" }}>
                             Pending
                           </Button>
                         ) : ticket.isStatus === "Resolved" ? (
-                          <Button sx={{ color: "green" , textTransform: "lowercase"}}>
+                          <Button sx={{ color: "green", textTransform: "lowercase" }}>
                             Resolved
                           </Button>
                         ) : ticket.isStatus === "Rejected" ? (
-                          <Button sx={{ color: "red", textTransform: "lowercase"}}>
+                          <Button sx={{ color: "red", textTransform: "lowercase" }}>
                             Rejected
                           </Button>
                         ) : (
-                          <Button sx={{ color: "gray", textTransform: "lowercase"}}>
+                          <Button sx={{ color: "gray", textTransform: "lowercase" }}>
                             Unknown Status
                           </Button> // Optional: Handle unexpected statuses
                         )}
                       </TableCell>
 
-                      <TableCell
+                      {/* <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
                       >
                         <IconButton
@@ -320,7 +324,7 @@ const ViewAll = () => {
                         >
                           <VisibilityIcon />
                         </IconButton>
-                      </TableCell>
+                      </TableCell> */}
                     </TableRow>
                   );
                 })

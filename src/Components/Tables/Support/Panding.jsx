@@ -105,16 +105,17 @@ const Panding = () => {
       }}
     >
       <Paper sx={{ p: 2, boxShadow: 3 }}>
-        <Grid container alignItems="center" spacing={1} mb={2}>
-          <Grid item xs={12} md={3}>
-            <Grid container alignItems="center" spacing={1}>
-              <Grid item>
+      <Grid item>
                 <IconButton color="primary" onClick={handleBackButtonClick}>
                   <ArrowBackIcon />
                 </IconButton>
               </Grid>
+        <Grid container alignItems="center" spacing={1} mb={2}>
+          <Grid item xs={12} md={5}>
+            <Grid container alignItems="center" spacing={1}>
+             
               <Grid item>
-                <Typography variant="h5" component="h1" gutterBottom>
+                <Typography variant="h4" component="h1" gutterBottom sx={{color: 'teal'}}>
                   Panding Tickets
                 </Typography>
               </Grid>
@@ -239,7 +240,7 @@ const Panding = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {loading ? (
+            {loading ? (
                 <TableRow>
                   <TableCell colSpan={8} align="center">
                     Loading...
@@ -249,6 +250,12 @@ const Panding = () => {
                 <TableRow>
                   <TableCell colSpan={8} align="center">
                     Error: {error.message}
+                  </TableCell>
+                </TableRow>
+              ) : filteredTickets.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={8} align="center">
+                    No data available.
                   </TableCell>
                 </TableRow>
               ) : (

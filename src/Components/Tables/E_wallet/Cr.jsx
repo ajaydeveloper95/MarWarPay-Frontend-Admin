@@ -91,7 +91,6 @@ const Cr = () => {
     const requestBody = {
       transactionAmount: parseFloat(transferAmount),
       transactionType: transactionType === 'CR' ? 'Cr.' : 'Dr.',
-    //   description: `Successfully ${transactionType === 'CR' ? 'Cr.' : 'Dr.'} Amount : ${transferAmount}`
     };
 
     // API Call to transfer the amount
@@ -166,7 +165,7 @@ const Cr = () => {
         >
           <ArrowBackIcon />
         </IconButton>
-        <Typography variant="h5" component="h1" gutterBottom>
+        <Typography variant="h4" component="h1" gutterBottom sx={{color: 'teal'}}>
           Credit Fund
         </Typography>
 
@@ -217,6 +216,7 @@ const Cr = () => {
                   value={transactionType}
                   onChange={(e) => setTransactionType(e.target.value)}
                   label="Transaction Type"
+                  readOnly
                 >
                   <MenuItem value="CR">Credit</MenuItem>
                   <MenuItem value="DR">Debit</MenuItem>
@@ -234,8 +234,8 @@ const Cr = () => {
                 onChange={(e) => setDescription(e.target.value)}
               />
             </Grid>
-            <Grid item xs={12} display="flex" justifyContent="flex-end" spacing={2}>
-              <Button type="submit" variant="contained" color="primary" sx={{ mr: 2 }}>
+            <Grid item xs={12} container spacing={2} justifyContent="flex-end">
+              <Button type="submit" variant="contained" color="primary" sx={{ mr: 2, background: 'teal' }}>
                 Submit
               </Button>
               <Button variant="outlined" color="secondary" onClick={handleCancel}>
@@ -250,7 +250,7 @@ const Cr = () => {
           <DialogTitle>Transfer Successful</DialogTitle>
           <DialogContent>
             <Typography>
-              The amount has been successfully Credit!
+              The amount has been successfully credited!
             </Typography>
           </DialogContent>
           <DialogActions>

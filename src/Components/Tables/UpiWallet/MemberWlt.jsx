@@ -4,7 +4,7 @@ import { Container, Typography, Table, TableBody, TableCell, TableContainer, Tab
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useSidebar } from '../../../Context/SidebarContext';
 import axios from 'axios';
-import { accessToken,domainBase } from '../../../helpingFile';
+import { accessToken, domainBase } from '../../../helpingFile';
 
 const API_ENDPOINT = `${domainBase}apiAdmin/v1/wallet/getAllTransactionUpi`;
 const ACCESS_TOKEN = accessToken;
@@ -39,18 +39,19 @@ const MemberWlt = () => {
       }
     };
 
-
     fetchData();
   }, []);
+
   useEffect(() => {
     setCurrentPage(0);
     setPreviousPage(0);
   }, [pageSize]);
 
-  // Filter members based on search query
+  // Filter data based on search query and date
   const filteredMembers = data.filter((member) => {
-    const matchesDescription = member.description.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesDescription;
+    const matchesMemberId = member.userInfo.memberId.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesDate = date ? new Date(member.createdAt).toLocaleDateString() === new Date(date).toLocaleDateString() : true;
+    return matchesMemberId && matchesDate;
   });
 
   // Determine the number of items to display
@@ -79,9 +80,6 @@ const MemberWlt = () => {
     navigate(-1);
   };
 
-  // if (loading) return <div>Loading...</div>;
-  // if (error) return <div>Error: {error.message}</div>;
-
   return (
     <>
       <Container
@@ -95,16 +93,16 @@ const MemberWlt = () => {
         }}
       >
         <Paper sx={{ p: 2, boxShadow: 3 }}>
+          <Grid item>
+            <IconButton color="primary" onClick={handleBackButtonClick}>
+              <ArrowBackIcon />
+            </IconButton>
+          </Grid>
           <Grid container alignItems="center" spacing={1} mb={2}>
-            <Grid item xs={12} md={3}>
+            <Grid item xs={12} md={5}>
               <Grid container alignItems="center" spacing={1}>
                 <Grid item>
-                  <IconButton color="primary" onClick={handleBackButtonClick}>
-                    <ArrowBackIcon />
-                  </IconButton>
-                </Grid>
-                <Grid item>
-                  <Typography variant="h5" component="h1" gutterBottom>
+                  <Typography variant="h4" component="h1" gutterBottom sx={{ color: 'teal' }}>
                     UPI Wallet
                   </Typography>
                 </Grid>
@@ -112,7 +110,7 @@ const MemberWlt = () => {
             </Grid>
             <Grid item xs={12} md={3}>
               <TextField
-                label="Search by Description"
+                label="Search by MemberID"
                 variant="outlined"
                 fullWidth
                 value={searchQuery}
@@ -166,15 +164,15 @@ const MemberWlt = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-              {loading ? (
+                {loading ? (
                   <TableRow>
-                    <TableCell colSpan={6} align="center">
+                    <TableCell colSpan={9} align="center">
                       Loading...
                     </TableCell>
                   </TableRow>
                 ) : error ? (
                   <TableRow>
-                    <TableCell colSpan={6} align="center">
+                    <TableCell colSpan={9} align="center">
                       Error: {error.message}
                     </TableCell>
                   </TableRow>
@@ -190,7 +188,7 @@ const MemberWlt = () => {
                       <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
                       >
-                        {member.transactionType==="Cr." ? (
+                        {member.transactionType === "Cr." ? (
                           <Button
                             sx={{ color: "green", text: 'bold', textTransform: "lowercase" }}
                           >
@@ -208,15 +206,15 @@ const MemberWlt = () => {
                       <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
                       >
-                        {member.transactionStatus==="Success" ? (
+                        {member.transactionStatus === "Success" ? (
                           <Button
-                            sx={{ color: "green", text: 'bold', textTransform: "lowercase"}}
+                            sx={{ color: "green", text: 'bold', textTransform: "lowercase" }}
                           >
                             Success
                           </Button>
                         ) : (
                           <Button
-                            sx={{ color: "red", text: 'bold', textTransform: "lowercase"}}
+                            sx={{ color: "red", text: 'bold', textTransform: "lowercase" }}
                           >
                             Failed
                           </Button>

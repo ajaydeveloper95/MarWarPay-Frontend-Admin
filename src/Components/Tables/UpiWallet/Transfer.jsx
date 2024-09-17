@@ -154,7 +154,7 @@ const Transfer = () => {
         >
           <ArrowBackIcon />
         </IconButton>
-        <Typography variant="h5" component="h1" gutterBottom>
+        <Typography variant="h4" component="h1" gutterBottom sx={{color: 'teal'}}>
           UPI to E-Wallet Transfer
         </Typography>
 
@@ -208,8 +208,8 @@ const Transfer = () => {
                 onChange={(e) => setDescription(e.target.value)}
               />
             </Grid>
-            <Grid item xs={12} display="flex" justifyContent="flex-end" spacing={2}>
-              <Button type="submit" variant="contained" color="primary" sx={{ mr: 2 }}>
+            <Grid item xs={12} display="flex" justifyContent="flex-end">
+              <Button type="submit" variant="contained" color="primary" sx={{ mr: 2, background: 'teal' }}>
                 Submit
               </Button>
               <Button variant="outlined" color="secondary" onClick={handleCancel}>

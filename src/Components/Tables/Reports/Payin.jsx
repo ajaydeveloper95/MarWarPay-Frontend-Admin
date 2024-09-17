@@ -151,7 +151,7 @@ const Payin = () => {
                 boxShadow: '5px 0 10px -3px rgba(0, 128, 128, 0.6)',
               }}
             >
-              <Typography variant="h6" sx={{ color: 'blue' }}>
+              <Typography variant="h6" sx={{ color: 'teal' }}>
               Total Success
               </Typography>
               <Typography>₹ 0.00/0</Typography>
@@ -166,7 +166,7 @@ const Payin = () => {
                 boxShadow: '5px 0 10px -3px rgba(0, 128, 128, 0.6)',
               }}
             >
-              <Typography variant="h6" sx={{ color: 'blue' }}>
+              <Typography variant="h6" sx={{ color: 'teal' }}>
               Total Success Charge
               </Typography>
               <Typography>₹ 0.00/0</Typography>
@@ -181,7 +181,7 @@ const Payin = () => {
                 boxShadow: '5px 0 10px -3px rgba(0, 128, 128, 0.6)',
               }}
             >
-              <Typography variant="h6" sx={{ color: 'blue' }}>
+              <Typography variant="h6" sx={{ color: 'teal' }}>
               Total Failed
               </Typography>
               <Typography>₹ 0.00/0</Typography>
@@ -202,14 +202,15 @@ const Payin = () => {
         <Paper sx={{ p: 2, boxShadow: 3 }}>
           <Grid container alignItems="center" spacing={1} mb={2}>
             <Grid item xs={12} md={3}>
-              <Grid container alignItems="center" spacing={1}>
-                <Grid item>
+            <Grid item>
                   <IconButton color="primary" onClick={handleBackButtonClick}>
                     <ArrowBackIcon />
                   </IconButton>
                 </Grid>
+              <Grid container alignItems="center" spacing={1}>
+                
                 <Grid item>
-                  <Typography variant="h5" component="h1" gutterBottom>
+                  <Typography variant="h4" component="h1" gutterBottom sx={{color: 'teal'}}>
                   UPI Collection
                   </Typography> 
                 </Grid>
@@ -304,18 +305,24 @@ const Payin = () => {
               </TableHead>
               <TableBody>
               {loading ? (
-                  <TableRow>
-                    <TableCell colSpan={6} align="center">
-                      Loading...
-                    </TableCell>
-                  </TableRow>
-                ) : error ? (
-                  <TableRow>
-                    <TableCell colSpan={6} align="center">
-                      Error: {error.message}
-                    </TableCell>
-                  </TableRow>
-                ) : (
+                <TableRow>
+                  <TableCell colSpan={8} align="center">
+                    Loading...
+                  </TableCell>
+                </TableRow>
+              ) : error ? (
+                <TableRow>
+                  <TableCell colSpan={8} align="center">
+                    Error: {error.message}
+                  </TableCell>
+                </TableRow>
+              ) : paginatedMembers.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={8} align="center">
+                    No data available.
+                  </TableCell>
+                </TableRow>
+              ) : (
                 paginatedMembers.map((row,index) => (
                   <TableRow key={row.id}>
                     <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{startIndex + index + 1}</TableCell>

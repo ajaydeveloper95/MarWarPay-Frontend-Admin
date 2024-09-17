@@ -21,7 +21,7 @@ import {
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useSidebar } from "../../../Context/SidebarContext";
 import axios from "axios";
-import { accessToken,domainBase } from '../../../helpingFile';
+import { accessToken, domainBase } from '../../../helpingFile';
 
 const API_ENDPOINT = `${domainBase}apiAdmin/v1/wallet/getAllTransactionEwallet`;
 const ACCESS_TOKEN = accessToken;
@@ -33,6 +33,7 @@ const My_Wllt = () => {
   const [pageSize, setPageSize] = useState("25");
   const [currentPage, setCurrentPage] = useState(0);
   const [transactions, setTransactions] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     // Fetch data from API
@@ -43,9 +44,11 @@ const My_Wllt = () => {
     })
       .then((response) => {
         setTransactions(response.data.data);
+        setLoading(false);
       })
       .catch((error) => {
         console.error("Error fetching data:", error);
+        setLoading(false);
       });
   }, []);
 
@@ -73,7 +76,6 @@ const My_Wllt = () => {
     }
   };
 
-
   return (
     <Container
       maxWidth="xl"
@@ -87,7 +89,7 @@ const My_Wllt = () => {
     >
       <Paper sx={{ p: 2, boxShadow: 3 }}>
         <Grid container alignItems="center" spacing={1} mb={2}>
-          <Grid item xs={12} md={3}>
+          <Grid item xs={12} md={4}>
             <Grid container alignItems="center" spacing={1}>
               <Grid item>
                 <IconButton color="primary">
@@ -95,13 +97,13 @@ const My_Wllt = () => {
                 </IconButton>
               </Grid>
               <Grid item>
-                <Typography variant="h5" component="h1" gutterBottom>
+                <Typography variant="h4" component="h1" gutterBottom sx={{color: 'teal'}}>
                   My E-Wallet
                 </Typography>
               </Grid>
             </Grid>
           </Grid>
-          <Grid item xs={12} md={3}>
+          <Grid item xs={12} md={4}>
             <TextField
               label="Search by Member ID"
               variant="outlined"
@@ -238,51 +240,51 @@ const My_Wllt = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {paginatedData.map((transaction, index) => {
-                const rowNumber = startIndex + index + 1;
+              {paginatedData.length > 0 ? (
+                paginatedData.map((transaction, index) => {
+                  const rowNumber = startIndex + index + 1;
 
-                return (
-                  <TableRow key={transaction._id}>
-                    <TableCell
-                      sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
-                    >
-                      {rowNumber}
-                    </TableCell>
-                    <TableCell
-                      sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
-                    >
-                      {transaction.userInfo.memberId}
-                    </TableCell>
-                    <TableCell
-                      sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
-                    >
-                      {transaction.userInfo.userName}
-                    </TableCell>
-                    <TableCell
-                      sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
-                    >
-                      {transaction.beforeAmount}
-                    </TableCell>
-                    <TableCell
-                      sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
-                    >
-                      {transaction.transactionAmount}
-                    </TableCell>
-                    <TableCell
-                      sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
-                    >
-                      {transaction.afterAmount}
-                    </TableCell>
-                    <TableCell
-                      sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
-                    >
-                      {new Date(transaction.createdAt).toLocaleString()}
-                    </TableCell>
-
-                    <TableCell
+                  return (
+                    <TableRow key={transaction._id}>
+                      <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
                       >
-                        {transaction.transactionType==="Cr." ? (
+                        {rowNumber}
+                      </TableCell>
+                      <TableCell
+                        sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
+                      >
+                        {transaction.userInfo.memberId}
+                      </TableCell>
+                      <TableCell
+                        sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
+                      >
+                        {transaction.userInfo.userName}
+                      </TableCell>
+                      <TableCell
+                        sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
+                      >
+                        {transaction.beforeAmount}
+                      </TableCell>
+                      <TableCell
+                        sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
+                      >
+                        {transaction.transactionAmount}
+                      </TableCell>
+                      <TableCell
+                        sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
+                      >
+                        {transaction.afterAmount}
+                      </TableCell>
+                      <TableCell
+                        sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
+                      >
+                        {new Date(transaction.createdAt).toLocaleString()}
+                      </TableCell>
+                      <TableCell
+                        sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
+                      >
+                        {transaction.transactionType === "Cr." ? (
                           <Button
                             sx={{ color: "green", text: 'bold' }}
                           >
@@ -296,58 +298,66 @@ const My_Wllt = () => {
                           </Button>
                         )}
                       </TableCell>
-                    <TableCell
-                      sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
-                    >
-                      {transaction.description}
-                    </TableCell>
-                    <TableCell
+                      <TableCell
+                        sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
+                      >
+                        {transaction.description}
+                      </TableCell>
+                      <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
                       >
                         {transaction.transactionStatus ? (
                           <Button
-                            
-                            sx={{ color: "green", text: 'bold', textTransform: "lowercase"}}
+                            sx={{ color: "green", text: 'bold', textTransform: "lowercase" }}
                           >
                             Active
                           </Button>
                         ) : (
                           <Button
-                            
-                            sx={{ color: "red", text: 'bold', textTransform: "lowercase"}}
+                            sx={{ color: "red", text: 'bold', textTransform: "lowercase" }}
                           >
                             Deactive
                           </Button>
                         )}
                       </TableCell>
-                  </TableRow>
-                );
-              })}
+                    </TableRow>
+                  );
+                })
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={10} sx={{ textAlign: "center", padding: "16px" }}>
+                    Data Not Available
+                  </TableCell>
+                </TableRow>
+              )}
             </TableBody>
           </Table>
         </TableContainer>
 
         {/* Pagination Controls */}
-        <Grid container justifyContent="space-between" mt={2}>
-          <Grid item>
-            <Button
-              variant="contained"
-              onClick={() => handlePageChange("prev")}
-              disabled={currentPage === 0}
-            >
-              Previous
-            </Button>
+        {!loading && (
+          <Grid container justifyContent="space-between" mt={2}>
+            <Grid item>
+              <Button
+                variant="contained"
+                onClick={() => handlePageChange("prev")}
+                disabled={currentPage === 0}
+              >
+                Previous
+              </Button>
+            </Grid>
+            <Grid item>
+              <Button
+                variant="contained"
+                onClick={() => handlePageChange("next")}
+                disabled={endIndex >= filteredData.length}
+                sx={{ background: 'teal' }}
+              >
+                Next
+              </Button>
+            </Grid>
           </Grid>
-          <Grid item>
-            <Button
-              variant="contained"
-              onClick={() => handlePageChange("next")}
-              disabled={endIndex >= filteredData.length}
-            >
-              Next
-            </Button>
-          </Grid>
-        </Grid>
+        )}
       </Paper>
     </Container>
   );

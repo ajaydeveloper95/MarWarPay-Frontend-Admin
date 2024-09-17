@@ -144,7 +144,7 @@ const EditTicket = () => {
                   onChange={handleChange}
                   label="Status"
                 >
-                  <MenuItem value="Pending">Pending</MenuItem>
+                  {/* <MenuItem value="Pending">Pending</MenuItem> */}
                   <MenuItem value="Resolved">Resolved</MenuItem>
                   <MenuItem value="Rejected">Rejected</MenuItem>
                 </Select>

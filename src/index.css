@@ -2,6 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
-body{
+body {
     background-image: url('https://airplhrd.com/core/member/Login-Page-Background.jpg');
+    background-size: cover; 
+    background-repeat: no-repeat; 
+    background-position: center center; 
+    background-attachment: fixed;
+    background-color: #f0f0f0;
 }

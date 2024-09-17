@@ -114,7 +114,7 @@ const AddPackage = () => {
         >
           <ArrowBackIcon />
         </IconButton>
-        <Typography variant="h5" component="h1" gutterBottom>
+        <Typography variant="h4" component="h1" gutterBottom sx={{color: 'teal'}}>
           Add Package
         </Typography>
 
@@ -187,7 +187,7 @@ const AddPackage = () => {
             </Grid>
             
             <Grid item xs={12} display="flex" justifyContent="flex-end" spacing={2}>
-              <Button type="submit" variant="contained" color="primary" sx={{ mr: 2 }}>
+              <Button type="submit" variant="contained" color="primary" sx={{ mr: 2 , background: 'teal'}}>
                 Add Package
               </Button>
               <Button variant="outlined" color="secondary" onClick={handleCancel}>

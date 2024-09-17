@@ -22,10 +22,10 @@ import {
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useSidebar } from "../../../Context/SidebarContext";
 import axios from "axios";
-import { accessToken, domainBase } from '../../../helpingFile';
+import { accessToken, domainBase } from "../../../helpingFile";
 
 const API_ENDPOINT = `${domainBase}apiAdmin/v1/wallet/eWalletMember/66c86b75986120a64a2946fa`;
-const USER_LIST_API = 'http://localhost:5000/apiAdmin/v1/utility/getUserList';
+const USER_LIST_API = "http://localhost:5000/apiAdmin/v1/utility/getUserList";
 const ACCESS_TOKEN = accessToken;
 
 const MemberWllt = () => {
@@ -35,23 +35,28 @@ const MemberWllt = () => {
   const [pageSize, setPageSize] = useState("25");
   const [currentPage, setCurrentPage] = useState(0);
   const [transactions, setTransactions] = useState([]);
-  const [dropdownValue, setDropdownValue] = useState('');
+  const [dropdownValue, setDropdownValue] = useState("");
   const [userList, setUserList] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     // Fetch data from API
-    axios.get(API_ENDPOINT, {
+    axios
+      .get(API_ENDPOINT, {
         headers: {
-            Authorization: `Bearer ${ACCESS_TOKEN}`,
-          },
-    })
+          Authorization: `Bearer ${ACCESS_TOKEN}`,
+        },
+      })
       .then((response) => {
         setTransactions(response.data.data);
+        setLoading(false); // Set loading to false after fetching data
       })
       .catch((error) => {
-        console.error("Error fetching data:", error);
+        setError(error); 
+        setLoading(false); 
+        // console.error("Error fetching data:", error);
       });
-
     // Fetch user list
     const fetchUserList = async () => {
       try {
@@ -71,12 +76,17 @@ const MemberWllt = () => {
 
   // Filter data based on search query and selected user
   const filteredData = transactions.filter((item) => {
-    const matchesMemberId = item.userInfo.memberId.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesUser = dropdownValue ? item.userInfo.memberId === dropdownValue : true;
+    const matchesMemberId = item.userInfo.memberId
+      .toLowerCase()
+      .includes(searchQuery.toLowerCase());
+    const matchesUser = dropdownValue
+      ? item.userInfo.memberId === dropdownValue
+      : true;
     return matchesMemberId && matchesUser;
   });
 
-  const itemsToDisplay = pageSize === "all" ? filteredData.length : parseInt(pageSize, 10);
+  const itemsToDisplay =
+    pageSize === "all" ? filteredData.length : parseInt(pageSize, 10);
 
   const startIndex = currentPage * itemsToDisplay;
   const endIndex = startIndex + itemsToDisplay;
@@ -107,22 +117,26 @@ const MemberWllt = () => {
       }}
     >
       <Paper sx={{ p: 2, boxShadow: 3 }}>
-      <Grid item xs={12} md={3}>
-            <Grid container alignItems="center" spacing={1}>
-              <Grid item>
-                <IconButton color="primary">
-                  <ArrowBackIcon />
-                </IconButton>
-              </Grid>
-              <Grid item>
-                <Typography variant="h5" component="h1" gutterBottom>
-                  My E-Wallet History
-                </Typography>
-              </Grid>
+        <Grid item xs={12} md={3}>
+          <Grid container alignItems="center" spacing={1}>
+            <Grid item>
+              <IconButton color="primary">
+                <ArrowBackIcon />
+              </IconButton>
+            </Grid>
+            <Grid item>
+              <Typography
+                variant="h4"
+                component="h1"
+                gutterBottom
+                sx={{ color: "teal" }}
+              >
+                My E-Wallet History
+              </Typography>
             </Grid>
           </Grid>
+        </Grid>
         <Grid container alignItems="center" spacing={1} mt={1} mb={2}>
-          
           <Grid item xs={12} md={3}>
             <TextField
               label="Search by Member ID"
@@ -179,17 +193,17 @@ const MemberWllt = () => {
             </FormControl>
           </Grid>
           <Grid item xs={12} md={2}>
-              <Link href="/">
-                <Button
-                  variant="contained"
-                  color="primary"
-                  fullWidth
-                  sx={{ height: "56px" }}
-                >
-                  Add Wallet
-                </Button>
-              </Link>
-            </Grid>
+            <Link href="/">
+              <Button
+                variant="contained"
+                color="primary"
+                fullWidth
+                sx={{ height: "56px", background: "teal" }}
+              >
+                Add Wallet
+              </Button>
+            </Link>
+          </Grid>
         </Grid>
 
         {/* Table Section */}
@@ -290,7 +304,26 @@ const MemberWllt = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {paginatedData.map((transaction, index) => {
+            {loading ? (
+                  <TableRow>
+                    <TableCell colSpan={10} align="center">
+                      Loading...
+                    </TableCell>
+                  </TableRow>
+                ) : error ? (
+                  <TableRow>
+                    <TableCell colSpan={10} align="center">
+                      Error loading data
+                    </TableCell>
+                  </TableRow>
+                ) : paginatedData.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={10} align="center">
+                      No records found
+                    </TableCell>
+                  </TableRow>
+                ) : (
+              paginatedData.map((transaction, index) => {
                 const rowNumber = startIndex + index + 1;
 
                 return (
@@ -334,17 +367,11 @@ const MemberWllt = () => {
                       sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
                     >
                       {transaction.transactionType === "Cr." ? (
-                        <Button
-                          sx={{ color: "green", text: 'bold' }}
-                        >
+                        <Button sx={{ color: "green", text: "bold" }}>
                           Cr.
                         </Button>
                       ) : (
-                        <Button
-                          sx={{ color: "red", text: 'bold' }}
-                        >
-                          Dr.
-                        </Button>
+                        <Button sx={{ color: "red", text: "bold" }}>Dr.</Button>
                       )}
                     </TableCell>
                     <TableCell
@@ -357,13 +384,21 @@ const MemberWllt = () => {
                     >
                       {transaction.transactionStatus ? (
                         <Button
-                          sx={{ color: "green", text: 'bold', textTransform: "lowercase" }}
+                          sx={{
+                            color: "green",
+                            text: "bold",
+                            textTransform: "lowercase",
+                          }}
                         >
                           Active
                         </Button>
                       ) : (
                         <Button
-                          sx={{ color: "red", text: 'bold', textTransform: "lowercase" }}
+                          sx={{
+                            color: "red",
+                            text: "bold",
+                            textTransform: "lowercase",
+                          }}
                         >
                           Deactive
                         </Button>
@@ -371,7 +406,7 @@ const MemberWllt = () => {
                     </TableCell>
                   </TableRow>
                 );
-              })}
+              }))}
             </TableBody>
           </Table>
         </TableContainer>
@@ -392,6 +427,7 @@ const MemberWllt = () => {
               variant="contained"
               onClick={() => handlePageChange("next")}
               disabled={endIndex >= filteredData.length}
+              sx={{ background: "teal" }}
             >
               Next
             </Button>

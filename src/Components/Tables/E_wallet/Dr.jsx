@@ -166,7 +166,7 @@ const Dr = () => {
         >
           <ArrowBackIcon />
         </IconButton>
-        <Typography variant="h5" component="h1" gutterBottom>
+        <Typography variant="h4" component="h1" gutterBottom sx={{color:"teal"}}>
           Dabit Fund
         </Typography>
 
@@ -217,6 +217,7 @@ const Dr = () => {
                   value={transactionType}
                   onChange={(e) => setTransactionType(e.target.value)}
                   label="Transaction Type"
+                  readOnly
                 >
                   <MenuItem value="CR">Credit</MenuItem>
                   <MenuItem value="DR">Debit</MenuItem>
@@ -235,7 +236,7 @@ const Dr = () => {
               />
             </Grid>
             <Grid item xs={12} display="flex" justifyContent="flex-end" spacing={2}>
-              <Button type="submit" variant="contained" color="primary" sx={{ mr: 2 }}>
+              <Button type="submit" variant="contained" color="primary" sx={{ mr: 2, background: 'teal' }}>
                 Submit
               </Button>
               <Button variant="outlined" color="secondary" onClick={handleCancel}>

@@ -112,17 +112,19 @@ const ViewPackage = () => {
         }}
       >
         <Paper sx={{ p: 2, boxShadow: 3 }}>
-          <Grid container alignItems="center" spacing={1} mb={2}>
-            <Grid item xs={12} md={3}>
-              <Grid container alignItems="center" spacing={1}>
-                <Grid item>
+        <Grid item>
                   <IconButton color="primary" onClick={handleBackButtonClick}>
                     <ArrowBackIcon />
                   </IconButton>
                 </Grid>
+          <Grid container alignItems="center" spacing={1} mb={2}>
+            
+            <Grid item xs={12} md={3}>
+              <Grid container alignItems="center" spacing={1}>
+                
                 <Grid item>
-                  <Typography variant="h5" component="h1" gutterBottom>
-                    UPI Wallet
+                  <Typography variant="h4" component="h1" gutterBottom sx={{color: 'teal'}}>
+                    View Package
                   </Typography>
                 </Grid>
               </Grid>
@@ -170,7 +172,7 @@ const ViewPackage = () => {
                   variant="contained"
                   color="primary"
                   fullWidth
-                  sx={{ height: "56px" }}
+                  sx={{ height: "56px", background: 'teal' }}
                 >
                   Add Package
                 </Button>

@@ -243,7 +243,7 @@ const AddMembers = () => {
         >
           <ArrowBackIcon />
         </IconButton>
-        <Typography variant="h5" component="h1" gutterBottom>
+        <Typography variant="h4" component="h1" gutterBottom sx={{color: 'teal'}}>
           Add New Member
         </Typography>
 
@@ -464,6 +464,7 @@ const AddMembers = () => {
                 variant="contained"
                 color="primary"
                 disabled={submitting}
+                sx={{background: 'teal'}}
               >
                 Add Member
               </Button>

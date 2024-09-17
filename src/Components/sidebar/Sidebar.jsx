@@ -79,21 +79,28 @@ const Sidebar = () => {
     <div>
       {/* Navbar */}
       <div
-        className={`fixed top-0 right-0 transition-all duration-300 p-5 text-gray-800 shadow-lg z-50 flex items-center justify-between`}
+        className={`fixed top-0 right-0 transition-all duration-300 p-5 text-gray-800 shadow-lg z-50 flex items-center justify-between ${
+          isDarkMode ? "bg-gray-800 text-white" : "bg-white text-gray-800"
+        }`}
         style={{
           width: isSidebarOpen ? "calc(100% - 16rem)" : "100%",
-          backgroundColor: "white",
         }}
       >
-        <img
-          src="/logo.png"
-          className="h-10 cursor-pointer"
-          alt="Logo"
-          onClick={handleProfileClick}
-        />
+         <button
+            onClick={toggleSidebar}
+            className={`text-white ${
+              isSidebarOpen ? "bg-gray-800" : "bg-gray-900"
+            } rounded-full`}
+          >
+            <span className="material-icons text-gray-100 p-1">
+              {isSidebarOpen ? "close" : "menu"}
+            </span>
+          </button>
         <div className="flex items-center space-x-4">
           <NotificationsIcon
-            className="text-gray-800 cursor-pointer text-4xl"
+            className={`cursor-pointer text-4xl ${
+              isDarkMode ? "text-white" : "text-gray-800"
+            }`}
             onClick={() => console.log("Notification Clicked")} // Replace with actual notification handler
           />
           <Brightness4Icon
@@ -104,65 +111,60 @@ const Sidebar = () => {
           />
           <div className="relative">
             <span
-              className="material-icons mt-2 text-4xl text-gray-800 cursor-pointer"
+              className={`material-icons mt-2 text-4xl cursor-pointer ${
+                isDarkMode ? "text-white" : "text-gray-800"
+              }`}
               onClick={handleProfileClick}
             >
               account_circle
             </span>
             {profileMenuVisible && (
-              <div className="absolute top-12 right-0 bg-white shadow-lg border border-gray-200 rounded-lg">
+            <div className={`absolute top-12 right-0 ${isDarkMode ? "bg-gray-700 text-white" : "bg-white text-gray-800"} shadow-lg border border-gray-200 rounded-lg`}>
                 <Link
                   to="/updateProfile"
-                  className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
+                  className="block px-4 py-2"
                 >
                   Profile
                 </Link>
                 <Link
                   to="/settings"
-                  className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
+                  className="block px-4 py-2 "
                 >
                   Settings
                 </Link>
                 <button
                   onClick={handleLogoutClick}
-                  className="block px-4 py-2 w-full text-left text-gray-800 hover:bg-gray-100"
+                  className="block px-4 py-2 w-full text-left "
                 >
                   Logout
                 </button>
               </div>
             )}
           </div>
-          <button
-            onClick={toggleSidebar}
-            className={`text-white ${
-              isSidebarOpen ? "bg-gray-800" : "bg-gray-900"
-            } rounded-full`}
-          >
-            <span className="material-icons text-gray-100 p-1">
-              {isSidebarOpen ? "close" : "menu"}
-            </span>
-          </button>
+         
         </div>
       </div>
 
       {/* Sidebar */}
       <div
-        className={`fixed top-0 left-0 h-screen text-gray-800 transition-transform transform ${
+        className={`fixed top-0 left-0 h-screen transition-transform transform ${
           isSidebarOpen ? "translate-x-0" : "-translate-x-full"
-        } w-64 z-40 overflow-y-auto`}
-        style={{ backgroundColor: "white", borderRight: "1px solid #e0e0e0" }}
+        } w-64 z-40 overflow-y-auto ${
+          isDarkMode ? "bg-gray-800 text-white" : " text-gray-800"
+        }`}
+        style={{ borderRight: isDarkMode ? "1px solid #4b4b4b" : "1px solid #e0e0e0" }}
       >
         <div className="flex-1 mt-5">
           <ul className="space-y-2">
-            <img src="/logo.png" alt="Logo" className="h-30 mt-3" />
+          <img src="/logo.png" alt="Logo" className={`h-30 mt-3 ${isDarkMode ? "invert" : ""}`} />
             {/* Dashboard */}
             <li>
               <Link
                 to="/dashboard"
-                className="flex items-center px-4 py-2 hover:bg-gray-100"
+                className="flex items-center px-4 py-2 "
               >
                 <span
-                  className={`material-icons mr-2 text-gray-800 ${
+                  className={`material-icons mr-2 ${
                     !isSidebarOpen && "text-2xl"
                   }`}
                 >
@@ -176,10 +178,10 @@ const Sidebar = () => {
             <li>
               <button
                 onClick={() => toggleDropdown("members")}
-                className="flex items-center px-4 py-2 hover:bg-gray-100 w-full text-left"
+                className="flex items-center px-4 py-2  w-full text-left"
               >
                 <span
-                  className={`material-icons mr-2 text-gray-800 ${
+                  className={`material-icons mr-2 ${
                     !isSidebarOpen && "text-2xl"
                   }`}
                 >
@@ -196,11 +198,11 @@ const Sidebar = () => {
               </button>
               {isDropdownOpen["members"] && isSidebarOpen && (
                 <div className="m-5">
-                  <ul className="pl-6 bg-gray-50 list-disc">
+                  <ul className="pl-6  list-disc">
                     <li>
                       <Link
                         to="/members/addMembers"
-                        className="flex items-center px-4 py-2 text-gray-800 hover:bg-gray-100"
+                        className="flex items-center px-4 py-2 "
                       >
                         Add Member
                       </Link>
@@ -208,7 +210,7 @@ const Sidebar = () => {
                     <li>
                       <Link
                         to="/members/all_members"
-                        className="flex items-center px-4 py-2 text-gray-800 hover:bg-gray-100"
+                        className="flex items-center px-4 py-2 "
                       >
                         View All Member
                       </Link>
@@ -236,7 +238,7 @@ const Sidebar = () => {
                     <li>
                       <Link
                         to="/members/users"
-                        className="flex items-center px-4 py-2 text-gray-800 hover:bg-gray-100"
+                        className="flex items-center px-4 py-2 "
                       >
                         Users
                       </Link>
@@ -246,44 +248,14 @@ const Sidebar = () => {
               )}
             </li>
 
-            {/* Invoice Management with Dropdown */}
-            {/* <li>
-              <button
-                onClick={() => toggleDropdown('invoice-management')}
-                className="flex items-center px-4 py-2 hover:bg-gray-100 w-full text-left"
-              >
-                <span className={`material-icons mr-2 text-gray-800 ${!isSidebarOpen && 'text-2xl'}`}>receipt</span>
-                {isSidebarOpen && 'Invoice Management'}
-                <span className={`material-icons ml-auto transition-transform ${isDropdownOpen['invoice-management'] ? 'rotate-180' : 'rotate-0'}`}>
-                  arrow_drop_down
-                </span>
-              </button>
-              {isDropdownOpen['invoice-management'] && isSidebarOpen && (
-                <div className='m-5'>
-                  <ul className="pl-6 bg-gray-50 list-disc">
-                    <li>
-                      <Link to="/invoice-management/pending" className="flex items-center px-4 py-2 text-gray-800 hover:bg-gray-100">
-                        Pending Invoices
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to="/invoice-management/paid" className="flex items-center px-4 py-2 text-gray-800 hover:bg-gray-100">
-                        Paid Invoices
-                      </Link>
-                    </li>
-                  </ul>
-                </div>
-              )}
-            </li> */}
-
             {/* Report Section with Dropdown */}
             <li>
               <button
                 onClick={() => toggleDropdown("report")}
-                className="flex items-center px-4 py-2 hover:bg-gray-100 w-full text-left"
+                className="flex items-center px-4 py-2 w-full text-left"
               >
                 <span
-                  className={`material-icons mr-2 text-gray-800 ${
+                  className={`material-icons mr-2 ${
                     !isSidebarOpen && "text-2xl"
                   }`}
                 >
@@ -300,11 +272,11 @@ const Sidebar = () => {
               </button>
               {isDropdownOpen["report"] && isSidebarOpen && (
                 <div className="m-5">
-                  <ul className="pl-6 bg-gray-50 list-disc">
+                  <ul className="pl-6  list-disc">
                     <li>
                       <Link
                         to="/report/payout"
-                        className="flex items-center px-4 py-2 text-gray-800 hover:bg-gray-100"
+                        className="flex items-center px-4 py-2 "
                       >
                         Payout History
                       </Link>
@@ -312,7 +284,7 @@ const Sidebar = () => {
                     <li>
                       <Link
                         to="/report/payoutGenerate"
-                        className="flex items-center px-4 py-2 text-gray-800 hover:bg-gray-100"
+                        className="flex items-center px-4 py-2 "
                       >
                         Payout Generate
                       </Link>
@@ -320,7 +292,7 @@ const Sidebar = () => {
                     <li>
                       <Link
                         to="/report/Qr"
-                        className="flex items-center px-4 py-2 text-gray-800 hover:bg-gray-100"
+                        className="flex items-center px-4 py-2 "
                       >
                         QR Report
                       </Link>
@@ -328,7 +300,7 @@ const Sidebar = () => {
                     <li>
                       <Link
                         to="/report/payin"
-                        className="flex items-center px-4 py-2 text-gray-800 hover:bg-gray-100"
+                        className="flex items-center px-4 py-2 "
                       >
                         Payin Report
                       </Link>
@@ -347,10 +319,10 @@ const Sidebar = () => {
             <li>
               <button
                 onClick={() => toggleDropdown("upi-wallet")}
-                className="flex items-center px-4 py-2 hover:bg-gray-100 w-full text-left"
+                className="flex items-center px-4 py-2 w-full text-left"
               >
                 <span
-                  className={`material-icons mr-2 text-gray-800 ${
+                  className={`material-icons mr-2 ${
                     !isSidebarOpen && "text-2xl"
                   }`}
                 >
@@ -367,11 +339,11 @@ const Sidebar = () => {
               </button>
               {isDropdownOpen["upi-wallet"] && isSidebarOpen && (
                 <div className="m-5">
-                  <ul className="pl-6 bg-gray-50 list-disc">
+                  <ul className="pl-6 list-disc">
                     <li>
                       <Link
                         to="/upi-wallet/configure"
-                        className="flex items-center px-4 py-2 text-gray-800 hover:bg-gray-100"
+                        className="flex items-center px-4 py-2"
                       >
                         Member Wallet
                       </Link>
@@ -379,7 +351,7 @@ const Sidebar = () => {
                     <li>
                       <Link
                         to="/upi-wallet/transactions"
-                        className="flex items-center px-4 py-2 text-gray-800 hover:bg-gray-100"
+                        className="flex items-center px-4 py-2"
                       >
                         UPI Wallet to E-Wallet Transfer
                       </Link>
@@ -393,10 +365,10 @@ const Sidebar = () => {
             <li>
               <button
                 onClick={() => toggleDropdown("ewallet-management")}
-                className="flex items-center px-4 py-2 hover:bg-gray-100 w-full text-left"
+                className="flex items-center px-4 py-2 w-full text-left"
               >
                 <span
-                  className={`material-icons mr-2 text-gray-800 ${
+                  className={`material-icons mr-2 ${
                     !isSidebarOpen && "text-2xl"
                   }`}
                 >
@@ -415,11 +387,11 @@ const Sidebar = () => {
               </button>
               {isDropdownOpen["ewallet-management"] && isSidebarOpen && (
                 <div className="m-5">
-                  <ul className="pl-6 bg-gray-50 list-disc">
+                  <ul className="pl-6 list-disc">
                     <li>
                       <Link
                         to="/ewallet-management/my-wallet"
-                        className="flex items-center px-4 py-2 text-gray-800 hover:bg-gray-100"
+                        className="flex items-center px-4 py-2"
                       >
                         My Wallet
                       </Link>
@@ -427,7 +399,7 @@ const Sidebar = () => {
                     <li>
                       <Link
                         to="/ewallet-management/member-wallet"
-                        className="flex items-center px-4 py-2 text-gray-800 hover:bg-gray-100"
+                        className="flex items-center px-4 py-2"
                       >
                         Member Wallet
                       </Link>
@@ -435,7 +407,7 @@ const Sidebar = () => {
                     <li>
                       <Link
                         to="/ewallet-management/credit-fund"
-                        className="flex items-center px-4 py-2 text-gray-800 hover:bg-gray-100"
+                        className="flex items-center px-4 py-2"
                       >
                         Credit Fund
                       </Link>
@@ -443,7 +415,7 @@ const Sidebar = () => {
                     <li>
                       <Link
                         to="/ewallet-management/debit-fund"
-                        className="flex items-center px-4 py-2 text-gray-800 hover:bg-gray-100"
+                        className="flex items-center px-4 py-2"
                       >
                         Debit Fund
                       </Link>
@@ -457,10 +429,10 @@ const Sidebar = () => {
             <li>
               <button
                 onClick={() => toggleDropdown("package-management")}
-                className="flex items-center px-4 py-2 hover:bg-gray-100 w-full text-left"
+                className="flex items-center px-4 py-2 w-full text-left"
               >
                 <span
-                  className={`material-icons mr-2 text-gray-800 ${
+                  className={`material-icons mr-2 ${
                     !isSidebarOpen && "text-2xl"
                   }`}
                 >
@@ -479,11 +451,11 @@ const Sidebar = () => {
               </button>
               {isDropdownOpen["package-management"] && isSidebarOpen && (
                 <div className="m-5">
-                  <ul className="pl-6 bg-gray-50 list-disc">
+                  <ul className="pl-6 list-disc">
                     <li>
                       <Link
                         to="/package/add"
-                        className="flex items-center px-4 py-2 text-gray-800 hover:bg-gray-100"
+                        className="flex items-center px-4 py-2"
                       >
                         Add Package
                       </Link>
@@ -491,7 +463,7 @@ const Sidebar = () => {
                     <li>
                       <Link
                         to="/package/view"
-                        className="flex items-center px-4 py-2 text-gray-800 hover:bg-gray-100"
+                        className="flex items-center px-4 py-2"
                       >
                         View Package
                       </Link>
@@ -505,10 +477,10 @@ const Sidebar = () => {
             <li>
               <button
                 onClick={() => toggleDropdown("support")}
-                className="flex items-center px-4 py-2 hover:bg-gray-100 w-full text-left"
+                className="flex items-center px-4 py-2  w-full text-left"
               >
                 <span
-                  className={`material-icons mr-2 text-gray-800 ${
+                  className={`material-icons mr-2 ${
                     !isSidebarOpen && "text-2xl"
                   }`}
                 >
@@ -525,11 +497,11 @@ const Sidebar = () => {
               </button>
               {isDropdownOpen["support"] && isSidebarOpen && (
                 <div className="m-5 ">
-                  <ul className="pl-6 bg-gray-50 list-disc">
+                  <ul className="pl-6  list-disc">
                     <li>
                       <Link
                         to="/support/pandingTicket"
-                        className="flex items-center px-4 py-2 text-gray-800 hover:bg-gray-100"
+                        className="flex items-center px-4 py-2"
                       >
                         Panding Ticket
                       </Link>
@@ -537,7 +509,7 @@ const Sidebar = () => {
                     <li>
                       <Link
                         to="/support/allTicket"
-                        className="flex items-center px-4 py-2 text-gray-800 hover:bg-gray-100"
+                        className="flex items-center px-4 py-2 "
                       >
                         All Tickets
                       </Link>
@@ -551,10 +523,10 @@ const Sidebar = () => {
             <li>
               <button
                 onClick={() => toggleDropdown("main-setting")}
-                className="flex items-center px-4 py-2 hover:bg-gray-100 w-full text-left"
+                className="flex items-center px-4 py-2 w-full text-left"
               >
                 <SettingsIcon
-                  className={`mr-2 text-gray-800 ${
+                  className={`mr-2 ${
                     !isSidebarOpen && "text-2xl"
                   }`}
                 />
@@ -565,32 +537,6 @@ const Sidebar = () => {
                   }`}
                 />
               </button>
-              {isDropdownOpen["main-setting"] && isSidebarOpen && (
-                <div className="m-5">
-                  {/* <ul className="pl-6 bg-gray-50">
-                    <li>
-                      <Link to="/settings/payoutCharge" className="flex items-center px-4 py-2 text-gray-800 hover:bg-gray-100">
-                        Payout Charge
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to="/settings/payinApi" className="flex items-center px-4 py-2 text-gray-800 hover:bg-gray-100">
-                        Payin API Switch
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to="/settings/payoutApi" className="flex items-center px-4 py-2 text-gray-800 hover:bg-gray-100">
-                        Payout API Switch
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to="/settings/account" className="flex items-center px-4 py-2 text-gray-800 hover:bg-gray-100">
-                        Account Open Charge
-                      </Link>
-                    </li>
-                  </ul> */}
-                </div>
-              )}
             </li>
           </ul>
         </div>
