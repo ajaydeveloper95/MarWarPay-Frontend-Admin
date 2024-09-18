@@ -80,7 +80,7 @@ const Sidebar = () => {
       {/* Navbar */}
       <div
         className={`fixed top-0 right-0 transition-all duration-300 p-5 text-gray-800 shadow-lg z-50 flex items-center justify-between ${
-          isDarkMode ? "bg-gray-800 text-white" : "bg-white text-gray-800"
+          isDarkMode ? "bg-gray-600 text-white" : "bg-blue-50 text-gray-800"
         }`}
         style={{
           width: isSidebarOpen ? "calc(100% - 16rem)" : "100%",
@@ -89,11 +89,11 @@ const Sidebar = () => {
          <button
             onClick={toggleSidebar}
             className={`text-white ${
-              isSidebarOpen ? "bg-gray-800" : "bg-gray-900"
+              isSidebarOpen ? "bg-gray-600" : "bg-gray-900"
             } rounded-full`}
           >
             <span className="material-icons text-gray-100 p-1">
-              {isSidebarOpen ? "close" : "menu"}
+              {isSidebarOpen ? "chevron_left" : "menu"}
             </span>
           </button>
         <div className="flex items-center space-x-4">
@@ -150,13 +150,13 @@ const Sidebar = () => {
         className={`fixed top-0 left-0 h-screen transition-transform transform ${
           isSidebarOpen ? "translate-x-0" : "-translate-x-full"
         } w-64 z-40 overflow-y-auto ${
-          isDarkMode ? "bg-gray-800 text-white" : " text-gray-800"
+          isDarkMode ? "bg-gray-600 text-white" : " text-gray-800"
         }`}
         style={{ borderRight: isDarkMode ? "1px solid #4b4b4b" : "1px solid #e0e0e0" }}
       >
-        <div className="flex-1 mt-5">
+        <div className="flex-1 mt-10">
           <ul className="space-y-2">
-          <img src="/logo.png" alt="Logo" className={`h-30 mt-3 ${isDarkMode ? "invert" : ""}`} />
+          <img src="/logo.png" alt="Logo" className={`h-30 mt-3 mb-5 ${isDarkMode ? "invert" : ""}`} />
             {/* Dashboard */}
             <li>
               <Link
@@ -544,7 +544,7 @@ const Sidebar = () => {
 
       {/* Logout Confirmation Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center z-50 bg-gray-800 bg-opacity-50">
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-gray-600 bg-opacity-50">
           <div className="bg-white rounded-lg shadow-lg p-6">
             <h2 className="text-lg font-semibold mb-4">Confirm Logout</h2>
             <p className="mb-4">Are you sure you want to logout?</p>

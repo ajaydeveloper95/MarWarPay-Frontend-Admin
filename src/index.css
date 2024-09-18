@@ -3,10 +3,16 @@
 @tailwind utilities;
 
 body {
-    background-image: url('https://airplhrd.com/core/member/Login-Page-Background.jpg');
+    background: linear-gradient(
+        to right, 
+        #d6f5f5,  /* Light aqua */
+        #b3e6ff,  /* Light blue */
+        #ffffff,  /* White */
+        #e6ffe6   /* Light green */
+    ); 
     background-size: cover; 
     background-repeat: no-repeat; 
     background-position: center center; 
     background-attachment: fixed;
-    background-color: #f0f0f0;
 }
+

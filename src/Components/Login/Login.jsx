@@ -40,15 +40,8 @@ const Login = () => {
         password,
       });
 
-      // Log the entire response to check the structure
-      console.log("Login response:", response);
-
       // Extract tokens from response data
       const { accessToken, refreshToken } = response.data.data;
-
-      // Log tokens to verify they are being received
-      console.log("Access Token:", accessToken);
-      console.log("Refresh Token:", refreshToken);
 
       if (accessToken && refreshToken) {
         // Save tokens or user data if needed
@@ -93,7 +86,7 @@ const Login = () => {
       sx={{
         height: "100vh",
         width: "100vw",
-        backgroundImage: "url('https://img.freepik.com/free-vector/gradient-technological-background_23-2148884155.jpg')",
+        // backgroundImage: "url('logo.png')",
         backgroundSize: "cover",
         backgroundPosition: "center",
         display: "flex",
@@ -107,7 +100,8 @@ const Login = () => {
         sx={{
           display: "flex",
           alignItems: "center",
-          width: '50%',
+          width: '30%',
+          height: '40%',
           justifyContent: "center",
         }}
       >

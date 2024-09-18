@@ -447,7 +447,7 @@ const ViewAllMembers = () => {
                                   border: "1px solid rgba(224, 224, 224, 1)",
                                 }}
                               >
-                                {user.package.packageName}
+                                {/* {user.package.packageName} */}
                               </TableCell>
                             </TableRow>
                             <TableRow>
