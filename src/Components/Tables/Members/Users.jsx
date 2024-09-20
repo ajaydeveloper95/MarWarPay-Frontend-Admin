@@ -304,15 +304,25 @@ const Users = () => {
                       >
                         {user.isActive ? (
                           <Button
-                           
-                          sx={{ color: "green", text: 'bold', textTransform: "lowercase"}}
+                            sx={{
+                              color: "green",
+                              backgroundColor: "rgba(0, 128, 0, 0.1)",
+                              border: "1px solid green",
+                              borderRadius: 2,
+                              padding: "2px 8px",
+                            }}
                           >
                             Active
                           </Button>
                         ) : (
                           <Button
-                            
-                          sx={{ color: "red", text: 'bold', textTransform: "lowercase"}}
+                            sx={{
+                              color: "red",
+                              backgroundColor: "rgba(255, 0, 0, 0.1)",
+                              border: "1px solid red",
+                              borderRadius: 2,
+                              padding: "2px 8px",
+                            }}
                           >
                             Deactive
                           </Button>

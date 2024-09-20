@@ -22,7 +22,7 @@ import { useSidebar } from '../../../Context/SidebarContext';
 import axios from 'axios';
 import { accessToken, domainBase } from '../../../helpingFile';
 
-const API_GET_USERS_ENDPOINT = `${domainBase}apiAdmin/v1/utility/getUserWithUpiWallet`;
+const API_GET_USERS_ENDPOINT = `${domainBase}apiAdmin/v1/utility/getUserWithWallet`;
 const API_TRANSFER_ENDPOINT = `${domainBase}apiAdmin/v1/wallet/eWalletFundCredit`;
 const ACCESS_TOKEN = accessToken;
 

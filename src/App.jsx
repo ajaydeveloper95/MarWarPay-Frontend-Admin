@@ -32,6 +32,8 @@ import My_Wllt from './Components/Tables/E_wallet/My_wllt';
 import MemberWllt from './Components/Tables/E_wallet/MemberWllt';
 import Cr from './Components/Tables/E_wallet/Cr';
 import Dr from './Components/Tables/E_wallet/Dr';
+import AllPayout from './Components/Tables/Package_setting/AllPayout';
+import UpdatePayout from './Components/Tables/Package_setting/UpdatePayout';
 
 function App() {
   return (
@@ -85,6 +87,10 @@ function App() {
                     <Route path="package/add" element={<AddPackage />} />
                     <Route path="package/view" element={<ViewPackage />} />
                     <Route path="/package/EditPackage/:id" element={<EditPackage />} />
+
+                    {/* Package Management routes */}
+                    <Route path="/package/settings/payout" element={<AllPayout />} />
+                    <Route path="update-payout/:id" element={<UpdatePayout />} />
 
                     {/* Support routes */}
                     <Route path="/support/pandingTicket" element={<Panding />} />

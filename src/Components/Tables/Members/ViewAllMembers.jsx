@@ -60,7 +60,6 @@ const ViewAllMembers = () => {
       });
   };
 
-
   useEffect(() => {
     setCurrentPage(0);
     setPreviousPage(0);
@@ -163,17 +162,21 @@ const ViewAllMembers = () => {
         }}
       >
         <Paper sx={{ p: 2, boxShadow: 3 }}>
-        <Grid item>
-                  <IconButton color="primary" onClick={handleBackButtonClick}>
-                    <ArrowBackIcon />
-                  </IconButton>
-                </Grid>
+          <Grid item>
+            <IconButton color="primary" onClick={handleBackButtonClick}>
+              <ArrowBackIcon />
+            </IconButton>
+          </Grid>
           <Grid container alignItems="center" spacing={1} mb={2}>
             <Grid item xs={12} md={3}>
               <Grid container alignItems="center" spacing={1}>
-                
                 <Grid item>
-                  <Typography variant="h4" component="h1" gutterBottom sx={{color: 'teal'}}>
+                  <Typography
+                    variant="h4"
+                    component="h1"
+                    gutterBottom
+                    sx={{ color: "teal" }}
+                  >
                     Members
                   </Typography>
                 </Grid>
@@ -223,7 +226,7 @@ const ViewAllMembers = () => {
                   variant="contained"
                   color="primary"
                   fullWidth
-                  sx={{ height: "56px", background: 'teal' }}
+                  sx={{ height: "56px", background: "teal" }}
                 >
                   Add Member
                 </Button>
@@ -525,19 +528,31 @@ const ViewAllMembers = () => {
                       >
                         {user.isActive ? (
                           <Button
-                           
-                          sx={{ color: "green", text: 'bold', textTransform: "lowercase"}}
+                            sx={{
+                              color: "green",
+                              backgroundColor: "rgba(0, 128, 0, 0.1)",
+                              border: "1px solid green",
+                              borderRadius: 2,
+                              padding: "2px 8px",
+                            }}
                           >
                             Active
                           </Button>
                         ) : (
                           <Button
-                          sx={{ color: "red", text: 'bold', textTransform: "lowercase" }}
+                            sx={{
+                              color: "red",
+                              backgroundColor: "rgba(255, 0, 0, 0.1)",
+                              border: "1px solid red",
+                              borderRadius: 2,
+                              padding: "2px 8px",
+                            }}
                           >
                             Deactive
                           </Button>
                         )}
                       </TableCell>
+
                       <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
                       >

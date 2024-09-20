@@ -473,7 +473,57 @@ const Sidebar = () => {
               )}
             </li>
 
-            {/* Package Management Section with Dropdown */}
+            {/* Package Settings Section with Dropdown */}
+<li>
+  <button
+    onClick={() => toggleDropdown("package-settings")}
+    className="flex items-center px-4 py-2 w-full text-left"
+  >
+    <span
+      className={`material-icons mr-2 ${
+        !isSidebarOpen && "text-2xl"
+      }`}
+    >
+      settings
+    </span>
+    {isSidebarOpen && "Package Settings"}
+    <span
+      className={`material-icons ml-auto transition-transform ${
+        isDropdownOpen["package-settings"]
+          ? "rotate-180"
+          : "rotate-0"
+      }`}
+    >
+      arrow_drop_down
+    </span>
+  </button>
+  {isDropdownOpen["package-settings"] && isSidebarOpen && (
+    <div className="m-5">
+      <ul className="pl-6 list-disc">
+        <li>
+          <Link
+            // to="/package/settings/payin"
+            className="flex items-center px-4 py-2"
+          >
+            Paying
+          </Link>
+        </li>
+        <li>
+          <Link
+            to="/package/settings/payout"
+            className="flex items-center px-4 py-2"
+          >
+           Payout
+          </Link>
+        </li>
+       
+      </ul>
+    </div>
+  )}
+</li>
+
+
+            {/* support Section with Dropdown */}
             <li>
               <button
                 onClick={() => toggleDropdown("support")}

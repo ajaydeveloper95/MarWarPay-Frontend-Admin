@@ -25,7 +25,7 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useSidebar } from "../../../Context/SidebarContext";
 import axios from "axios";
-import { accessToken,domainBase } from '../../../helpingFile';
+import { accessToken, domainBase } from "../../../helpingFile";
 
 const API_ENDPOINT = `${domainBase}apiAdmin/v1/package/allPackage`;
 const ACCESS_TOKEN = accessToken;
@@ -112,18 +112,21 @@ const ViewPackage = () => {
         }}
       >
         <Paper sx={{ p: 2, boxShadow: 3 }}>
-        <Grid item>
-                  <IconButton color="primary" onClick={handleBackButtonClick}>
-                    <ArrowBackIcon />
-                  </IconButton>
-                </Grid>
+          <Grid item>
+            <IconButton color="primary" onClick={handleBackButtonClick}>
+              <ArrowBackIcon />
+            </IconButton>
+          </Grid>
           <Grid container alignItems="center" spacing={1} mb={2}>
-            
             <Grid item xs={12} md={3}>
               <Grid container alignItems="center" spacing={1}>
-                
                 <Grid item>
-                  <Typography variant="h4" component="h1" gutterBottom sx={{color: 'teal'}}>
+                  <Typography
+                    variant="h4"
+                    component="h1"
+                    gutterBottom
+                    sx={{ color: "teal" }}
+                  >
                     View Package
                   </Typography>
                 </Grid>
@@ -172,7 +175,7 @@ const ViewPackage = () => {
                   variant="contained"
                   color="primary"
                   fullWidth
-                  sx={{ height: "56px", background: 'teal' }}
+                  sx={{ height: "56px", background: "teal" }}
                 >
                   Add Package
                 </Button>
@@ -260,7 +263,7 @@ const ViewPackage = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-              {loading ? (
+                {loading ? (
                   <TableRow>
                     <TableCell colSpan={6} align="center">
                       Loading...
@@ -300,43 +303,63 @@ const ViewPackage = () => {
                           {member.packagePayInCharge}
                         </TableCell>
                         <TableCell
-                        sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
-                      >
-                        {member.isActive ? (
-                          <Button
-                            
-                            sx={{ color: "green", text: 'bold', textTransform: "lowercase"}}
-                          >
-                            Active
-                          </Button>
-                        ) : (
-                          <Button
-                            
-                            sx={{ color: "red", text: 'bold', textTransform: "lowercase"}}
-                          >
-                            Deactive
-                          </Button>
-                        )}
-                      </TableCell>
-                      <TableCell
-                        sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
-                      >
-                        {member.packagePayOutCharge > 0 ? (
-                          <Button
-                          sx={{ color: "green", text: 'bold', textTransform: "lowercase"}}
-                          >
-                            Yes
-                          </Button>
-                        ) : (
-                          <Button
-                          sx={{ color: "red", text: 'bold', textTransform: "lowercase"}}
-                          >
-                            No
-                          </Button>
-                        )}
-                      </TableCell>
-                      
-                        
+                          sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
+                        >
+                          {member.isActive ? (
+                            <Button
+                              sx={{
+                                color: "green",
+                                // fontWeight: "bold",
+                                backgroundColor: "rgba(0, 128, 0, 0.1)",
+                                border: "1px solid green",
+                                borderRadius: 2,
+                                padding: "2px 8px",
+                              }}
+                            >
+                              Active
+                            </Button>
+                          ) : (
+                            <Button
+                              sx={{
+                                color: "red",
+                                // fontWeight: "bold",
+                                backgroundColor: "rgba(255, 0, 0, 0.1)",
+                                border: "1px solid red",
+                                borderRadius: 2,
+                                padding: "2px 8px",
+                              }}
+                            >
+                              Deactive
+                            </Button>
+                          )}
+                        </TableCell>
+
+                        <TableCell
+                          sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
+                        >
+                          {member.packagePayOutCharge > 0 ? (
+                            <Button
+                              sx={{
+                                color: "green",
+                                text: "bold",
+                                textTransform: "lowercase",
+                              }}
+                            >
+                              Yes
+                            </Button>
+                          ) : (
+                            <Button
+                              sx={{
+                                color: "red",
+                                text: "bold",
+                                textTransform: "lowercase",
+                              }}
+                            >
+                              No
+                            </Button>
+                          )}
+                        </TableCell>
+
                         <TableCell
                           sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
                         >
