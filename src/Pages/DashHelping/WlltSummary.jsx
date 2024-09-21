@@ -1,6 +1,44 @@
 import { Box, Typography, TableContainer, Paper, Table, TableHead, TableRow, TableCell, TableBody } from '@mui/material';
+import { domainBase, accessToken } from '../../helpingFile';
+import axios from 'axios';
+import { useEffect, useState } from 'react';
+
+const API_GET_USERS_ENDPOINT = `${domainBase}apiAdmin/v1/utility/getUserWithWallet`;
+const ACCESS_TOKEN = accessToken;
 
 function WlltSummary() {
+  const [eWalletBalance, setEWalletBalance] = useState(0);
+  const [upiWalletBalance, setUpiWalletBalance] = useState(0);
+
+  useEffect(() => {
+    // Fetch total balances from API
+    const fetchTotalBalances = async () => {
+      try {
+        const response = await axios.get(API_GET_USERS_ENDPOINT, {
+          headers: {
+            Authorization: `Bearer ${ACCESS_TOKEN}`,
+          },
+        });
+        if (response.status === 200) {
+          const totalEwalletBalance = response.data.data.reduce(
+            (total, user) => total + user.EwalletBalance,
+            0
+          );
+          const totalUpiWalletBalance = response.data.data.reduce(
+            (total, user) => total + user.upiWalletBalance,
+            0
+          );
+          setEWalletBalance(totalEwalletBalance);
+          setUpiWalletBalance(totalUpiWalletBalance);
+        }
+      } catch (error) {
+        console.error('Error fetching balances:', error);
+      }
+    };
+
+    fetchTotalBalances();
+  }, []);
+
   return (
     <Box
       sx={{
@@ -71,8 +109,18 @@ function WlltSummary() {
               }}
             >
               <TableCell>Primary Wallet</TableCell>
-              <TableCell align="center">₹ 10,000.00</TableCell>
-              <TableCell align="center">₹ 5,000.00</TableCell>
+              <TableCell align="center">
+                ₹{" "}
+                {upiWalletBalance.toLocaleString("en-IN", {
+                  minimumFractionDigits: 2,
+                })}
+              </TableCell>
+              <TableCell align="center">
+                ₹{" "}
+                {eWalletBalance.toLocaleString("en-IN", {
+                  minimumFractionDigits: 2,
+                })}
+              </TableCell>
             </TableRow>
             <TableRow
               sx={{
@@ -81,8 +129,8 @@ function WlltSummary() {
               }}
             >
               <TableCell>Secondary Wallet</TableCell>
-              <TableCell align="center">₹ 3,000.00</TableCell>
-              <TableCell align="center">₹ 2,000.00</TableCell>
+              <TableCell align="center">₹ 00.00</TableCell>
+              <TableCell align="center">₹ 00.00</TableCell>
             </TableRow>
             <TableRow
               sx={{
@@ -94,13 +142,13 @@ function WlltSummary() {
               <TableCell sx={{ color: 'white' }}>Total</TableCell>
               <TableCell align="center" sx={{ color: 'white' }}>
                 ₹{" "}
-                {(10000 + 3000).toLocaleString("en-IN", {
+                {upiWalletBalance.toLocaleString("en-IN", {
                   minimumFractionDigits: 2,
                 })}
               </TableCell>
               <TableCell align="center" sx={{ color: 'white' }}>
                 ₹{" "}
-                {(5000 + 2000).toLocaleString("en-IN", {
+                {eWalletBalance.toLocaleString("en-IN", {
                   minimumFractionDigits: 2,
                 })}
               </TableCell>
