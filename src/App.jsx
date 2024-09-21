@@ -54,6 +54,7 @@ function App() {
                     {/* Dashboard route */}
                     <Route path="/dashboard" element={<DashBoard />} />
                     <Route path="/updateProfile" element={<Profile />} />
+                    <Route path="/updateProfile/:id" element={<Profile />} />
 
                     {/* Member routes */}
                     <Route path="members/addMembers" element={<AddMembers />} />

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   TextField,
   Button,
@@ -13,21 +13,44 @@ import {
   DialogActions,
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import axios from 'axios'; 
 import { useSidebar } from '../../Context/SidebarContext';
 
 const Profile = () => {
-  const [name, setName] = useState('Suresh Dudi');
-  const [firmName, setFirmName] = useState('Info Solutions Private Limited');
-  const [email, setEmail] = useState('marwarpay@gmail.com');
-  const [mobile, setMobile] = useState('8619082889');
+  const [name, setName] = useState('');
+  const [firmName, setFirmName] = useState(''); // Changed from `firmName` to `address`
+  const [email, setEmail] = useState('');
+  const [mobile, setMobile] = useState('');
   const [frontendLogo, setFrontendLogo] = useState(null);
   const [panelLogo, setPanelLogo] = useState(null);
   const [fileError, setFileError] = useState('');
-  const [isDialogOpen, setIsDialogOpen] = useState(false); // State for success dialog
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const navigate = useNavigate();
   const { isSidebarOpen } = useSidebar();
+  const { id } = useParams(); // Get the user ID from the URL parameters
+
+  useEffect(() => {
+    // Fetch user data from the API
+    const fetchUserData = async () => {
+      try {
+        const response = await axios.get(`http://localhost:5000/apiAdmin/v1/user/userProfile/${id}`);
+        const userData = response.data.data;
+
+        // Update state with user data
+        setName(userData.fullName);
+        setFirmName(userData.addresh.addresh); // Assuming firmName is the address field
+        setEmail(userData.email);
+        setMobile(userData.mobileNumber);
+        // Add other fields as needed
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
+    };
+
+    fetchUserData();
+  }, [id]); // Fetch data when component mounts and when ID changes
 
   const handleFileChange = (e, setFile) => {
     const file = e.target.files[0];
@@ -38,28 +61,42 @@ const Profile = () => {
         return;
       }
       setFileError('');
-      setFile(URL.createObjectURL(file));
+      setFile(file); // Save the file object instead of a URL
     }
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
+
+    // Create FormData object for file uploads
+    const formData = new FormData();
+    formData.append('fullName', name);
+    formData.append('addresh', firmName); // Assuming firmName is the address field
+    formData.append('email', email);
+    formData.append('mobileNumber', mobile);
     
-    console.log('Profile updated:', {
-      name,
-      firmName,
-      email,
-      mobile,
-      frontendLogo,
-      panelLogo,
-    });
+    // Append the files only if they exist
+    if (frontendLogo) {
+      formData.append('frontendLogo', frontendLogo);
+    }
+    if (panelLogo) {
+      formData.append('panelLogo', panelLogo);
+    }
 
-    // Show success dialog
-    setIsDialogOpen(true);
+    try {
+      const response = await axios.put(`http://localhost:5000/apiAdmin/v1/user/updateUser/${id}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
 
-    // Reset form fields
-    setFrontendLogo(null);
-    setPanelLogo(null);
+      if (response.status === 200) {
+        // Show success dialog
+        setIsDialogOpen(true);
+      }
+    } catch (error) {
+      console.error('Error updating profile:', error);
+    }
   };
 
   const handleCloseDialog = () => {

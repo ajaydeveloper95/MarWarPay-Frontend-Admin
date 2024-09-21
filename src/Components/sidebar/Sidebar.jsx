@@ -120,7 +120,7 @@ const Sidebar = () => {
             </span>
             {profileMenuVisible && (
             <div className={`absolute top-12 right-0 ${isDarkMode ? "bg-gray-700 text-white" : "bg-white text-gray-800"} shadow-lg border border-gray-200 rounded-lg`}>
-                <Link
+                {/* <Link
                   to="/updateProfile"
                   className="block px-4 py-2"
                 >
@@ -131,7 +131,7 @@ const Sidebar = () => {
                   className="block px-4 py-2 "
                 >
                   Settings
-                </Link>
+                </Link> */}
                 <button
                   onClick={handleLogoutClick}
                   className="block px-4 py-2 w-full text-left "
