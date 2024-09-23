@@ -25,7 +25,7 @@ import {
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 import { useSidebar } from "../../../Context/SidebarContext";
-import { accessToken } from '../../../helpingFile';
+import { accessToken, domainBase } from '../../../helpingFile';
 
 const ACCESS_TOKEN = accessToken;
 
@@ -47,7 +47,7 @@ const UpdatePayout = () => {
     if (!packageData._id) {
       const fetchPackageData = async () => {
         try {
-          const response = await axios.get(`http://localhost:5000/apiAdmin/v1/package/getSinglePayOutPackage/${id}`, {
+          const response = await axios.get(`${domainBase}apiAdmin/v1/package/getSinglePayOutPackage/${id}`, {
             headers: {
               Authorization: `Bearer ${ACCESS_TOKEN}`,
             },
@@ -86,7 +86,7 @@ const UpdatePayout = () => {
     try {
       const updatedChargeRange = payOutChargeRange.map(({ _id, ...rest }) => rest);
       await axios.post(
-        `http://localhost:5000/apiAdmin/v1/package/updatePayOutPackage/${id}`,
+        `${domainBase}apiAdmin/v1/package/updatePayOutPackage/${id}`,
         {
           payOutPackageName,
           payOutChargeRange: updatedChargeRange,

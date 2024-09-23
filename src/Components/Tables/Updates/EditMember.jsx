@@ -13,11 +13,12 @@ import {
   MenuItem,
 } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useSidebar } from "../../../Context/SidebarContext";
 import axios from "axios";
 import { accessToken, domainBase } from "../../../helpingFile";
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const ACCESS_TOKEN = accessToken;
 const PACKAGE_API_ENDPOINT = `${domainBase}apiAdmin/v1/utility/getPackageList`;
@@ -84,11 +85,14 @@ const EditMember = () => {
         }
       );
       if (response.status === 200) {
-        toast.success("Updated successfully!");
+        toast.success("Updated successfully!"); // Show success toast
+        setTimeout(() => {
+          navigate("/members/all_members"); // Navigate after 2 seconds
+        }, 2000);
       }
     } catch (err) {
       console.error("Error updating user data:", err);
-      toast.error("Error updating user data. Please try again.");
+      toast.error("Error updating user data. Please try again."); // Show error toast
     }
   };
 
@@ -147,18 +151,21 @@ const EditMember = () => {
         marginTop: "8%",
       }}
     >
+      
       <Paper sx={{ p: 2, boxShadow: 3 }}>
-        <Typography variant="h5" component="h1" gutterBottom>
-          Update Member
-        </Typography>
-        <Button
-          variant="contained"
+      <Button
+          // variant="contained"
           color="primary"
           onClick={handleBackButtonClick}
-          sx={{ mb: 2 }}
+          sx={{ mb: 1 }}
+          startIcon={<ArrowBackIcon />}
         >
-          Back to Members
+            {/* Back */}
         </Button>
+        <Typography variant="h4" component="h1" gutterBottom sx={{mb: 4, color: 'teal'}}>
+          Update Member
+        </Typography>
+       
         <form onSubmit={handleSubmit}>
           <Grid container spacing={2}>
             <Grid item xs={12} md={6}>
@@ -182,7 +189,6 @@ const EditMember = () => {
                 InputProps={{
                   readOnly: true, // Make the field read-only
                 }}
-                
               />
             </Grid>
             <Grid item xs={12} md={6}>
@@ -294,19 +300,15 @@ const EditMember = () => {
               type="submit"
               sx={{ mr: 2 }}
             >
-              Save Changes
+              Update
             </Button>
-            <Button
-              variant="outlined"
-              color="secondary"
-              onClick={handleBackButtonClick}
-            >
+            <Button variant="contained" color="secondary" onClick={() => {}}>
               Cancel
             </Button>
           </Box>
         </form>
       </Paper>
-      <ToastContainer />
+      <ToastContainer /> {/* Add ToastContainer for toast notifications */}
     </Container>
   );
 };

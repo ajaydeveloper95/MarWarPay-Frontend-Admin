@@ -84,7 +84,7 @@ const Users = () => {
 
   return (
     <>
-      <Box
+      {/* <Box
         sx={{ padding: 3, marginBottom: 2, marginTop: 12 }}
         maxWidth="xl"
         style={{
@@ -108,7 +108,7 @@ const Users = () => {
               <Typography variant="h6" sx={{ color: 'teal' }}>
                 Total E-Wallet Balance
               </Typography>
-              <Typography>₹</Typography>
+              <Typography>₹  {usersData.length > 0 ? usersData.reduce((total, user) => total + user.EwalletBalance, 0).toLocaleString('en-IN', { minimumFractionDigits: 2 }) : '0.00'}</Typography>
             </Box>
           </Grid>
           <Grid item xs={12} md={3}>
@@ -124,7 +124,7 @@ const Users = () => {
               <Typography variant="h6" sx={{ color: 'teal' }}>
                 Total UPI-Wallet Balance
               </Typography>
-              <Typography>₹</Typography>
+              <Typography>₹  {usersData.length > 0 ? usersData.reduce((total, user) => total + user.upiWalletBalance, 0).toLocaleString('en-IN', { minimumFractionDigits: 2 }) : '0.00'}</Typography>
             </Box>
           </Grid>
           <Grid item xs={12} md={3}>
@@ -140,7 +140,7 @@ const Users = () => {
               <Typography variant="h6" sx={{ color: 'teal' }}>
                 Total Active Users
               </Typography>
-              <Typography>₹</Typography>
+              <Typography>{usersData.filter(user => user.isActive).length}</Typography>
             </Box>
           </Grid>
           <Grid item xs={12} md={3}>
@@ -156,11 +156,11 @@ const Users = () => {
               <Typography variant="h6" sx={{ color: 'teal' }}>
                 Total Deactive Users
               </Typography>
-              <Typography>₹</Typography>
+              <Typography>{usersData.filter(user => !user.isActive).length}</Typography>
             </Box>
           </Grid>
         </Grid>
-      </Box>
+      </Box> */}
 
       <Container
         maxWidth="xl"
@@ -169,6 +169,7 @@ const Users = () => {
           transition: 'margin-left 0.3s ease',
           minWidth: '600px',
           maxWidth: '80%',
+          marginTop: '8%'
         }}
       >
         <Paper sx={{ p: 2, boxShadow: 3 }}>

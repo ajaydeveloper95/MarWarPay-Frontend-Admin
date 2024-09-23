@@ -22,7 +22,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useSidebar } from '../../../Context/SidebarContext';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { accessToken } from '../../../helpingFile';
+import { accessToken, domainBase } from '../../../helpingFile';
 
 const ACCESS_TOKEN = accessToken;
 
@@ -42,7 +42,7 @@ const EditPackage = () => {
     const fetchPackageData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5000/apiAdmin/v1/package/getSinglePackage/${id}`, // Use `id` for API call
+          `${domainBase}apiAdmin/v1/package/getSinglePackage/${id}`, // Use `id` for API call
           {
             headers: {
               Authorization: `Bearer ${ACCESS_TOKEN}`,
@@ -70,7 +70,7 @@ const EditPackage = () => {
     e.preventDefault();
     try {
       const response = await axios.post(
-        `http://localhost:5000/apiAdmin/v1/package/updatePackage/${id}`, // Use `id` for API call
+        `${domainBase}apiAdmin/v1/package/updatePackage/${id}`, // Use `id` for API call
         packageData,
         {
           headers: {

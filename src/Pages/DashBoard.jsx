@@ -21,7 +21,7 @@ function DashBoard() {
           marginTop: "8%",
           marginLeft: isSidebarOpen ? "16rem" : "8rem",
           minWidth: "600px",
-          maxWidth: "80%",
+          maxWidth: "70%",
           fontWeight: "700",
           textTransform: "uppercase",
           letterSpacing: "4px",
@@ -44,7 +44,7 @@ function DashBoard() {
           marginLeft: isSidebarOpen ? "16rem" : "1rem",
           transition: "margin-left 0.3s ease",
           minWidth: "600px",
-          maxWidth: "100%",
+          maxWidth: "80%",
         }}
       >
         <Total_Blnc />

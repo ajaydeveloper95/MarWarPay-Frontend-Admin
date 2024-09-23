@@ -19,7 +19,6 @@ import ViewPackage from './Components/Tables/Package/ViewPackage';
 import PayoutCharge from './Components/Tables/Setting/PayoutCharge';
 import DashBoard from './Pages/DashBoard';
 import Footer from './Components/footer/Footer';
-import Profile from './Components/profile/Profile';
 import PayoutGenerate from './Components/Tables/Reports/PayoutGenerate';
 import EditMember from './Components/Tables/Updates/EditMember';
 import Login from './Components/Login/Login';
@@ -53,8 +52,6 @@ function App() {
                   <Routes>
                     {/* Dashboard route */}
                     <Route path="/dashboard" element={<DashBoard />} />
-                    <Route path="/updateProfile" element={<Profile />} />
-                    <Route path="/updateProfile/:id" element={<Profile />} />
 
                     {/* Member routes */}
                     <Route path="members/addMembers" element={<AddMembers />} />

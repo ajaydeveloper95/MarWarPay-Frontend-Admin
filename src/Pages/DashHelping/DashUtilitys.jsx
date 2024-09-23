@@ -91,7 +91,7 @@ function DashUtilities() {
   }, []);
 
   const boxStyles = {
-    width: '220px',
+    width: '200px',
     height: '200px',
     p: 2,
     borderRadius: 2,
@@ -134,8 +134,8 @@ function DashUtilities() {
     justifyContent: 'center',
     backgroundColor: '#00796B',
     borderRadius: '50%',
-    width: '60px',
-    height: '60px',
+    width: '50px',
+    height: '50px',
     // mb: 2,
     boxShadow: '0 4px 8px rgba(0, 0, 0, 0.4)',
     transition: 'background-color 0.3s ease, box-shadow 0.3s ease',
@@ -149,31 +149,31 @@ function DashUtilities() {
     {
       label: 'Total Members',
       count: totalMembers, // Assuming you will update this value later
-      icon: <SupervisorAccountIcon sx={{ fontSize: 24, color: 'white' }} />,
+      icon: <SupervisorAccountIcon sx={{ fontSize: 20, color: 'white' }} />,
       background: 'linear-gradient(135deg, #E0F7FA, #80DEEA)',
     },
     {
       label: 'Total Users',
       count: totalUsers,
-      icon: <PersonIcon sx={{ fontSize: 24, color: 'white' }} />,
+      icon: <PersonIcon sx={{ fontSize: 20, color: 'white' }} />,
       background: 'linear-gradient(135deg, #FFF9C4, #FBC02D)',
     },
     {
       label: 'Pending Tickets',
       count: pendingTickets,
-      icon: <GroupIcon sx={{ fontSize: 24, color: 'white' }} />,
+      icon: <GroupIcon sx={{ fontSize: 20, color: 'white' }} />,
       background: 'linear-gradient(135deg, #E1BEE7, #CE93D8)',
     },
     {
       label: 'Total Packages',
       count: totalPackages,
-      icon: <ApiIcon sx={{ fontSize: 24, color: 'white' }} />,
+      icon: <ApiIcon sx={{ fontSize: 20, color: 'white' }} />,
       background: 'linear-gradient(135deg, #CFD8DC, #B0BEC5)',
     },
   ];
 
   return (
-    <Grid container spacing={6} marginTop={3}>
+    <Grid container spacing={6} marginTop={2}>
       {dataItems.map((item, index) => (
         <Grid item xs={12} md={3} key={index}>
           <Box
@@ -183,7 +183,7 @@ function DashUtilities() {
             }}
           >
             <Box sx={iconContainerStyles}>{item.icon}</Box>
-            <Typography variant="h6" sx={{ color: '#004D40', fontWeight: 'bold', mb: 1 }}>
+            <Typography variant="h6" sx={{ color: '#004D40', fontWeight: 'bold', mt: 1 }}>
               {item.label}
             </Typography>
             <Typography sx={{ color: '#004D40', fontSize: '1.5rem', fontWeight: 'bold' }}>

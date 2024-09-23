@@ -83,12 +83,12 @@ function MnyTransfer() {
                 {chartLegend.map((item) => (
                   <Box
                     key={item.label}
-                    sx={{ display: "flex", alignItems: "center", mr: 4 }}
+                    sx={{ display: "flex", alignItems: "center", mr: 2 }}
                   >
                     <Box
                       sx={{
-                        width: 20,
-                        height: 20,
+                        width: 16,
+                        height: 16,
                         backgroundColor: item.color,
                         borderRadius: "50%",
                         mr: 1,
@@ -149,12 +149,12 @@ function MnyTransfer() {
                 {chartLegend.map((item) => (
                   <Box
                     key={item.label}
-                    sx={{ display: "flex", alignItems: "center", mr: 4 }}
+                    sx={{ display: "flex", alignItems: "center", mr: 2 }}
                   >
                     <Box
                       sx={{
-                        width: 20,
-                        height: 20,
+                        width: 16,
+                        height: 16,
                         backgroundColor: item.color,
                         borderRadius: "50%",
                         mr: 1,
@@ -214,12 +214,12 @@ function MnyTransfer() {
                 {chartLegend.map((item) => (
                   <Box
                     key={item.label}
-                    sx={{ display: "flex", alignItems: "center", mr: 4 }}
+                    sx={{ display: "flex", alignItems: "center", mr: 2 }}
                   >
                     <Box
                       sx={{
-                        width: 20,
-                        height: 20,
+                        width: 16,
+                        height: 16,
                         backgroundColor: item.color,
                         borderRadius: "50%",
                         mr: 1,
@@ -278,12 +278,12 @@ function MnyTransfer() {
                 {chartLegend.map((item) => (
                   <Box
                     key={item.label}
-                    sx={{ display: "flex", alignItems: "center", mr: 4 }}
+                    sx={{ display: "flex", alignItems: "center", mr: 2 }}
                   >
                     <Box
                       sx={{
-                        width: 20,
-                        height: 20,
+                        width: 16,
+                        height: 16,
                         backgroundColor: item.color,
                         borderRadius: "50%",
                         mr: 1,

@@ -103,7 +103,7 @@ const Sidebar = () => {
           isDarkMode ? "bg-gray-600 text-white" : "bg-blue-50 text-gray-800"
         }`}
         style={{
-          width: isSidebarOpen ? "calc(100% - 16rem)" : "100%",
+          width: isSidebarOpen ? "calc(100% - 15.5rem)" : "100%",
         }}
       >
          <button
@@ -169,7 +169,7 @@ const Sidebar = () => {
       <div
         className={`fixed top-0 left-0 h-screen transition-transform transform ${
           isSidebarOpen ? "translate-x-0" : "-translate-x-full"
-        } w-64 z-40 overflow-y-auto ${
+        } w-50 z-40 overflow-y-auto ${
           isDarkMode ? "bg-gray-600 text-white" : " text-gray-800"
         }`}
         style={{ borderRight: isDarkMode ? "1px solid #4b4b4b" : "1px solid #e0e0e0" }}
@@ -185,7 +185,7 @@ const Sidebar = () => {
               >
                 <span
                   className={`material-icons mr-2 ${
-                    !isSidebarOpen && "text-xl"
+                    !isSidebarOpen && "text-sm"
                   }`}
                 >
                   dashboard
@@ -202,7 +202,7 @@ const Sidebar = () => {
               >
                 <span
                   className={`material-icons mr-2 ${
-                    !isSidebarOpen && "text-xl"
+                    !isSidebarOpen && "text-sm"
                   }`}
                 >
                   people
@@ -276,7 +276,7 @@ const Sidebar = () => {
               >
                 <span
                   className={`material-icons mr-2 ${
-                    !isSidebarOpen && "text-xl"
+                    !isSidebarOpen && "text-sm"
                   }`}
                 >
                   assessment
@@ -343,7 +343,7 @@ const Sidebar = () => {
               >
                 <span
                   className={`material-icons mr-2 ${
-                    !isSidebarOpen && "text-xl"
+                    !isSidebarOpen && "text-sm"
                   }`}
                 >
                   payment
@@ -373,7 +373,7 @@ const Sidebar = () => {
                         to="/upi-wallet/transactions"
                         className="flex items-center px-4 py-2"
                       >
-                        UPI Wallet to E-Wallet Transfer
+                        UPI to E-Wallet Transfer
                       </Link>
                     </li>
                   </ul>
@@ -389,7 +389,7 @@ const Sidebar = () => {
               >
                 <span
                   className={`material-icons mr-2 ${
-                    !isSidebarOpen && "text-xl"
+                    !isSidebarOpen && "text-sm"
                   }`}
                 >
                   account_balance_wallet
@@ -453,7 +453,7 @@ const Sidebar = () => {
               >
                 <span
                   className={`material-icons mr-2 ${
-                    !isSidebarOpen && "text-xl"
+                    !isSidebarOpen && "text-sm"
                   }`}
                 >
                   payment
@@ -501,7 +501,7 @@ const Sidebar = () => {
   >
     <span
       className={`material-icons mr-2 ${
-        !isSidebarOpen && "text-xl"
+        !isSidebarOpen && "text-sm"
       }`}
     >
       settings
@@ -551,7 +551,7 @@ const Sidebar = () => {
               >
                 <span
                   className={`material-icons mr-2 ${
-                    !isSidebarOpen && "text-xl"
+                    !isSidebarOpen && "text-sm"
                   }`}
                 >
                   support
@@ -597,7 +597,7 @@ const Sidebar = () => {
               >
                 <SettingsIcon
                   className={`mr-2 ${
-                    !isSidebarOpen && "text-xl"
+                    !isSidebarOpen && "text-sm"
                   }`}
                 />
                 {isSidebarOpen && "Main Setting"}

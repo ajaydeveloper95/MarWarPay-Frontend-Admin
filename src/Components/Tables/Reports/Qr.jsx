@@ -169,7 +169,7 @@ const Qr = () => {
               <Typography variant="h6" sx={{ color: "teal" }}>
                 TOTAL BALANCE
               </Typography>
-              <Typography>₹</Typography>
+              <Typography>₹ {data.length > 0 ? data.reduce((total, user) => total + user.amount, 0).toLocaleString('en-IN', { minimumFractionDigits: 2 }) : '0.00'}</Typography>
             </Box>
           </Grid>
           <Grid item xs={12} md={6}>
@@ -182,9 +182,9 @@ const Qr = () => {
               }}
             >
               <Typography variant="h6" sx={{ color: "teal" }}>
-                TOTAL DOWNLINE BALANCE
+                Total Transactions
               </Typography>
-              <Typography>₹</Typography>
+              <Typography></Typography>
             </Box>
           </Grid>
         </Grid>

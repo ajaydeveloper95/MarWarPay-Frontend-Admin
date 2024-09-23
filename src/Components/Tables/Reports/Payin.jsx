@@ -10,7 +10,7 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle'; // Icon for succe
 import CancelIcon from '@mui/icons-material/Cancel'; // Icon for failure
 
 const API_ENDPOINT = `${domainBase}apiAdmin/v1/payin/allSuccessPayIn`;
-const USER_LIST_API = 'http://localhost:5000/apiAdmin/v1/utility/getUserList';
+const USER_LIST_API = `${domainBase}apiAdmin/v1/utility/getUserList`;
 const ACCESS_TOKEN = accessToken;
 
 const Payin = () => {

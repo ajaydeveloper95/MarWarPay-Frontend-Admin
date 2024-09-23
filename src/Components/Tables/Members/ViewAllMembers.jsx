@@ -129,9 +129,9 @@ const ViewAllMembers = () => {
               }}
             >
               <Typography variant="h6" sx={{ color: "teal" }}>
-                TOTAL BALANCE
+                Total E-Wallet Balance
               </Typography>
-              <Typography>₹</Typography>
+              <Typography>₹ {usersData.length > 0 ? usersData.reduce((total, user) => total + user.EwalletBalance, 0).toLocaleString('en-IN', { minimumFractionDigits: 2 }) : '0.00'}</Typography>
             </Box>
           </Grid>
           <Grid item xs={12} md={6}>
@@ -144,9 +144,9 @@ const ViewAllMembers = () => {
               }}
             >
               <Typography variant="h6" sx={{ color: "teal" }}>
-                TOTAL DOWNLINE BALANCE
+              Total UPI-Wallet Balance
               </Typography>
-              <Typography>₹</Typography>
+              <Typography>₹ {usersData.length > 0 ? usersData.reduce((total, user) => total + user.upiWalletBalance, 0).toLocaleString('en-IN', { minimumFractionDigits: 2 }) : '0.00'}</Typography>
             </Box>
           </Grid>
         </Grid>

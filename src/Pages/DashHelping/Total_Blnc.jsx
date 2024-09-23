@@ -10,7 +10,7 @@ function Total_Blnc() {
   const [data, setData] = useState([]);
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
-  const [openMoneyBalance, ] = useState(750000);
+  const [openMoneyBalance, ] = useState(550000);
   const [intervalId, setIntervalId] = useState(null);
 
   useEffect(() => {
