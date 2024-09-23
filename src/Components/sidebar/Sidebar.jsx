@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useSidebar } from "../../Context/SidebarContext";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import SettingsIcon from "@mui/icons-material/Settings";
@@ -17,10 +17,12 @@ const Sidebar = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation(); // Get the current location
+  const profileMenuRef = useRef(null); // Ref for the profile menu
 
   // Function to toggle the profile menu
   const handleProfileClick = () => {
-    setProfileMenuVisible(!profileMenuVisible);
+    setProfileMenuVisible((prev) => !prev);
   };
 
   // Toggle dark mode
@@ -75,6 +77,24 @@ const Sidebar = () => {
     setIsModalOpen(false);
   };
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (profileMenuRef.current && !profileMenuRef.current.contains(event.target)) {
+        setProfileMenuVisible(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  useEffect(() => {
+    setProfileMenuVisible(false);
+  }, [location]); // Runs whenever the location changes
+
   return (
     <div>
       {/* Navbar */}
@@ -118,8 +138,8 @@ const Sidebar = () => {
             >
               account_circle
             </span>
-            {profileMenuVisible && (
-            <div className={`absolute top-12 right-0 ${isDarkMode ? "bg-gray-700 text-white" : "bg-white text-gray-800"} shadow-lg border border-gray-200 rounded-lg`}>
+            {profileMenuVisible ? (
+            <div ref={profileMenuRef}  className={`absolute top-12 right-0 ${isDarkMode ? "bg-gray-700 text-white" : "bg-white text-gray-800"} shadow-lg border border-gray-200 rounded-lg`}>
                 {/* <Link
                   to="/updateProfile"
                   className="block px-4 py-2"
@@ -139,7 +159,7 @@ const Sidebar = () => {
                   Logout
                 </button>
               </div>
-            )}
+            ) : null }
           </div>
          
         </div>
@@ -165,7 +185,7 @@ const Sidebar = () => {
               >
                 <span
                   className={`material-icons mr-2 ${
-                    !isSidebarOpen && "text-2xl"
+                    !isSidebarOpen && "text-xl"
                   }`}
                 >
                   dashboard
@@ -182,7 +202,7 @@ const Sidebar = () => {
               >
                 <span
                   className={`material-icons mr-2 ${
-                    !isSidebarOpen && "text-2xl"
+                    !isSidebarOpen && "text-xl"
                   }`}
                 >
                   people
@@ -256,7 +276,7 @@ const Sidebar = () => {
               >
                 <span
                   className={`material-icons mr-2 ${
-                    !isSidebarOpen && "text-2xl"
+                    !isSidebarOpen && "text-xl"
                   }`}
                 >
                   assessment
@@ -323,7 +343,7 @@ const Sidebar = () => {
               >
                 <span
                   className={`material-icons mr-2 ${
-                    !isSidebarOpen && "text-2xl"
+                    !isSidebarOpen && "text-xl"
                   }`}
                 >
                   payment
@@ -369,7 +389,7 @@ const Sidebar = () => {
               >
                 <span
                   className={`material-icons mr-2 ${
-                    !isSidebarOpen && "text-2xl"
+                    !isSidebarOpen && "text-xl"
                   }`}
                 >
                   account_balance_wallet
@@ -433,7 +453,7 @@ const Sidebar = () => {
               >
                 <span
                   className={`material-icons mr-2 ${
-                    !isSidebarOpen && "text-2xl"
+                    !isSidebarOpen && "text-xl"
                   }`}
                 >
                   payment
@@ -481,7 +501,7 @@ const Sidebar = () => {
   >
     <span
       className={`material-icons mr-2 ${
-        !isSidebarOpen && "text-2xl"
+        !isSidebarOpen && "text-xl"
       }`}
     >
       settings
@@ -531,7 +551,7 @@ const Sidebar = () => {
               >
                 <span
                   className={`material-icons mr-2 ${
-                    !isSidebarOpen && "text-2xl"
+                    !isSidebarOpen && "text-xl"
                   }`}
                 >
                   support
@@ -577,7 +597,7 @@ const Sidebar = () => {
               >
                 <SettingsIcon
                   className={`mr-2 ${
-                    !isSidebarOpen && "text-2xl"
+                    !isSidebarOpen && "text-xl"
                   }`}
                 />
                 {isSidebarOpen && "Main Setting"}

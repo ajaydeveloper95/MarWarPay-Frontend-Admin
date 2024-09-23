@@ -35,7 +35,7 @@ const EditMember = () => {
     const fetchUserData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5000/apiAdmin/v1/user/userProfile/${id}`,
+          `${domainBase}/apiAdmin/v1/user/userProfile/${id}`,
           {
             headers: {
               Authorization: `Bearer ${ACCESS_TOKEN}`,
@@ -74,7 +74,7 @@ const EditMember = () => {
     e.preventDefault();
     try {
       const response = await axios.post(
-        `http://localhost:5000/apiAdmin/v1/user/updateUser/${userData._id}`,
+        `${domainBase}/apiAdmin/v1/user/updateUser/${userData._id}`,
         userData1,
         {
           headers: {

@@ -390,9 +390,9 @@ const MemberWllt = () => {
                             // textTransform: "lowercase",
                             backgroundColor: "rgba(0, 128, 0, 0.1)",
 
-                            border: "1px solid green",
+                            // border: "1px solid green",
                             borderRadius: 2,
-                            padding: "2px 8px",
+                            padding: "2px 10px",
                           }}
                         >
                           Active
@@ -404,9 +404,9 @@ const MemberWllt = () => {
                             // text: "bold",
                             // textTransform: "lowercase",
                             backgroundColor: "rgba(255, 0, 0, 0.1)",
-                            border: "1px solid red",
+                            // border: "1px solid red",
                             borderRadius: 2,
-                            padding: "2px 8px",
+                            padding: "2px 10px",
                           }}
                         >
                           Deactive

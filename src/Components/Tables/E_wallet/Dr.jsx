@@ -34,15 +34,13 @@ const Dr = () => {
   const [transactionType, setTransactionType] = useState('DR');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+
 
   const navigate = useNavigate();
   const { isSidebarOpen } = useSidebar();
 
   useEffect(() => {
     const fetchData = async () => {
-      setLoading(true);
       try {
         const response = await axios.get(API_GET_USERS_ENDPOINT, {
           headers: {
@@ -51,9 +49,7 @@ const Dr = () => {
         });
         setData(response.data.data);
       } catch (err) {
-        setError(err);
-      } finally {
-        setLoading(false);
+        console.log(err)
       }
     };
 
@@ -67,7 +63,7 @@ const Dr = () => {
     // Find the selected member from the data and set the available balance
     const selectedMember = data.find((item) => item._id === selectedMemberId);
     if (selectedMember) {
-      setAvailableBalance(selectedMember.upiWalletBalance);
+      setAvailableBalance(selectedMember.EwalletBalance);
     } else {
       setAvailableBalance('');
     }
@@ -134,9 +130,6 @@ const Dr = () => {
   const handleCancel = () => {
     navigate(-1); // Navigate to the previous page
   };
-
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error.message}</div>;
 
   return (
     <Container

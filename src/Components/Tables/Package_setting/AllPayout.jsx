@@ -192,11 +192,11 @@ const AllPayout = () => {
                           backgroundColor: packageItem.isActive
                             ? "rgba(0, 128, 0, 0.1)"
                             : "rgba(255, 0, 0, 0.1)", // Light background
-                          border: `1px solid ${
+                          border: `${
                             packageItem.isActive ? "green" : "red"
                           }`,
                           borderRadius: 2,
-                          padding: "2px 8px",
+                          padding: "2px 10px",
                         }}
                       >
                         {packageItem.isActive ? "Active" : "Inactive"}

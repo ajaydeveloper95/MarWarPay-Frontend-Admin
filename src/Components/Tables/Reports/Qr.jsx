@@ -33,7 +33,7 @@ import axios from "axios";
 import { accessToken, domainBase } from "../../../helpingFile";
 
 const API_ENDPOINT = `${domainBase}apiAdmin/v1/payin/allPaymentGenerated`;
-const USER_LIST_API = "http://localhost:5000/apiAdmin/v1/utility/getUserList";
+const USER_LIST_API = `${domainBase}/apiAdmin/v1/utility/getUserList`;
 const ACCESS_TOKEN = accessToken;
 
 const Qr = () => {
@@ -459,12 +459,8 @@ const Qr = () => {
                               member.callBackStatus === "Success"
                                 ? "rgba(0, 128, 0, 0.1)"
                                 : "rgba(255, 0, 0, 0.1)",
-                            border:
-                              member.callBackStatus === "Success"
-                                ? "1px solid green"
-                                : "1px solid red",
                             borderRadius: 2,
-                            padding: "2px 8px",
+                            padding: "2px 10px",
                           }}
                         >
                           {member.callBackStatus === "Success"

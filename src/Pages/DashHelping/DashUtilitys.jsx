@@ -9,11 +9,15 @@ import { domainBase, accessToken } from '../../helpingFile';
 
 const API_GET_USERS_ENDPOINT = `${domainBase}apiAdmin/v1/utility/getUserList`;
 const API_GET_PACKAGES_ENDPOINT = `${domainBase}apiAdmin/v1/utility/getPackageList`;
+const API_GET_PENDING_TICKETS_ENDPOINT = `${domainBase}apiAdmin/v1/utility/getPendingTicketList`;
+const API_GET_ALL_MEMBERS_ENDPOINT = `${domainBase}/apiAdmin/v1/utility/getAllMemberList`;
 const ACCESS_TOKEN = accessToken;
 
-function DashUtilitys() {
+function DashUtilities() {
   const [totalUsers, setTotalUsers] = useState(0);
   const [totalPackages, setTotalPackages] = useState(0);
+  const [pendingTickets, setPendingTickets] = useState(0);
+  const [totalMembers, setTotalMembers] = useState(0);
 
   useEffect(() => {
     // Fetch total users from API
@@ -32,7 +36,23 @@ function DashUtilitys() {
       }
     };
 
-     const fetchTotalPackages = async () => {
+    const fetchTotalMembers = async () => {
+      try {
+        const response = await axios.get(API_GET_ALL_MEMBERS_ENDPOINT, {
+          headers: {
+            Authorization: `Bearer ${ACCESS_TOKEN}`,
+          },
+        });
+        if (response.status === 200) {
+          setTotalMembers(response.data.data.length);
+        }
+      } catch (error) {
+        console.error('Error fetching total members:', error);
+      }
+    };
+
+    // Fetch total packages from API
+    const fetchTotalPackages = async () => {
       try {
         const response = await axios.get(API_GET_PACKAGES_ENDPOINT, {
           headers: {
@@ -43,16 +63,35 @@ function DashUtilitys() {
           setTotalPackages(response.data.data.length);
         }
       } catch (error) {
-        console.error('Error fetching total users:', error);
+        console.error('Error fetching total packages:', error);
+      }
+    };
+
+    // Fetch pending tickets from API
+    const fetchPendingTickets = async () => {
+      try {
+        const response = await axios.get(API_GET_PENDING_TICKETS_ENDPOINT, {
+          headers: {
+            Authorization: `Bearer ${ACCESS_TOKEN}`,
+          },
+        });
+        if (response.status === 200) {
+          // Set pendingTickets to the length of the data array
+          setPendingTickets(response.data.data.length);
+        }
+      } catch (error) {
+        console.error('Error fetching pending tickets:', error);
       }
     };
 
     fetchTotalUsers();
     fetchTotalPackages();
+    fetchPendingTickets();
+    fetchTotalMembers();
   }, []);
 
   const boxStyles = {
-    width: '240px',
+    width: '220px',
     height: '200px',
     p: 2,
     borderRadius: 2,
@@ -62,7 +101,7 @@ function DashUtilitys() {
     alignItems: 'center',
     justifyContent: 'center',
     textAlign: 'center',
-    mx: 'auto',
+    // mx: 'auto',
     position: 'relative',
     overflow: 'hidden',
     transition: 'transform 0.3s ease, box-shadow 0.3s ease',
@@ -97,7 +136,7 @@ function DashUtilitys() {
     borderRadius: '50%',
     width: '60px',
     height: '60px',
-    mb: 2,
+    // mb: 2,
     boxShadow: '0 4px 8px rgba(0, 0, 0, 0.4)',
     transition: 'background-color 0.3s ease, box-shadow 0.3s ease',
     '&:hover': {
@@ -109,24 +148,24 @@ function DashUtilitys() {
   const dataItems = [
     {
       label: 'Total Members',
-      count: 0,
+      count: totalMembers, // Assuming you will update this value later
       icon: <SupervisorAccountIcon sx={{ fontSize: 24, color: 'white' }} />,
       background: 'linear-gradient(135deg, #E0F7FA, #80DEEA)',
     },
     {
       label: 'Total Users',
-      count: totalUsers, // Use state for total users count
+      count: totalUsers,
       icon: <PersonIcon sx={{ fontSize: 24, color: 'white' }} />,
       background: 'linear-gradient(135deg, #FFF9C4, #FBC02D)',
     },
     {
-      label: 'Total Tickets',
-      count: 0,
+      label: 'Pending Tickets',
+      count: pendingTickets,
       icon: <GroupIcon sx={{ fontSize: 24, color: 'white' }} />,
       background: 'linear-gradient(135deg, #E1BEE7, #CE93D8)',
     },
     {
-      label: 'Total Package',
+      label: 'Total Packages',
       count: totalPackages,
       icon: <ApiIcon sx={{ fontSize: 24, color: 'white' }} />,
       background: 'linear-gradient(135deg, #CFD8DC, #B0BEC5)',
@@ -134,7 +173,7 @@ function DashUtilitys() {
   ];
 
   return (
-    <Grid container spacing={1} marginTop={5}>
+    <Grid container spacing={6} marginTop={3}>
       {dataItems.map((item, index) => (
         <Grid item xs={12} md={3} key={index}>
           <Box
@@ -157,4 +196,4 @@ function DashUtilitys() {
   );
 }
 
-export default DashUtilitys;
+export default DashUtilities;

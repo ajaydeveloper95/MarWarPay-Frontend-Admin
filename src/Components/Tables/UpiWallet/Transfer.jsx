@@ -33,15 +33,13 @@ const Transfer = () => {
   const [description, setDescription] = useState('');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [UpdateAmt,setUpdateAmt] = useState("open")
 
   const navigate = useNavigate();
   const { isSidebarOpen } = useSidebar();
 
   useEffect(() => {
     const fetchData = async () => {
-      setLoading(true);
       try {
         const response = await axios.get(API_GET_USERS_ENDPOINT, {
           headers: {
@@ -50,14 +48,12 @@ const Transfer = () => {
         });
         setData(response.data.data);
       } catch (err) {
-        setError(err);
-      } finally {
-        setLoading(false);
+        console.log(err)
       }
     };
 
     fetchData();
-  }, []);
+  }, [UpdateAmt]);
 
   const handleMemberChange = (e) => {
     const selectedMemberId = e.target.value;
@@ -98,6 +94,8 @@ const Transfer = () => {
         }
       );
 
+      setUpdateAmt("done")
+
       if (response.status === 200) {
         // Display the success dialog
         setIsDialogOpen(true);
@@ -121,9 +119,6 @@ const Transfer = () => {
   const handleCancel = () => {
     navigate(-1); // Navigate to the previous page
   };
-
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error.message}</div>;
 
 
   return (

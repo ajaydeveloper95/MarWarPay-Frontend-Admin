@@ -109,7 +109,7 @@ const ViewAllMembers = () => {
   return (
     <>
       <Box
-        sx={{ padding: 3, marginBottom: 2, marginTop: 12 }}
+        sx={{ padding: 2, marginBottom: 2, marginTop: 12 }}
         maxWidth="xl"
         style={{
           marginLeft: isSidebarOpen ? "16rem" : "10rem",
@@ -531,9 +531,9 @@ const ViewAllMembers = () => {
                             sx={{
                               color: "green",
                               backgroundColor: "rgba(0, 128, 0, 0.1)",
-                              border: "1px solid green",
+                              // border: "1px solid green",
                               borderRadius: 2,
-                              padding: "2px 8px",
+                              padding: "2px 10px",
                             }}
                           >
                             Active
@@ -543,9 +543,9 @@ const ViewAllMembers = () => {
                             sx={{
                               color: "red",
                               backgroundColor: "rgba(255, 0, 0, 0.1)",
-                              border: "1px solid red",
+                              // border: "1px solid red",
                               borderRadius: 2,
-                              padding: "2px 8px",
+                              padding: "2px 10px",
                             }}
                           >
                             Deactive

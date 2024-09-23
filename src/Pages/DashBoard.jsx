@@ -15,7 +15,7 @@ function DashBoard() {
   return (
     <>
       <Typography
-        variant="h3"
+        variant="h4"
         sx={{
           textAlign: "center",
           marginTop: "8%",
@@ -39,7 +39,7 @@ function DashBoard() {
       </Typography>
 
       <Box
-        sx={{ padding: 3, marginBottom: 2, marginTop: 5 }}
+        sx={{ padding: 5, }}
         style={{
           marginLeft: isSidebarOpen ? "16rem" : "1rem",
           transition: "margin-left 0.3s ease",

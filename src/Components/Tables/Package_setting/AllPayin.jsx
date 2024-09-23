@@ -34,7 +34,7 @@ const AllPayin = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, ] = useState(null);
 
   useEffect(() => {
     // Simulate data fetching
