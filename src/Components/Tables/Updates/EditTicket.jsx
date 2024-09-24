@@ -133,7 +133,7 @@ const EditTicket = () => {
           </Typography>
         </Box>
         <form onSubmit={handleSubmit}>
-          <Grid container spacing={2}>
+          <Grid container spacing={1}>
             <Grid item xs={12} sm={6}>
               <FormControl fullWidth variant="outlined" required>
                 <InputLabel id="status-label">Status</InputLabel>

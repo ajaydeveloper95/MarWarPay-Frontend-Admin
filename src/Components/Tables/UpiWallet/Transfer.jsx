@@ -154,7 +154,7 @@ const Transfer = () => {
         </Typography>
 
         <form onSubmit={handleSubmit} noValidate autoComplete="off">
-          <Grid container spacing={2}>
+          <Grid container spacing={1}>
             <Grid item xs={12} sm={6} md={4}>
               <FormControl fullWidth variant="outlined" required>
                 <InputLabel id="member-label">Member</InputLabel>

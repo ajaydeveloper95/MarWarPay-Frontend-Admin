@@ -5,7 +5,7 @@ import {
   TableHead, TableRow, Paper, IconButton, Grid, TextField, Button,
   MenuItem, Select, InputLabel, FormControl, Box
 } from '@mui/material';
-import VisibilityIcon from '@mui/icons-material/Visibility';
+// import VisibilityIcon from '@mui/icons-material/Visibility';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useSidebar } from '../../../Context/SidebarContext';
 import { accessToken, domainBase } from '../../../helpingFile';
@@ -250,7 +250,7 @@ const Users = () => {
                   <TableCell sx={{ fontWeight: 'bold', fontSize: '16px', border: '1px solid rgba(224, 224, 224, 1)' }}>WalletBalance</TableCell>
                   <TableCell sx={{ fontWeight: 'bold', fontSize: '16px', border: '1px solid rgba(224, 224, 224, 1)' }}>Created</TableCell>
                   <TableCell sx={{ fontWeight: 'bold', fontSize: '16px', border: '1px solid rgba(224, 224, 224, 1)' }}>Status</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', fontSize: '16px', border: '1px solid rgba(224, 224, 224, 1)' }}>Action</TableCell>
+                  {/* <TableCell sx={{ fontWeight: 'bold', fontSize: '16px', border: '1px solid rgba(224, 224, 224, 1)' }}>Action</TableCell> */}
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -329,11 +329,11 @@ const Users = () => {
                           </Button>
                         )}
                       </TableCell>
-                    <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>
+                    {/* <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>
                       <IconButton color="primary">
                         <VisibilityIcon />
                       </IconButton>
-                    </TableCell>
+                    </TableCell> */}
                   </TableRow>
                   ))
                 )}

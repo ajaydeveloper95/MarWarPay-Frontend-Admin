@@ -19,9 +19,9 @@ function DashBoard() {
         sx={{
           textAlign: "center",
           marginTop: "8%",
-          marginLeft: isSidebarOpen ? "16rem" : "8rem",
+          marginLeft: isSidebarOpen ? "16rem" : "10rem",
           minWidth: "600px",
-          maxWidth: "70%",
+          maxWidth: "80%",
           fontWeight: "700",
           textTransform: "uppercase",
           letterSpacing: "4px",
@@ -41,7 +41,7 @@ function DashBoard() {
       <Box
         sx={{ padding: 5, }}
         style={{
-          marginLeft: isSidebarOpen ? "16rem" : "1rem",
+          marginLeft: isSidebarOpen ? "16rem" : "10rem",
           transition: "margin-left 0.3s ease",
           minWidth: "600px",
           maxWidth: "80%",

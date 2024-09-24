@@ -146,7 +146,7 @@ const EditPackage = () => {
         </Typography>
 
         <form noValidate autoComplete="off" onSubmit={handleSubmit}>
-          <Grid container spacing={2}>
+          <Grid container spacing={1}>
             <Grid item xs={12} sm={6}>
               <TextField
                 label="Package Name"

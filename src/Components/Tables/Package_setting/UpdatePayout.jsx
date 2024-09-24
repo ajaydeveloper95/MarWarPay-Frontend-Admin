@@ -127,7 +127,7 @@ const UpdatePayout = () => {
           Update Payout Package
         </Typography>
         <form onSubmit={handleSubmit}>
-          <Grid container spacing={2}>
+          <Grid container spacing={1}>
             <Grid item xs={12}>
               <TextField
                 label="Package Name"

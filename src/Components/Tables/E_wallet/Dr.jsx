@@ -160,11 +160,11 @@ const Dr = () => {
           <ArrowBackIcon />
         </IconButton>
         <Typography variant="h4" component="h1" gutterBottom sx={{color:"teal"}}>
-          Dabit Fund
+          Debit Fund
         </Typography>
 
         <form onSubmit={handleSubmit} noValidate autoComplete="off">
-          <Grid container spacing={2}>
+          <Grid container spacing={1}>
             <Grid item xs={12} sm={6} md={4}>
               <FormControl fullWidth variant="outlined" required>
                 <InputLabel id="member-label">Member</InputLabel>
@@ -244,7 +244,7 @@ const Dr = () => {
           <DialogTitle>Transfer Successful</DialogTitle>
           <DialogContent>
             <Typography>
-              The amount has been successfully Dabit!
+              The amount has been successfully Debit!
             </Typography>
           </DialogContent>
           <DialogActions>

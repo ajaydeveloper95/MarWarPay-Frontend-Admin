@@ -186,7 +186,7 @@ const AddPackage = () => {
               />
             </Grid>
             
-            <Grid item xs={12} display="flex" justifyContent="flex-end" spacing={2}>
+            <Grid item xs={12} display="flex" justifyContent="flex-end" spacing={1}>
               <Button type="submit" variant="contained" color="primary" sx={{ mr: 2 , background: 'teal'}}>
                 Add Package
               </Button>

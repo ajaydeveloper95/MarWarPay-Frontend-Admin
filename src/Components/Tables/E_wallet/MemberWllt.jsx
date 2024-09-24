@@ -25,7 +25,7 @@ import axios from "axios";
 import { accessToken, domainBase } from "../../../helpingFile";
 
 const API_ENDPOINT = `${domainBase}apiAdmin/v1/wallet/eWalletMember/66c86b75986120a64a2946fa`;
-const USER_LIST_API = "${domainBase}apiAdmin/v1/utility/getUserList";
+const USER_LIST_API = `${domainBase}apiAdmin/v1/utility/getUserList`;
 const ACCESS_TOKEN = accessToken;
 
 const MemberWllt = () => {

@@ -167,7 +167,7 @@ const Qr = () => {
               }}
             >
               <Typography variant="h6" sx={{ color: "teal" }}>
-                TOTAL BALANCE
+                Total QR generate balance
               </Typography>
               <Typography>₹ {data.length > 0 ? data.reduce((total, user) => total + user.amount, 0).toLocaleString('en-IN', { minimumFractionDigits: 2 }) : '0.00'}</Typography>
             </Box>
@@ -182,11 +182,41 @@ const Qr = () => {
               }}
             >
               <Typography variant="h6" sx={{ color: "teal" }}>
-                Total Transactions
+                Total QR generate Transaction
               </Typography>
-              <Typography></Typography>
+              <Typography>{data.length}</Typography>
             </Box>
           </Grid>
+          {/* <Grid item xs={12} md={3}>
+            <Box
+              sx={{
+                p: 2,
+                borderRadius: 2,
+                backgroundColor: "background.paper",
+                boxShadow: "5px 0 10px -3px rgba(0, 128, 128, 0.6)",
+              }}
+            >
+              <Typography variant="h6" sx={{ color: "teal" }}>
+                Total success QR balance
+              </Typography>
+              <Typography>₹</Typography>
+            </Box>
+          </Grid>
+          <Grid item xs={12} md={3}>
+            <Box
+              sx={{
+                p: 2,
+                borderRadius: 2,
+                backgroundColor: "background.paper",
+                boxShadow: "5px 0 10px -3px rgba(0, 128, 128, 0.6)",
+              }}
+            >
+              <Typography variant="h6" sx={{ color: "teal" }}>
+                Total success QR Transaction
+              </Typography>
+              <Typography>₹</Typography>
+            </Box>
+          </Grid> */}
         </Grid>
       </Box>
 

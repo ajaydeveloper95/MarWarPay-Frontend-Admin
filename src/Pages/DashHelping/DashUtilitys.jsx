@@ -91,7 +91,7 @@ function DashUtilities() {
   }, []);
 
   const boxStyles = {
-    width: '200px',
+    width: '210px',
     height: '200px',
     p: 2,
     borderRadius: 2,
@@ -179,6 +179,7 @@ function DashUtilities() {
           <Box
             sx={{
               ...boxStyles,
+              // m:1,
               background: item.background, // Set gradient background from item
             }}
           >

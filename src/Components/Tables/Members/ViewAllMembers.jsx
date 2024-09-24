@@ -64,7 +64,9 @@ const ViewAllMembers = () => {
     setCurrentPage(0);
     setPreviousPage(0);
     fetchData();
-  }, [pageSize]);
+  }, [pageSize,usersData]);
+
+  console.log(usersData)
 
   // Filter users based on search query and date
   const filteredUsers = usersData.filter((user) => {
@@ -450,7 +452,7 @@ const ViewAllMembers = () => {
                                   border: "1px solid rgba(224, 224, 224, 1)",
                                 }}
                               >
-                                {/* {user.package.packageName} */}
+                                {user.package?.packageName}
                               </TableCell>
                             </TableRow>
                             <TableRow>

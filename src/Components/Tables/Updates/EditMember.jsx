@@ -28,7 +28,7 @@ const EditMember = () => {
   const { isSidebarOpen } = useSidebar();
   const [userData, setUserData] = useState({});
   const [userData1, setUserData1] = useState({});
-  const [loading, setLoading] = useState(true);
+  const [ setLoading] = useState(true);
   const [packages, setPackages] = useState([]);
   const { id } = useParams();
 
@@ -127,18 +127,28 @@ const EditMember = () => {
 
   const handlePackageChange = (e) => {
     const { value } = e.target;
-    setUserData((prevData) => ({
-      ...prevData,
-      package: {
-        ...prevData.package,
-        packageId: value,
-      },
-    }));
-  };
+    const selectedPackage = packages.find((pkg) => pkg._id === value);
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+    if (selectedPackage) {
+      setUserData((prevData) => ({
+        ...prevData,
+        package: {
+          ...prevData.package,
+          packageId: value,
+          packageName: selectedPackage.packageName, // Optionally store the package name if needed
+        },
+      }));
+
+      setUserData1((prevData) => ({
+        ...prevData,
+        package: {
+          ...prevData.package,
+          packageId: value,
+          packageName: selectedPackage.packageName, // Optionally store the package name if needed
+        },
+      }));
+    }
+  };
 
   return (
     <Container
@@ -151,23 +161,27 @@ const EditMember = () => {
         marginTop: "8%",
       }}
     >
-      
       <Paper sx={{ p: 2, boxShadow: 3 }}>
-      <Button
+        <Button
           // variant="contained"
           color="primary"
           onClick={handleBackButtonClick}
           sx={{ mb: 1 }}
           startIcon={<ArrowBackIcon />}
         >
-            {/* Back */}
+          {/* Back */}
         </Button>
-        <Typography variant="h4" component="h1" gutterBottom sx={{mb: 4, color: 'teal'}}>
+        <Typography
+          variant="h4"
+          component="h1"
+          gutterBottom
+          sx={{ mb: 4, color: "teal" }}
+        >
           Update Member
         </Typography>
-       
+
         <form onSubmit={handleSubmit}>
-          <Grid container spacing={2}>
+          <Grid container spacing={1}>
             <Grid item xs={12} md={6}>
               <TextField
                 label="User Name"
@@ -231,7 +245,8 @@ const EditMember = () => {
                 <InputLabel id="package-type-label">Package Type</InputLabel>
                 <Select
                   labelId="package-type-label"
-                  value={userData.package || ""}
+                  name="packageId"
+                  value={userData.package?.packageId || ""} // Ensure this matches with packages
                   onChange={handlePackageChange}
                   label="Package Type"
                 >
@@ -249,7 +264,7 @@ const EditMember = () => {
                 name="minWalletBalance"
                 variant="outlined"
                 fullWidth
-                value={userData.minWalletBalance || ""}
+                value={userData.minWalletBalance || "0"}
                 onChange={onhandle2}
               />
             </Grid>
@@ -259,7 +274,7 @@ const EditMember = () => {
                 name="EwalletBalance"
                 variant="outlined"
                 fullWidth
-                value={userData.EwalletBalance || ""}
+                value={userData.EwalletBalance || "0"}
                 InputProps={{
                   readOnly: true, // Make the field read-only
                 }}
@@ -271,7 +286,7 @@ const EditMember = () => {
                 name="upiWalletBalance"
                 variant="outlined"
                 fullWidth
-                value={userData.upiWalletBalance || ""}
+                value={userData.upiWalletBalance || "0"}
                 InputProps={{
                   readOnly: true, // Make the field read-only
                 }}
