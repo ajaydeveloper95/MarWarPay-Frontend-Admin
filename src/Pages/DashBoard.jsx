@@ -5,7 +5,6 @@ import Total_Blnc from "./DashHelping/Total_Blnc";
 import DashUtilitys from "./DashHelping/DashUtilitys";
 import WlltSummary from "./DashHelping/WlltSummary";
 import MnyTransfer from "./DashHelping/MnyTransfer";
-import FundASPE from "./DashHelping/FundASPE";
 import DistributeSmy from "./DashHelping/DistributeSmy";
 import ApiSummary from "./DashHelping/ApiSummary";
 
@@ -51,7 +50,6 @@ function DashBoard() {
         <DashUtilitys />
         <WlltSummary />
         <MnyTransfer />
-        <FundASPE />
         <DistributeSmy />
         <ApiSummary />
       </Box>

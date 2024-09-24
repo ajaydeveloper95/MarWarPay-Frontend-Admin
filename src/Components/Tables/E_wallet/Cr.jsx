@@ -72,17 +72,6 @@ const Cr = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    // Validate transfer amount
-    if (parseFloat(transferAmount) > parseFloat(availableBalance)) {
-      alert('Transfer amount cannot exceed the available balance.');
-      return;
-    }
-
-    if (parseFloat(transferAmount) <= 10) {
-      alert('Transfer amount must be greater than 10.');
-      return;
-    }
-
     // Construct the request body
     const requestBody = {
       transactionAmount: parseFloat(transferAmount),
@@ -165,7 +154,7 @@ const Cr = () => {
         </Typography>
 
         <form onSubmit={handleSubmit} noValidate autoComplete="off">
-          <Grid container spacing={1}>
+          <Grid container spacing={2}>
             <Grid item xs={12} sm={6} md={4}>
               <FormControl fullWidth variant="outlined" required>
                 <InputLabel id="member-label">Member</InputLabel>
@@ -229,7 +218,7 @@ const Cr = () => {
                 onChange={(e) => setDescription(e.target.value)}
               />
             </Grid>
-            <Grid item xs={12} container spacing={2} justifyContent="flex-end">
+            <Grid item xs={12} container spacing={2} justifyContent="flex-end" marginTop={1}>
               <Button type="submit" variant="contained" color="primary" sx={{ mr: 2, background: 'teal' }}>
                 Submit
               </Button>

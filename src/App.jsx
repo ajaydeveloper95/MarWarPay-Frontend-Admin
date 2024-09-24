@@ -23,7 +23,7 @@ import PayoutGenerate from './Components/Tables/Reports/PayoutGenerate';
 import EditMember from './Components/Tables/Updates/EditMember';
 import Login from './Components/Login/Login';
 import EditPackage from './Components/Tables/Updates/EditPackage';
-import PrivateRoute from './Components/PrivateRoute'; // Import the PrivateRoute component
+import PrivateRoute from './Components/PrivateRoute';
 import Panding from './Components/Tables/Support/Panding';
 import ViewAll from './Components/Tables/Support/ViewAll';
 import EditTicket from './Components/Tables/Updates/EditTicket';
@@ -33,6 +33,7 @@ import Cr from './Components/Tables/E_wallet/Cr';
 import Dr from './Components/Tables/E_wallet/Dr';
 import AllPayout from './Components/Tables/Package_setting/AllPayout';
 import UpdatePayout from './Components/Tables/Package_setting/UpdatePayout';
+import Settlement from './Components/Tables/UpiWallet/Settlement';
 
 function App() {
   return (
@@ -73,6 +74,7 @@ function App() {
                     {/* UPI wallet routes */}
                     <Route path="upi-wallet/configure" element={<MemberWlt />} />
                     <Route path="upi-wallet/transactions" element={<Transfer />} />
+                    <Route path="/upi-wallet/settlement" element={<Settlement/>} />
 
                     {/* UPI wallet routes */}
                     <Route path="/ewallet-management/my-wallet" element={<My_Wllt />} />

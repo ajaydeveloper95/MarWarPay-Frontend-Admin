@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   TextField,
   MenuItem,
@@ -22,9 +22,10 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useNavigate } from 'react-router-dom';
 import { useSidebar } from '../../../Context/SidebarContext';
 import axios from "axios";
-import { accessToken,domainBase } from '../../../helpingFile';
+import { accessToken, domainBase } from '../../../helpingFile';
 
 const API_ENDPOINT = `${domainBase}apiAdmin/v1/package/addPackage`;
+const API_PayoutCharge = `${domainBase}apiAdmin/v1/utility/getPayOutPackageList`;
 const ACCESS_TOKEN = accessToken;
 
 const AddPackage = () => {
@@ -35,14 +36,34 @@ const AddPackage = () => {
   const [status, setStatus] = useState(true);
   const [isDefault, setIsDefault] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [payOutPackages, setPayOutPackages] = useState([]); // State for payout packages
   const [error, setError] = useState(null);
 
   const navigate = useNavigate();
   const { isSidebarOpen } = useSidebar();
 
+  // Fetch the payout package list
+  useEffect(() => {
+    const fetchPayOutPackages = async () => {
+      try {
+        const response = await axios.get(API_PayoutCharge, {
+          headers: {
+            Authorization: `Bearer ${ACCESS_TOKEN}`,
+          },
+        });
+        setPayOutPackages(response.data.data);
+      } catch (err) {
+        console.error('Error fetching payout packages:', err);
+        setError(err);
+      }
+    };
+    fetchPayOutPackages();
+  }, []);
+
+
   const handleSubmit = async (event) => {
     event.preventDefault();
-  
+
     try {
       // Make the POST request to the API endpoint
       await axios.post(API_ENDPOINT, {
@@ -51,16 +72,13 @@ const AddPackage = () => {
         packagePayOutCharge,
         packagePayInCharge,
         isActive: status,
-        // isDefault,
       }, {
         headers: {
           Authorization: `Bearer ${ACCESS_TOKEN}`,
         },
       });
-  
-      // Display the success dialog
+
       setIsDialogOpen(true);
-  
       // Reset form fields after a successful POST request
       setPackageName('');
       setPackageInfo('');
@@ -68,7 +86,7 @@ const AddPackage = () => {
       setPackagePayInCharge('');
       setStatus(true);
       setIsDefault(false);
-  
+
       console.log('Data posted successfully!');
     } catch (err) {
       console.error('Error posting data:', err);
@@ -114,7 +132,7 @@ const AddPackage = () => {
         >
           <ArrowBackIcon />
         </IconButton>
-        <Typography variant="h4" component="h1" gutterBottom sx={{color: 'teal'}}>
+        <Typography variant="h4" component="h1" gutterBottom sx={{ color: 'teal' }}>
           Add Package
         </Typography>
 
@@ -140,14 +158,21 @@ const AddPackage = () => {
               />
             </Grid>
             <Grid item xs={12} sm={6}>
-              <TextField
-                label="Package Pay Out Charge"
-                variant="outlined"
-                fullWidth
-                type="number"
-                value={packagePayOutCharge}
-                onChange={(e) => setPackagePayOutCharge(e.target.value)}
-              />
+              <FormControl fullWidth variant="outlined" required>
+                <InputLabel id="pay-out-charge-label">Package Pay Out Charge</InputLabel>
+                <Select
+                  labelId="pay-out-charge-label"
+                  value={packagePayOutCharge}
+                  onChange={(e) => setPackagePayOutCharge(e.target.value)}
+                  label="Package Pay Out Charge"
+                >
+                  {payOutPackages.map((pkg) => (
+                    <MenuItem key={pkg._id} value={pkg._id}>
+                      {pkg.payOutPackageName}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
             </Grid>
             <Grid item xs={12} sm={6}>
               <TextField
@@ -185,9 +210,9 @@ const AddPackage = () => {
                 label="Is Default?"
               />
             </Grid>
-            
+
             <Grid item xs={12} display="flex" justifyContent="flex-end" spacing={1}>
-              <Button type="submit" variant="contained" color="primary" sx={{ mr: 2 , background: 'teal'}}>
+              <Button type="submit" variant="contained" color="primary" sx={{ mr: 2, background: 'teal' }}>
                 Add Package
               </Button>
               <Button variant="outlined" color="secondary" onClick={handleCancel}>

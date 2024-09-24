@@ -64,9 +64,8 @@ const ViewAllMembers = () => {
     setCurrentPage(0);
     setPreviousPage(0);
     fetchData();
-  }, [pageSize,usersData]);
+  }, [pageSize]);
 
-  console.log(usersData)
 
   // Filter users based on search query and date
   const filteredUsers = usersData.filter((user) => {

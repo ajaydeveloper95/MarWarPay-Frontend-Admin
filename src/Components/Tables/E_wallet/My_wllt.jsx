@@ -21,7 +21,7 @@ import {
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useSidebar } from "../../../Context/SidebarContext";
 import axios from "axios";
-import { accessToken, domainBase } from '../../../helpingFile';
+import { accessToken, domainBase } from "../../../helpingFile";
 
 const API_ENDPOINT = `${domainBase}apiAdmin/v1/wallet/getAllTransactionEwallet`;
 const ACCESS_TOKEN = accessToken;
@@ -37,11 +37,12 @@ const My_Wllt = () => {
 
   useEffect(() => {
     // Fetch data from API
-    axios.get(API_ENDPOINT, {
+    axios
+      .get(API_ENDPOINT, {
         headers: {
-            Authorization: `Bearer ${ACCESS_TOKEN}`,
-          },
-    })
+          Authorization: `Bearer ${ACCESS_TOKEN}`,
+        },
+      })
       .then((response) => {
         setTransactions(response.data.data);
         setLoading(false);
@@ -97,7 +98,12 @@ const My_Wllt = () => {
                 </IconButton>
               </Grid>
               <Grid item>
-                <Typography variant="h4" component="h1" gutterBottom sx={{color: 'teal'}}>
+                <Typography
+                  variant="h4"
+                  component="h1"
+                  gutterBottom
+                  sx={{ color: "teal" }}
+                >
                   My E-Wallet
                 </Typography>
               </Grid>
@@ -285,15 +291,11 @@ const My_Wllt = () => {
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
                       >
                         {transaction.transactionType === "Cr." ? (
-                          <Button
-                            sx={{ color: "green", text: 'bold' }}
-                          >
+                          <Button sx={{ color: "green", text: "bold" }}>
                             Cr.
                           </Button>
                         ) : (
-                          <Button
-                            sx={{ color: "red", text: 'bold' }}
-                          >
+                          <Button sx={{ color: "red", text: "bold" }}>
                             Dr.
                           </Button>
                         )}
@@ -304,45 +306,47 @@ const My_Wllt = () => {
                         {transaction.description}
                       </TableCell>
                       <TableCell
-  sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
->
-  {transaction.transactionStatus ? (
-    <Button
-      sx={{
-        color: "green",
-        // fontWeight: "bold", 
-        textTransform: "lowercase", 
-        backgroundColor: "rgba(0, 128, 0, 0.1)", 
-        // border: "1px solid green",
-        borderRadius: 2,
-        padding: "2px 10px",
-      }}
-    >
-      Active
-    </Button>
-  ) : (
-    <Button
-      sx={{
-        color: "red",
-        // fontWeight: "bold",  
-        textTransform: "lowercase",
-        backgroundColor: "rgba(255, 0, 0, 0.1)",
-        // border: "1px solid red",
-        borderRadius: 2,
-        padding: "2px 10px",
-      }}
-    >
-      Deactive
-    </Button>
-  )}
-</TableCell>
-
+                        sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
+                      >
+                        {transaction.transactionStatus ? (
+                          <Button
+                            sx={{
+                              color: "green",
+                              // fontWeight: "bold",
+                              textTransform: "lowercase",
+                              backgroundColor: "rgba(0, 128, 0, 0.1)",
+                              // border: "1px solid green",
+                              borderRadius: 2,
+                              padding: "2px 10px",
+                            }}
+                          >
+                            Success
+                          </Button>
+                        ) : (
+                          <Button
+                            sx={{
+                              color: "red",
+                              // fontWeight: "bold",
+                              textTransform: "lowercase",
+                              backgroundColor: "rgba(255, 0, 0, 0.1)",
+                              // border: "1px solid red",
+                              borderRadius: 2,
+                              padding: "2px 10px",
+                            }}
+                          >
+                            Failed
+                          </Button>
+                        )}
+                      </TableCell>
                     </TableRow>
                   );
                 })
               ) : (
                 <TableRow>
-                  <TableCell colSpan={10} sx={{ textAlign: "center", padding: "16px" }}>
+                  <TableCell
+                    colSpan={10}
+                    sx={{ textAlign: "center", padding: "16px" }}
+                  >
                     Data Not Available
                   </TableCell>
                 </TableRow>
@@ -368,7 +372,7 @@ const My_Wllt = () => {
                 variant="contained"
                 onClick={() => handlePageChange("next")}
                 disabled={endIndex >= filteredData.length}
-                sx={{ background: 'teal' }}
+                sx={{ background: "teal" }}
               >
                 Next
               </Button>

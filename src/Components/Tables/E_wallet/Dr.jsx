@@ -34,6 +34,7 @@ const Dr = () => {
   const [transactionType, setTransactionType] = useState('DR');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [data, setData] = useState([]);
+  const [fileUpdate,setfileUpdate] = useState("open")
 
 
   const navigate = useNavigate();
@@ -54,7 +55,7 @@ const Dr = () => {
     };
 
     fetchData();
-  }, []);
+  }, [fileUpdate]);
 
   const handleMemberChange = async (e) => {
     const selectedMemberId = e.target.value;
@@ -72,22 +73,10 @@ const Dr = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    // Validate transfer amount
-    if (parseFloat(transferAmount) > parseFloat(availableBalance)) {
-      alert('Transfer amount cannot exceed the available balance.');
-      return;
-    }
-
-    if (parseFloat(transferAmount) <= 10) {
-      alert('Transfer amount must be greater than 10.');
-      return;
-    }
-
     // Construct the request body
     const requestBody = {
       transactionAmount: parseFloat(transferAmount),
       transactionType: transactionType === 'CR' ? 'Cr.' : 'Dr.',
-    //   description: `Successfully ${transactionType === 'CR' ? 'Cr.' : 'Dr.'} Amount : ${transferAmount}`
     };
 
     // API Call to transfer the amount
@@ -101,6 +90,8 @@ const Dr = () => {
           },
         }
       );
+
+      setfileUpdate("done")
 
       if (response.status === 200) {
         // Display the success dialog with transaction details
@@ -164,7 +155,7 @@ const Dr = () => {
         </Typography>
 
         <form onSubmit={handleSubmit} noValidate autoComplete="off">
-          <Grid container spacing={1}>
+          <Grid container spacing={2}>
             <Grid item xs={12} sm={6} md={4}>
               <FormControl fullWidth variant="outlined" required>
                 <InputLabel id="member-label">Member</InputLabel>

@@ -387,7 +387,7 @@ const MemberWllt = () => {
                           sx={{
                             color: "green",
                             // text: "bold",
-                            // textTransform: "lowercase",
+                            textTransform: "lowercase",
                             backgroundColor: "rgba(0, 128, 0, 0.1)",
 
                             // border: "1px solid green",
@@ -395,21 +395,21 @@ const MemberWllt = () => {
                             padding: "2px 10px",
                           }}
                         >
-                          Active
+                          Success
                         </Button>
                       ) : (
                         <Button
                           sx={{
                             color: "red",
                             // text: "bold",
-                            // textTransform: "lowercase",
+                            textTransform: "lowercase",
                             backgroundColor: "rgba(255, 0, 0, 0.1)",
                             // border: "1px solid red",
                             borderRadius: 2,
                             padding: "2px 10px",
                           }}
                         >
-                          Deactive
+                          Failed
                         </Button>
                       )}
                     </TableCell>

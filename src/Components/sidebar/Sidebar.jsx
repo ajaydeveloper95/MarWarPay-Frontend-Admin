@@ -376,6 +376,14 @@ const Sidebar = () => {
                         UPI to E-Wallet Transfer
                       </Link>
                     </li>
+                    <li>
+                      <Link
+                        to="/upi-wallet/settlement"
+                        className="flex items-center px-4 py-2"
+                      >
+                        Settlemet Amount
+                      </Link>
+                    </li>
                   </ul>
                 </div>
               )}

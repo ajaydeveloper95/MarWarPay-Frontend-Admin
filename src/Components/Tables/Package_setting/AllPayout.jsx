@@ -112,7 +112,7 @@ const AllPayout = () => {
                     <TableCell>{packageItem.payOutPackageName}</TableCell>
                     <TableContainer
                       component={Paper}
-                      sx={{ borderRadius: 2, marginTop: 2 }}
+                      sx={{ borderRadius: 2, marginTop: 2, marginBottom: 1 }}
                     >
                       <Table size="small" aria-label="charge ranges">
                         <TableHead>
