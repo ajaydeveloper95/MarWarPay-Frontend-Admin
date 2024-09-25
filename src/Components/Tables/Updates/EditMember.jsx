@@ -28,7 +28,7 @@ const EditMember = () => {
   const { isSidebarOpen } = useSidebar();
   const [userData, setUserData] = useState({});
   const [userData1, setUserData1] = useState({});
-  const [ setLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
   const [packages, setPackages] = useState([]);
   const { id } = useParams();
 
@@ -86,9 +86,9 @@ const EditMember = () => {
       );
       if (response.status === 200) {
         toast.success("Updated successfully!"); // Show success toast
-        setTimeout(() => {
-          navigate("/members/all_members"); // Navigate after 2 seconds
-        }, 2000);
+        // setTimeout(() => {
+        //   navigate("/members/all_members"); // Navigate after 2 seconds
+        // }, 2000);
       }
     } catch (err) {
       console.error("Error updating user data:", err);
@@ -125,30 +125,9 @@ const EditMember = () => {
     }));
   };
 
-  const handlePackageChange = (e) => {
-    const { value } = e.target;
-    const selectedPackage = packages.find((pkg) => pkg._id === value);
-
-    if (selectedPackage) {
-      setUserData((prevData) => ({
-        ...prevData,
-        package: {
-          ...prevData.package,
-          packageId: value,
-          packageName: selectedPackage.packageName, // Optionally store the package name if needed
-        },
-      }));
-
-      setUserData1((prevData) => ({
-        ...prevData,
-        package: {
-          ...prevData.package,
-          packageId: value,
-          packageName: selectedPackage.packageName, // Optionally store the package name if needed
-        },
-      }));
-    }
-  };
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <Container
@@ -181,7 +160,7 @@ const EditMember = () => {
         </Typography>
 
         <form onSubmit={handleSubmit}>
-          <Grid container spacing={1}>
+          <Grid container spacing={2}>
             <Grid item xs={12} md={6}>
               <TextField
                 label="User Name"
@@ -245,9 +224,9 @@ const EditMember = () => {
                 <InputLabel id="package-type-label">Package Type</InputLabel>
                 <Select
                   labelId="package-type-label"
-                  name="packageId"
-                  value={userData.package?.packageId || ""} // Ensure this matches with packages
-                  onChange={handlePackageChange}
+                  name="package"
+                  value={userData.package || ""}
+                  onChange={onhandle2}
                   label="Package Type"
                 >
                   {packages.map((pkg) => (
