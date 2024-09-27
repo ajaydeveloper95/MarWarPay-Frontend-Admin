@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from "react";
 import {
   TextField,
   MenuItem,
@@ -11,10 +11,6 @@ import {
   Grid,
   Box,
   IconButton,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
   Table,
   TableBody,
   TableCell,
@@ -22,58 +18,132 @@ import {
   TableHead,
   TableRow,
   Paper,
-} from '@mui/material';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { useNavigate } from 'react-router-dom';
-import { useSidebar } from '../../../Context/SidebarContext';
+} from "@mui/material";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { useNavigate } from "react-router-dom";
+import { useSidebar } from "../../../Context/SidebarContext";
+import axios from "axios";
+import { accessToken, domainBase } from "../../../helpingFile";
+
+const ACCESS_TOKEN = accessToken;
+const USER_LIST_API = `${domainBase}apiAdmin/v1/utility/getUserList`;
+const SETTLEMENT_API =
+  "http://localhost:5000/apiAdmin/v1/wallet/getSettlementAmountAll";
+const SETTLEMENT_ONE_API =
+  "http://localhost:5000/apiAdmin/v1/wallet/getSettlementAmountOne/"; // Adjusted API endpoint
 
 const Settlement = () => {
-  const [member, setMember] = useState('');
+  const [startDateTime, setStartDateTime] = useState("");
+  const [endDateTime, setEndDateTime] = useState("");
+  const [filteredTransactions, setFilteredTransactions] = useState([]);
+  const [userList, setUserList] = useState([]);
+  const [dropdownValue, setDropdownValue] = useState("");
+  const [loading, setLoading] = useState(false);
   const { isSidebarOpen } = useSidebar();
-  const [availableBalance, setAvailableBalance] = useState('');
-  const [transferAmount, setTransferAmount] = useState('');
-  const [description, setDescription] = useState('');
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-
   const navigate = useNavigate();
 
-  const handleMemberChange = (e) => {
-    setMember(e.target.value);
+  useEffect(() => {
+    const fetchUserList = async () => {
+      try {
+        const response = await axios.get(USER_LIST_API, {
+          headers: {
+            Authorization: `Bearer ${ACCESS_TOKEN}`,
+          },
+        });
+        setUserList(response.data.data);
+      } catch (err) {
+        console.error("Error fetching user list:", err);
+      }
+    };
+    fetchUserList();
+  }, []);
+
+  const handleStartDateChange = (e) => {
+    setStartDateTime(e.target.value);
   };
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    // Logic to handle form submission
-    setIsDialogOpen(true); // Open the dialog on form submit
-  };
-
-  const handleCloseDialog = () => {
-    setIsDialogOpen(false);
+  const handleEndDateChange = (e) => {
+    setEndDateTime(e.target.value);
   };
 
   const handleCancel = () => {
-    navigate(-1); // Navigate to the previous page
+    navigate(-1);
   };
 
-  // Sample transaction data as an object
-  const transactionData = [
-    { id: 1, key: "Transaction ID", value: "TXN123456" },
-    { id: 2, key: "Member", value: "Member 1" },
-    { id: 3, key: "Transfer Amount", value: "1000" },
-    { id: 4, key: "Description", value: "Transfer to e-wallet" },
-    { id: 5, key: "Status", value: "Success" },
-  ];
+  const handleSearch = async () => {
+    try {
+      if (!startDateTime || !endDateTime) {
+        alert("Please select both start and end dates.");
+        return;
+      }
+  
+      const startDate = new Date(startDateTime);
+      const endDate = new Date(endDateTime);
+  
+      // Check if start date is greater than end date
+      if (startDate >= endDate) {
+        alert("Start date cannot be greater than end date.");
+        return;
+      }
+  
+      setLoading(true); // Set loading to true before the API call
+  
+      const formattedStartDate = startDate.toISOString();
+      const formattedEndDate = endDate.toISOString();
+  
+      // API request for settlements based on user selection
+      if (dropdownValue) {
+        const responseOne = await axios.post(
+          `${SETTLEMENT_ONE_API}${dropdownValue}`, // Using the user ID (_id)
+          {
+            startTimeAndDate: formattedStartDate,
+            endTimeAndDate: formattedEndDate,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${ACCESS_TOKEN}`,
+            },
+          }
+        );
+  
+        const userSettlement = responseOne.data?.data || [];
+        setFilteredTransactions(userSettlement);
+      } else {
+        // If no user selected, fetch all settlements
+        const responseAll = await axios.post(
+          SETTLEMENT_API,
+          {
+            startTimeAndDate: formattedStartDate,
+            endTimeAndDate: formattedEndDate,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${ACCESS_TOKEN}`,
+            },
+          }
+        );
+  
+        const transactions = responseAll.data?.data?.dataEwallet || [];
+        setFilteredTransactions(transactions);
+      }
+    } catch (err) {
+      console.error("Error fetching settlement data:", err);
+    } finally {
+      setLoading(false); // Set loading to false after the API call
+    }
+  };
+  
 
   return (
     <Container
-    maxWidth="xl"
-    style={{
-      marginLeft: isSidebarOpen ? "16rem" : "10rem",
-      transition: "margin-left 0.3s ease",
-      minWidth: "600px",
-      maxWidth: "80%",
-      marginTop: "8%",
-    }}
+      maxWidth="xl"
+      style={{
+        marginLeft: isSidebarOpen ? "16rem" : "10rem",
+        transition: "margin-left 0.3s ease",
+        minWidth: "600px",
+        maxWidth: "80%",
+        marginTop: "8%",
+      }}
     >
       <Box
         sx={{
@@ -81,129 +151,176 @@ const Settlement = () => {
           p: 4,
           borderRadius: 2,
           boxShadow: 3,
-          backgroundColor: 'background.paper',
-          position: 'relative',
+          backgroundColor: "background.paper",
+          position: "relative",
         }}
       >
         <IconButton
-          onClick={() => navigate(-1)}
+          onClick={handleCancel}
           color="primary"
-          sx={{ position: 'absolute', top: 0, left: 16 }}
+          sx={{ position: "absolute", top: 0, left: 16 }}
         >
           <ArrowBackIcon />
         </IconButton>
-        <Typography variant="h4" component="h1" gutterBottom sx={{ color: 'teal' }}>
+        <Typography
+          variant="h4"
+          component="h1"
+          gutterBottom
+          sx={{ color: "teal" }}
+        >
           Settlement Amount
         </Typography>
 
-        <form onSubmit={handleSubmit} noValidate autoComplete="off">
-          <Grid container spacing={2}>
-            <Grid item xs={12} sm={6} md={4}>
-              <FormControl fullWidth variant="outlined" required>
-                <InputLabel id="member-label">Member</InputLabel>
-                <Select
-                  labelId="member-label"
-                  value={member}
-                  onChange={handleMemberChange}
-                  label="Member"
-                >
-                  {/* Replace the options with actual member data */}
-                  <MenuItem value="1">Member 1</MenuItem>
-                  <MenuItem value="2">Member 2</MenuItem>
-                  <MenuItem value="3">Member 3</MenuItem>
-                </Select>
-              </FormControl>
-            </Grid>
-            <Grid item xs={12} sm={6} md={4}>
-              <TextField
-                label="Available Balance"
-                variant="outlined"
-                fullWidth
-                value={availableBalance}
-                onChange={(e) => setAvailableBalance(e.target.value)}
-                disabled
-              />
-            </Grid>
-            <Grid item xs={12} sm={6} md={4}>
-              <TextField
-                label="Transfer Amount"
-                type="number"
-                variant="outlined"
-                fullWidth
-                value={transferAmount}
-                onChange={(e) => setTransferAmount(e.target.value)}
-                required
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                label="Description"
-                variant="outlined"
-                fullWidth
-                multiline
-                rows={3}
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-              />
-            </Grid>
-            <Grid item xs={12} display="flex" justifyContent="flex-end">
-              <Button type="submit" variant="contained" color="primary" sx={{ mr: 2, background: 'teal' }}>
-                Submit
-              </Button>
-              <Button variant="outlined" color="secondary" onClick={handleCancel}>
-                Cancel
-              </Button>
-            </Grid>
+        <Grid container spacing={2} alignItems="center">
+          <Grid item xs={12} md={2}>
+            <FormControl fullWidth>
+              <InputLabel id="dropdown-label">All Users</InputLabel>
+              <Select
+                labelId="dropdown-label"
+                value={dropdownValue}
+                onChange={(e) => setDropdownValue(e.target.value)}
+                label="All Users"
+              >
+                <MenuItem value="">All Users</MenuItem>
+                {userList.map((user) => (
+                  <MenuItem key={user._id} value={user._id}>
+                    {`${user.fullName} (${user.memberId})`}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
           </Grid>
-        </form>
 
-        {/* Success Dialog */}
-        <Dialog open={isDialogOpen} onClose={handleCloseDialog}>
-          <DialogTitle>Transfer Successful</DialogTitle>
-          <DialogContent>
-            <Typography>The amount has been successfully transferred!</Typography>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleCloseDialog} color="primary">
-              OK
+          <Grid item xs={12} sm={6} md={3}>
+            <TextField
+              fullWidth
+              label="Start Date & Time"
+              type="datetime-local"
+              value={startDateTime}
+              onChange={handleStartDateChange}
+              InputLabelProps={{
+                shrink: true,
+              }}
+              variant="outlined"
+            />
+          </Grid>
+
+          <Grid item xs={12} sm={6} md={3}>
+            <TextField
+              fullWidth
+              label="End Date & Time"
+              type="datetime-local"
+              value={endDateTime}
+              onChange={handleEndDateChange}
+              InputLabelProps={{
+                shrink: true,
+              }}
+              variant="outlined"
+            />
+          </Grid>
+
+          <Grid item xs={12} md={2}>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleSearch}
+              disabled={loading} // Disable button while loading
+            >
+              Search
             </Button>
-          </DialogActions>
-        </Dialog>
-      </Box>
+          </Grid>
+        </Grid>
 
-      {/* Table Container */}
-      <Box
-        sx={{
-          mt: 4,
-          p: 2,
-          borderRadius: 2,
-          boxShadow: 2,
-          backgroundColor: 'background.paper',
-        }}
-      >
-        <Typography variant="h6" component="h2" gutterBottom sx={{ color: 'teal', fontWeight: 'bold' }}>
-          Transaction Details
-        </Typography>
-        <TableContainer component={Paper}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell sx={{ fontWeight: 'bold', backgroundColor: 'lightgray',border: "1px solid rgba(224, 224, 224, 1)" }}>#</TableCell>
-                <TableCell sx={{ fontWeight: 'bold', backgroundColor: 'lightgray',border: "1px solid rgba(224, 224, 224, 1)" }}>User</TableCell>
-                <TableCell sx={{ fontWeight: 'bold', backgroundColor: 'lightgray',border: "1px solid rgba(224, 224, 224, 1)" }}>Settlement Amount</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {transactionData.map((transaction, index) => (
-                <TableRow key={transaction.id}>
-                  <TableCell sx={{border: "1px solid rgba(224, 224, 224, 1)"}}>{index + 1}</TableCell>
-                  <TableCell sx={{border: "1px solid rgba(224, 224, 224, 1)"}}>{transaction.key}</TableCell>
-                  <TableCell sx={{border: "1px solid rgba(224, 224, 224, 1)"}}>{transaction.value}</TableCell>
+        {/* Table Container */}
+        <Box
+          sx={{
+            mt: 4,
+            p: 2,
+            borderRadius: 2,
+            boxShadow: 2,
+            backgroundColor: "background.paper",
+          }}
+        >
+          <Typography
+            variant="h6"
+            component="h2"
+            gutterBottom
+            sx={{ color: "teal", fontWeight: "bold" }}
+          >
+            Transaction Details
+          </Typography>
+          <TableContainer component={Paper}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell
+                    sx={{
+                      fontWeight: "bold",
+                      backgroundColor: "lightgray",
+                      border: "1px solid rgba(224, 224, 224, 1)",
+                    }}
+                  >
+                    #
+                  </TableCell>
+                  <TableCell
+                    sx={{
+                      fontWeight: "bold",
+                      backgroundColor: "lightgray",
+                      border: "1px solid rgba(224, 224, 224, 1)",
+                    }}
+                  >
+                    User
+                  </TableCell>
+                  <TableCell
+                    sx={{
+                      fontWeight: "bold",
+                      backgroundColor: "lightgray",
+                      border: "1px solid rgba(224, 224, 224, 1)",
+                    }}
+                  >
+                    Settlement Amount
+                  </TableCell>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+              </TableHead>
+              <TableBody>
+                {loading ? (
+                  <TableRow>
+                    <TableCell colSpan={3} align="center">
+                      Loading...
+                    </TableCell>
+                  </TableRow>
+                ) : filteredTransactions.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={3} align="center">
+                      No Data Available
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  filteredTransactions.map((transaction, index) => (
+                    <TableRow key={transaction._id}>
+                      <TableCell
+                        sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
+                      >
+                        {index + 1}
+                      </TableCell>
+                      <TableCell
+                        sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
+                      >
+                        {transaction._id|| "N/A"}{" "}
+                        {/* Adjusted to show user name */}
+                      </TableCell>
+                      <TableCell
+                        sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
+                      >
+                        {transaction.amount} {/* Displaying the amount */}
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Box>
       </Box>
     </Container>
   );
