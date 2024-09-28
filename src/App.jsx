@@ -6,7 +6,6 @@ import MasterDistributor from './Components/Tables/Members/MasterDistributor';
 import Retailer from './Components/Tables/Members/Retailer';
 import Distributor from './Components/Tables/Members/Distributor';
 import ApiMember from './Components/Tables/Members/ApiMember';
-import Users from './Components/Tables/Members/Users';
 import Sidebar from './Components/sidebar/Sidebar';
 import Payout from './Components/Tables/Reports/Payout';
 import BalanceRpt from './Components/Tables/Reports/BalanceRpt';
@@ -62,7 +61,6 @@ function App() {
                     <Route path="members/retailer" element={<Retailer />} />
                     <Route path="members/distributor" element={<Distributor />} />
                     <Route path="members/api_member" element={<ApiMember />} />
-                    <Route path="members/users" element={<Users />} />
 
                     {/* Report routes */}
                     <Route path="report/payout" element={<Payout />} />

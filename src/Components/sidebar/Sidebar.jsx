@@ -235,34 +235,7 @@ const Sidebar = () => {
                         View All Member
                       </Link>
                     </li>
-                    {/* <li>
-                      <Link to="" className="flex items-center px-4 py-2 text-gray-800 hover:bg-gray-100">
-                        Master Distributor
-                      </Link>
-                    </li> */}
-                    {/* <li>
-                      <Link to="" className="flex items-center px-4 py-2 text-gray-800 hover:bg-gray-100">
-                        Distributor
-                      </Link>
-                    </li> */}
-                    {/* <li>
-                      <Link to="" className="flex items-center px-4 py-2 text-gray-800 hover:bg-gray-100">
-                        Retailer
-                      </Link>
-                    </li> */}
-                    {/* <li>
-                      <Link to="" className="flex items-center px-4 py-2 text-gray-800 hover:bg-gray-100">
-                        API Members
-                      </Link>
-                    </li> */}
-                    <li>
-                      <Link
-                        to="/members/users"
-                        className="flex items-center px-4 py-2 "
-                      >
-                        Users
-                      </Link>
-                    </li>
+                    
                   </ul>
                 </div>
               )}

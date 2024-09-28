@@ -471,6 +471,23 @@ const ViewAllMembers = () => {
                                 {user.minWalletBalance}
                               </TableCell>
                             </TableRow>
+                            <TableRow>
+                              <TableCell
+                                sx={{
+                                  border: "1px solid rgba(224, 224, 224, 1)",
+                                  fontWeight: "bold",
+                                }}
+                              >
+                                Member Type
+                              </TableCell>
+                              <TableCell
+                                sx={{
+                                  border: "1px solid rgba(224, 224, 224, 1)",
+                                }}
+                              >
+                                {user.memberType}
+                              </TableCell>
+                            </TableRow>
                           </TableBody>
                         </Table>
                       </TableCell>

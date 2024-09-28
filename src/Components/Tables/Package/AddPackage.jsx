@@ -15,8 +15,6 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-  Checkbox,
-  FormControlLabel,
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useNavigate } from 'react-router-dom';
@@ -34,7 +32,7 @@ const AddPackage = () => {
   const [packagePayOutCharge, setPackagePayOutCharge] = useState('');
   const [packagePayInCharge, setPackagePayInCharge] = useState('');
   const [status, setStatus] = useState(true);
-  const [isDefault, setIsDefault] = useState(false);
+  // const [isDefault, setIsDefault] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [payOutPackages, setPayOutPackages] = useState([]); // State for payout packages
   const [error, setError] = useState(null);
@@ -60,7 +58,6 @@ const AddPackage = () => {
     fetchPayOutPackages();
   }, []);
 
-
   const handleSubmit = async (event) => {
     event.preventDefault();
 
@@ -85,7 +82,7 @@ const AddPackage = () => {
       setPackagePayOutCharge('');
       setPackagePayInCharge('');
       setStatus(true);
-      setIsDefault(false);
+      // setIsDefault(false);
 
       console.log('Data posted successfully!');
     } catch (err) {
@@ -98,6 +95,7 @@ const AddPackage = () => {
 
   const handleCloseDialog = () => {
     setIsDialogOpen(false);
+    navigate('/package/view'); // Navigate to the /view page after closing the dialog
   };
 
   const handleCancel = () => {
@@ -198,7 +196,7 @@ const AddPackage = () => {
                 </Select>
               </FormControl>
             </Grid>
-            <Grid item xs={12}>
+            {/* <Grid item xs={12}>
               <FormControlLabel
                 control={
                   <Checkbox
@@ -209,7 +207,7 @@ const AddPackage = () => {
                 }
                 label="Is Default?"
               />
-            </Grid>
+            </Grid> */}
 
             <Grid item xs={12} display="flex" justifyContent="flex-end" spacing={1}>
               <Button type="submit" variant="contained" color="primary" sx={{ mr: 2, background: 'teal' }}>

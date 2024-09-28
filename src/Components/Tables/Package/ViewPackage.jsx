@@ -295,7 +295,7 @@ const ViewPackage = () => {
                         <TableCell
                           sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
                         >
-                          {member.packagePayOutCharge}
+                          {member.payOutPackage?.payOutPackageName}
                         </TableCell>
                         <TableCell
                           sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}

@@ -169,6 +169,9 @@ const EditMember = () => {
                 fullWidth
                 value={userData.userName || ""}
                 onChange={onhandle2}
+                InputProps={{
+                  readOnly: true, // Make the field read-only
+                }}
               />
             </Grid>
             <Grid item xs={12} md={6}>

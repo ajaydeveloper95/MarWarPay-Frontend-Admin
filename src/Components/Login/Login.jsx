@@ -66,7 +66,7 @@ const Login = () => {
         // Redirect to homepage/dashboard after a short delay
         setTimeout(() => {
           navigate("/dashboard");
-        }, 1000);
+        }, 2000);
       } else {
         throw new Error("Access token or refresh token is missing in response.");
       }
