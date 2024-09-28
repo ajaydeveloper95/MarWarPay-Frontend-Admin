@@ -28,9 +28,9 @@ import { accessToken, domainBase } from "../../../helpingFile";
 const ACCESS_TOKEN = accessToken;
 const USER_LIST_API = `${domainBase}apiAdmin/v1/utility/getUserList`;
 const SETTLEMENT_API =
-  "http://localhost:5000/apiAdmin/v1/wallet/getSettlementAmountAll";
+  `${domainBase}apiAdmin/v1/wallet/getSettlementAmountAll`;
 const SETTLEMENT_ONE_API =
-  "http://localhost:5000/apiAdmin/v1/wallet/getSettlementAmountOne/"; // Adjusted API endpoint
+  `${domainBase}apiAdmin/v1/wallet/getSettlementAmountOne/`; // Adjusted API endpoint
 
 const Settlement = () => {
   const [startDateTime, setStartDateTime] = useState("");
