@@ -397,14 +397,14 @@ const Sidebar = () => {
                         My Wallet
                       </Link>
                     </li>
-                    <li>
+                    {/* <li>
                       <Link
                         to="/ewallet-management/member-wallet"
                         className="flex items-center px-4 py-2"
                       >
                         Member Wallet
                       </Link>
-                    </li>
+                    </li> */}
                     <li>
                       <Link
                         to="/ewallet-management/credit-fund"

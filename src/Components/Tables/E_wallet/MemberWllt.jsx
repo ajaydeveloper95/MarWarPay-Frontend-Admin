@@ -50,7 +50,7 @@ const MemberWllt = () => {
       })
       .then((response) => {
         setTransactions(response.data.data);
-        setLoading(false); // Set loading to false after fetching data
+        setLoading(false);
       })
       .catch((error) => {
         setError(error); 

@@ -19,9 +19,7 @@ import {
   InputLabel,
   FormControl,
   Box,
-  // Link,
 } from "@mui/material";
-// import VisibilityIcon from "@mui/icons-material/Visibility";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useSidebar } from "../../../Context/SidebarContext";
 import axios from "axios";
@@ -51,9 +49,9 @@ const ViewAll = () => {
           },
         });
         setData(response.data.data || []);
-        setLoading(false);
       } catch (err) {
         setError(err);
+      } finally {
         setLoading(false);
       }
     };
@@ -67,7 +65,7 @@ const ViewAll = () => {
 
   const itemsToDisplay =
     pageSize === "all" ? filteredTickets.length : parseInt(pageSize, 10);
-
+  
   const startIndex = currentPage * itemsToDisplay;
   const endIndex = startIndex + itemsToDisplay;
   const paginatedTickets = filteredTickets.slice(startIndex, endIndex);
@@ -79,15 +77,11 @@ const ViewAll = () => {
 
   const handlePageChange = (direction) => {
     if (direction === "next" && endIndex < filteredTickets.length) {
-      setCurrentPage(currentPage + 1);
+      setCurrentPage((prev) => prev + 1);
     } else if (direction === "prev" && currentPage > 0) {
-      setCurrentPage(currentPage - 1);
+      setCurrentPage((prev) => prev - 1);
     }
   };
-
-  // const handleViewTicket = (_id) => {
-  //   navigate(`/ticket/ViewTicket/${_id}`);
-  // };
 
   const handleBackButtonClick = () => {
     navigate(-1);
@@ -162,169 +156,66 @@ const ViewAll = () => {
           <Table sx={{ borderCollapse: "collapse" }}>
             <TableHead>
               <TableRow>
-                <TableCell
-                  sx={{
-                    fontWeight: "bold",
-                    fontSize: "16px",
-                    border: "1px solid rgba(224, 224, 224, 1)",
-                  }}
-                >
-                  #
-                </TableCell>
-                <TableCell
-                  sx={{
-                    fontWeight: "bold",
-                    fontSize: "16px",
-                    border: "1px solid rgba(224, 224, 224, 1)",
-                  }}
-                >
-                  Member
-                </TableCell>
-                <TableCell
-                  sx={{
-                    fontWeight: "bold",
-                    fontSize: "16px",
-                    border: "1px solid rgba(224, 224, 224, 1)",
-                  }}
-                >
-                  TicketID
-                </TableCell>
-                <TableCell
-                  sx={{
-                    fontWeight: "bold",
-                    fontSize: "16px",
-                    border: "1px solid rgba(224, 224, 224, 1)",
-                  }}
-                >
-                  Subject
-                </TableCell>
-                <TableCell
-                  sx={{
-                    fontWeight: "bold",
-                    fontSize: "16px",
-                    border: "1px solid rgba(224, 224, 224, 1)",
-                  }}
-                >
-                  Related To
-                </TableCell>
-                <TableCell
-                  sx={{
-                    fontWeight: "bold",
-                    fontSize: "16px",
-                    border: "1px solid rgba(224, 224, 224, 1)",
-                  }}
-                >
-                  Last Update
-                </TableCell>
-                <TableCell
-                  sx={{
-                    fontWeight: "bold",
-                    fontSize: "16px",
-                    border: "1px solid rgba(224, 224, 224, 1)",
-                  }}
-                >
-                  Status
-                </TableCell>
-                {/* <TableCell
-                  sx={{
-                    fontWeight: "bold",
-                    fontSize: "16px",
-                    border: "1px solid rgba(224, 224, 224, 1)",
-                  }}
-                >
-                  Action
-                </TableCell> */}
+                {["#", "Member", "TicketID", "Subject", "Related To", "Last Update", "Status"].map((header) => (
+                  <TableCell
+                    key={header}
+                    sx={{
+                      fontWeight: "bold",
+                      fontSize: "16px",
+                      border: "1px solid rgba(224, 224, 224, 1)",
+                    }}
+                  >
+                    {header}
+                  </TableCell>
+                ))}
               </TableRow>
             </TableHead>
             <TableBody>
               {loading ? (
                 <TableRow>
-                  <TableCell colSpan={8} align="center">
+                  <TableCell colSpan={7} align="center">
                     Loading...
                   </TableCell>
                 </TableRow>
               ) : error ? (
                 <TableRow>
-                  <TableCell colSpan={8} align="center">
+                  <TableCell colSpan={7} align="center">
                     Error: {error.message}
                   </TableCell>
                 </TableRow>
               ) : filteredTickets.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={8} align="center">
+                  <TableCell colSpan={7} align="center">
                     No data available.
                   </TableCell>
                 </TableRow>
               ) : (
                 paginatedTickets.map((ticket, index) => {
-                  // Calculate row number based on pagination
                   const rowNumber = startIndex + index + 1;
-
                   return (
                     <TableRow key={ticket._id}>
-                      <TableCell
-                        sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
-                      >
-                        {rowNumber}
+                      <TableCell sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}>{rowNumber}</TableCell>
+                      <TableCell sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}>
+                        {ticket.userInfo ? ticket.userInfo.userName : 'N/A'} {/* Check for userInfo */}
                       </TableCell>
-                      <TableCell
-                        sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
-                      >
-                        {ticket.userInfo.userName}
-                      </TableCell>
-                      <TableCell
-                        sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
-                      >
-                        {ticket.TicketID}
-                      </TableCell>
-                      <TableCell
-                        sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
-                      >
-                        {ticket.subject}
-                      </TableCell>
-                      <TableCell
-                        sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
-                      >
-                        {ticket.relatedTo}
-                      </TableCell>
-                      <TableCell
-                        sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
-                      >
+                      <TableCell sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}>{ticket.TicketID}</TableCell>
+                      <TableCell sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}>{ticket.subject}</TableCell>
+                      <TableCell sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}>{ticket.relatedTo}</TableCell>
+                      <TableCell sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}>
                         {new Date(ticket.createdAt).toLocaleDateString()}
                       </TableCell>
-                      <TableCell
-                        sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
-                      >
-                        {ticket.isStatus === "Pending" ? (
-                          <Button sx={{ color: "orange", textTransform: "lowercase" }}>
-                            Pending
-                          </Button>
-                        ) : ticket.isStatus === "Resolved" ? (
-                          <Button sx={{ color: "green", textTransform: "lowercase" }}>
-                            Resolved
-                          </Button>
-                        ) : ticket.isStatus === "Rejected" ? (
-                          <Button sx={{ color: "red", textTransform: "lowercase" }}>
-                            Rejected
-                          </Button>
-                        ) : (
-                          <Button sx={{ color: "gray", textTransform: "lowercase" }}>
-                            Unknown Status
-                          </Button> // Optional: Handle unexpected statuses
-                        )}
-                      </TableCell>
-
-                      {/* <TableCell
-                        sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
-                      >
-                        <IconButton
-                          color="primary"
-                          component={Link}
-                          onClick={() => handleViewTicket(ticket._id)}
+                      <TableCell sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}>
+                        <Button
+                          sx={{ 
+                            color: ticket.isStatus === "Pending" ? "orange" : 
+                                  ticket.isStatus === "Resolved" ? "green" : 
+                                  ticket.isStatus === "Rejected" ? "red" : "gray", 
+                            textTransform: "lowercase" 
+                          }}
                         >
-                          <VisibilityIcon />
-                        </IconButton>
-                      </TableCell> */}
+                          {ticket.isStatus}
+                        </Button>
+                      </TableCell>
                     </TableRow>
                   );
                 })
@@ -348,6 +239,7 @@ const ViewAll = () => {
             color="primary"
             onClick={() => handlePageChange("next")}
             disabled={endIndex >= filteredTickets.length}
+            sx={{ marginLeft: 2 }}
           >
             Next
           </Button>

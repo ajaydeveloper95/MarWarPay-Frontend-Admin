@@ -245,7 +245,7 @@ const AddMembers = () => {
                   label="Member Type"
                 >
                   <MenuItem value="Users">User</MenuItem>
-                  <MenuItem value="Users">Manager</MenuItem>
+                  <MenuItem value="Manages">Manager</MenuItem>
                 </Select>
               </FormControl>
             </Grid>

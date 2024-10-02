@@ -342,7 +342,7 @@ const ViewAllMembers = () => {
                       <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
                       >
-                        {user.userName}
+                        {user.fullName}
                       </TableCell>
                       <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}

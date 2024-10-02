@@ -53,6 +53,8 @@ const Qr = () => {
   const [dialogMessage, setDialogMessage] = useState("");
   const [dialogSeverity, setDialogSeverity] = useState("info");
   const [userList, setUserList] = useState([]);
+  const [qrDialogOpen, setQrDialogOpen] = useState(false);
+  const [qrData, setQrData] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -142,6 +144,22 @@ const Qr = () => {
 
   const handleDialogClose = () => {
     setDialogOpen(false);
+  };
+
+  const handleQrClick = (qr) => {
+    if (qr) {
+      setQrData(qr);
+      setQrDialogOpen(true);
+    } else {
+      setDialogMessage("No QR code available for this transaction.");
+      setDialogSeverity("info");
+      setDialogOpen(true);
+    }
+  };
+
+  const handleQrDialogClose = () => {
+    setQrDialogOpen(false);
+    setQrData(null);
   };
 
   return (
@@ -468,7 +486,10 @@ const Qr = () => {
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
                       >
                         <Button
-                          sx={{ color: "white", background: "lightBlue" }}
+                          variant="contained"
+                          color="info"
+                          onClick={() => handleQrClick(member.qrData)}
+                          sx={{ textTransform: "none" }}
                         >
                           View QR
                         </Button>
@@ -559,6 +580,38 @@ const Qr = () => {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleDialogClose} color="primary">
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+        {/* QR Code Dialog */}
+        <Dialog open={qrDialogOpen} onClose={handleQrDialogClose} maxWidth="sm" fullWidth>
+        <DialogTitle>QR Code</DialogTitle>
+        <DialogContent dividers>
+          {qrData ? (
+            <Box
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
+              flexDirection="column"
+              gap={2}
+            >
+              <img
+                src={qrData} // Assuming qrData is a URL to the QR image
+                alt="QR Code"
+                style={{ maxWidth: "100%", height: "auto" }}
+              />
+              <Typography variant="body1">Scan this QR Code to proceed.</Typography>
+            </Box>
+          ) : (
+            <Typography variant="body1">
+              No QR code available for this transaction.
+            </Typography>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleQrDialogClose} color="primary">
             Close
           </Button>
         </DialogActions>

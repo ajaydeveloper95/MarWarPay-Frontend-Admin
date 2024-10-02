@@ -50,10 +50,10 @@ const Panding = () => {
             Authorization: `Bearer ${ACCESS_TOKEN}`,
           },
         });
-        setData(response.data.data);
-        setLoading(false);
-      } catch (err) {
+        setData(response.data.data || []);
+      }catch (err) {
         setError(err);
+      } finally {
         setLoading(false);
       }
     };
@@ -270,10 +270,8 @@ const Panding = () => {
                       >
                         {rowNumber}
                       </TableCell>
-                      <TableCell
-                        sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
-                      >
-                        {ticket.userInfo.userName}
+                      <TableCell sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}>
+                        {ticket.userInfo ? ticket.userInfo.userName : 'N/A'} {/* Check for userInfo */}
                       </TableCell>
                       <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
