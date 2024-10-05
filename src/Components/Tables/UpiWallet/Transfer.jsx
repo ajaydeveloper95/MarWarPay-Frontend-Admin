@@ -21,6 +21,8 @@ import { useNavigate } from 'react-router-dom';
 import { useSidebar } from '../../../Context/SidebarContext';
 import axios from 'axios';
 import { accessToken, domainBase } from '../../../helpingFile';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css'; // Import Toastify CSS
 
 const API_GET_USERS_ENDPOINT = `${domainBase}apiAdmin/v1/utility/getUserWithWallet`;
 const API_TRANSFER_ENDPOINT = `${domainBase}apiAdmin/v1/wallet/upiToEwallet`; // Updated with your base URL
@@ -33,7 +35,7 @@ const Transfer = () => {
   const [description, setDescription] = useState('');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [data, setData] = useState([]);
-  const [UpdateAmt,setUpdateAmt] = useState("open")
+  const [UpdateAmt, setUpdateAmt] = useState('open');
 
   const navigate = useNavigate();
   const { isSidebarOpen } = useSidebar();
@@ -48,7 +50,7 @@ const Transfer = () => {
         });
         setData(response.data.data);
       } catch (err) {
-        console.log(err)
+        console.log(err);
       }
     };
 
@@ -73,12 +75,7 @@ const Transfer = () => {
 
     // Validate transfer amount
     if (parseFloat(transferAmount) > parseFloat(availableBalance)) {
-      alert('Transfer amount cannot exceed the available balance.');
-      return;
-    }
-
-    if (parseFloat(transferAmount) <= 10) {
-      alert('Transfer amount must be greater than 10.');
+      toast.error('Transfer amount cannot exceed the available balance.'); // Replace alert with toast
       return;
     }
 
@@ -94,15 +91,16 @@ const Transfer = () => {
         }
       );
 
-      setUpdateAmt("done")
+      setUpdateAmt('done');
 
       if (response.status === 200) {
         // Display the success dialog
         setIsDialogOpen(true);
+        toast.success('The amount has been successfully transferred!'); // Add success toast notification
       }
     } catch (err) {
-      alert('An error occurred while processing the transaction.');
-      console.log(err)
+      toast.error('An error occurred while processing the transaction.'); // Replace alert with toast
+      console.log(err);
     }
 
     // Reset form fields
@@ -119,7 +117,6 @@ const Transfer = () => {
   const handleCancel = () => {
     navigate(-1); // Navigate to the previous page
   };
-
 
   return (
     <Container
@@ -149,7 +146,7 @@ const Transfer = () => {
         >
           <ArrowBackIcon />
         </IconButton>
-        <Typography variant="h4" component="h1" gutterBottom sx={{color: 'teal'}}>
+        <Typography variant="h4" component="h1" gutterBottom sx={{ color: 'teal' }}>
           UPI to E-Wallet Transfer
         </Typography>
 
@@ -228,6 +225,8 @@ const Transfer = () => {
             </Button>
           </DialogActions>
         </Dialog>
+
+        <ToastContainer /> {/* Add ToastContainer here */}
       </Box>
     </Container>
   );

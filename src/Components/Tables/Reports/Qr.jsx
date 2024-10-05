@@ -187,7 +187,14 @@ const Qr = () => {
               <Typography variant="h6" sx={{ color: "teal" }}>
                 Total QR generate balance
               </Typography>
-              <Typography>₹ {data.length > 0 ? data.reduce((total, user) => total + user.amount, 0).toLocaleString('en-IN', { minimumFractionDigits: 2 }) : '0.00'}</Typography>
+              <Typography>
+                ₹{" "}
+                {data.length > 0
+                  ? data
+                      .reduce((total, user) => total + user.amount, 0)
+                      .toLocaleString("en-IN", { minimumFractionDigits: 2 })
+                  : "0.00"}
+              </Typography>
             </Box>
           </Grid>
           <Grid item xs={12} md={6}>
@@ -505,18 +512,25 @@ const Qr = () => {
                             color:
                               member.callBackStatus === "Success"
                                 ? "green"
-                                : "red",
+                                : member.callBackStatus === "Failed"
+                                ? "red"
+                                : "orange", // Color for Pending
                             backgroundColor:
                               member.callBackStatus === "Success"
                                 ? "rgba(0, 128, 0, 0.1)"
-                                : "rgba(255, 0, 0, 0.1)",
+                                : member.callBackStatus === "Failed"
+                                ? "rgba(255, 0, 0, 0.1)"
+                                : "rgba(255, 165, 0, 0.1)", // Background for Pending
                             borderRadius: 2,
                             padding: "2px 10px",
                           }}
                         >
                           {member.callBackStatus === "Success"
                             ? "Success"
-                            : "Failed"}
+                            : member.callBackStatus === "Failed"
+                            ? "Failed"
+                            : "Pending"}{" "}
+                          {/* Display Pending when callBackStatus is not Success or Failed */}
                         </Button>
                       </TableCell>
 
@@ -585,8 +599,13 @@ const Qr = () => {
         </DialogActions>
       </Dialog>
 
-        {/* QR Code Dialog */}
-        <Dialog open={qrDialogOpen} onClose={handleQrDialogClose} maxWidth="sm" fullWidth>
+      {/* QR Code Dialog */}
+      <Dialog
+        open={qrDialogOpen}
+        onClose={handleQrDialogClose}
+        maxWidth="sm"
+        fullWidth
+      >
         <DialogTitle>QR Code</DialogTitle>
         <DialogContent dividers>
           {qrData ? (
@@ -602,7 +621,9 @@ const Qr = () => {
                 alt="QR Code"
                 style={{ maxWidth: "100%", height: "auto" }}
               />
-              <Typography variant="body1">Scan this QR Code to proceed.</Typography>
+              <Typography variant="body1">
+                Scan this QR Code to proceed.
+              </Typography>
             </Box>
           ) : (
             <Typography variant="body1">

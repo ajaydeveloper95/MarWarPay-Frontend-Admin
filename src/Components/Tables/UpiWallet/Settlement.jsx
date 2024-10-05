@@ -76,21 +76,21 @@ const Settlement = () => {
         alert("Please select both start and end dates.");
         return;
       }
-  
+
       const startDate = new Date(startDateTime);
       const endDate = new Date(endDateTime);
-  
+
       // Check if start date is greater than end date
       if (startDate >= endDate) {
         alert("Start date cannot be greater than end date.");
         return;
       }
-  
+
       setLoading(true); // Set loading to true before the API call
-  
+
       const formattedStartDate = startDate.toISOString();
       const formattedEndDate = endDate.toISOString();
-  
+
       // API request for settlements based on user selection
       if (dropdownValue) {
         const responseOne = await axios.post(
@@ -105,7 +105,7 @@ const Settlement = () => {
             },
           }
         );
-  
+
         const userSettlement = responseOne.data?.data || [];
         setFilteredTransactions(userSettlement);
       } else {
@@ -122,7 +122,7 @@ const Settlement = () => {
             },
           }
         );
-  
+
         const transactions = responseAll.data?.data?.dataEwallet || [];
         setFilteredTransactions(transactions);
       }
@@ -132,7 +132,13 @@ const Settlement = () => {
       setLoading(false); // Set loading to false after the API call
     }
   };
-  
+
+  const handleReset = () => {
+    setStartDateTime("");
+    setEndDateTime("");
+    setDropdownValue("");
+    setFilteredTransactions([]);
+  };
 
   return (
     <Container
@@ -227,6 +233,16 @@ const Settlement = () => {
               disabled={loading} // Disable button while loading
             >
               Search
+            </Button>
+          </Grid>
+
+          <Grid item xs={12} md={2}>
+            <Button
+              variant="outlined"
+              color="secondary"
+              onClick={handleReset}
+            >
+              Reset
             </Button>
           </Grid>
         </Grid>
