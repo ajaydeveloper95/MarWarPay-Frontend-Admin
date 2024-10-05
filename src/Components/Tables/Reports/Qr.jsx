@@ -444,19 +444,25 @@ const Qr = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {loading ? (
-                  <TableRow>
-                    <TableCell colSpan={6} align="center">
-                      Loading...
-                    </TableCell>
-                  </TableRow>
-                ) : error ? (
-                  <TableRow>
-                    <TableCell colSpan={6} align="center">
-                      Error: {error.message}
-                    </TableCell>
-                  </TableRow>
-                ) : (
+              {loading ? (
+                <TableRow>
+                  <TableCell colSpan={8} align="center">
+                    Loading...
+                  </TableCell>
+                </TableRow>
+              ) : error ? (
+                <TableRow>
+                  <TableCell colSpan={8} align="center">
+                    Error: {error.message}
+                  </TableCell>
+                </TableRow>
+              ) : paginatedMembers.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={8} align="center">
+                    No data available.
+                  </TableCell>
+                </TableRow>
+              ) : (
                   paginatedMembers.map((member, index) => (
                     <TableRow key={member._id}>
                       <TableCell

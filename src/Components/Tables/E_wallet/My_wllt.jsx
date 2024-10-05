@@ -178,15 +178,6 @@ const My_Wllt = () => {
                     border: "1px solid rgba(224, 224, 224, 1)",
                   }}
                 >
-                  Name
-                </TableCell>
-                <TableCell
-                  sx={{
-                    fontWeight: "bold",
-                    fontSize: "16px",
-                    border: "1px solid rgba(224, 224, 224, 1)",
-                  }}
-                >
                   Before Amount
                 </TableCell>
                 <TableCell
@@ -261,11 +252,6 @@ const My_Wllt = () => {
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
                       >
                         {transaction.userInfo.memberId}
-                      </TableCell>
-                      <TableCell
-                        sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
-                      >
-                        {transaction.userInfo.userName}
                       </TableCell>
                       <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}

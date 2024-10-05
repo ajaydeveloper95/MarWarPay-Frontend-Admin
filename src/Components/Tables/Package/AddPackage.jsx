@@ -32,10 +32,10 @@ const AddPackage = () => {
   const [packagePayOutCharge, setPackagePayOutCharge] = useState('');
   const [packagePayInCharge, setPackagePayInCharge] = useState('');
   const [status, setStatus] = useState(true);
-  // const [isDefault, setIsDefault] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [payOutPackages, setPayOutPackages] = useState([]); // State for payout packages
+  const [payOutPackages, setPayOutPackages] = useState([]);
   const [error, setError] = useState(null);
+  const [successMessage, setSuccessMessage] = useState('');
 
   const navigate = useNavigate();
   const { isSidebarOpen } = useSidebar();
@@ -52,7 +52,7 @@ const AddPackage = () => {
         setPayOutPackages(response.data.data);
       } catch (err) {
         console.error('Error fetching payout packages:', err);
-        setError(err);
+        setError('Failed to load payout packages. Please try again later.');
       }
     };
     fetchPayOutPackages();
@@ -62,7 +62,6 @@ const AddPackage = () => {
     event.preventDefault();
 
     try {
-      // Make the POST request to the API endpoint
       await axios.post(API_ENDPOINT, {
         packageName,
         packageInfo,
@@ -75,23 +74,20 @@ const AddPackage = () => {
         },
       });
 
+      setSuccessMessage('The package has been successfully added!'); // Set success message
       setIsDialogOpen(true);
+
       // Reset form fields after a successful POST request
       setPackageName('');
       setPackageInfo('');
       setPackagePayOutCharge('');
       setPackagePayInCharge('');
       setStatus(true);
-      // setIsDefault(false);
-
-      console.log('Data posted successfully!');
     } catch (err) {
       console.error('Error posting data:', err);
-      setError(err);
+      setError('Failed to add package. Please check your input and try again.'); // Set error message
     }
   };
-
-  if (error) return <div>Error: {error.message}</div>;
 
   const handleCloseDialog = () => {
     setIsDialogOpen(false);
@@ -133,6 +129,12 @@ const AddPackage = () => {
         <Typography variant="h4" component="h1" gutterBottom sx={{ color: 'teal' }}>
           Add Package
         </Typography>
+
+        {error && (
+          <Typography variant="body1" color="error" sx={{ marginBottom: 2 }}>
+            {error}
+          </Typography>
+        )}
 
         <form onSubmit={handleSubmit} noValidate autoComplete="off">
           <Grid container spacing={2}>
@@ -196,18 +198,6 @@ const AddPackage = () => {
                 </Select>
               </FormControl>
             </Grid>
-            {/* <Grid item xs={12}>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={isDefault}
-                    onChange={(e) => setIsDefault(e.target.checked)}
-                    color="primary"
-                  />
-                }
-                label="Is Default?"
-              />
-            </Grid> */}
 
             <Grid item xs={12} display="flex" justifyContent="flex-end" spacing={1}>
               <Button type="submit" variant="contained" color="primary" sx={{ mr: 2, background: 'teal' }}>
@@ -225,7 +215,7 @@ const AddPackage = () => {
           <DialogTitle>Success</DialogTitle>
           <DialogContent>
             <Typography>
-              The package has been successfully added!
+              {successMessage}
             </Typography>
           </DialogContent>
           <DialogActions>

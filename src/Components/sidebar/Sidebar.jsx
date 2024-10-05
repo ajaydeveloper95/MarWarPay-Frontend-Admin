@@ -4,7 +4,6 @@ import { useSidebar } from "../../Context/SidebarContext";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import SettingsIcon from "@mui/icons-material/Settings";
 import NotificationsIcon from "@mui/icons-material/Notifications";
-import Brightness4Icon from "@mui/icons-material/Brightness4";
 import axios from "axios";
 import { domainBase } from "../../helpingFile";
 
@@ -14,7 +13,7 @@ const Sidebar = () => {
   const { isSidebarOpen, toggleSidebar } = useSidebar();
   const [isDropdownOpen, setIsDropdownOpen] = useState({});
   const [profileMenuVisible, setProfileMenuVisible] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isDarkMode] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation(); // Get the current location
@@ -23,11 +22,6 @@ const Sidebar = () => {
   // Function to toggle the profile menu
   const handleProfileClick = () => {
     setProfileMenuVisible((prev) => !prev);
-  };
-
-  // Toggle dark mode
-  const toggleTheme = () => {
-    setIsDarkMode((prevMode) => !prevMode);
   };
 
   // Function to toggle dropdown menus
@@ -123,12 +117,6 @@ const Sidebar = () => {
             }`}
             onClick={() => console.log("Notification Clicked")} // Replace with actual notification handler
           />
-          <Brightness4Icon
-            className={`cursor-pointer text-4xl ${
-              isDarkMode ? "text-yellow-400" : "text-gray-800"
-            }`}
-            onClick={toggleTheme}
-          />
           <div className="relative">
             <span
               className={`material-icons mt-2 text-4xl cursor-pointer ${
@@ -140,18 +128,6 @@ const Sidebar = () => {
             </span>
             {profileMenuVisible ? (
             <div ref={profileMenuRef}  className={`absolute top-12 right-0 ${isDarkMode ? "bg-gray-700 text-white" : "bg-white text-gray-800"} shadow-lg border border-gray-200 rounded-lg`}>
-                {/* <Link
-                  to="/updateProfile"
-                  className="block px-4 py-2"
-                >
-                  Profile
-                </Link>
-                <Link
-                  to="/settings"
-                  className="block px-4 py-2 "
-                >
-                  Settings
-                </Link> */}
                 <button
                   onClick={handleLogoutClick}
                   className="block px-4 py-2 w-full text-left "
@@ -298,11 +274,6 @@ const Sidebar = () => {
                         Payin Report
                       </Link>
                     </li>
-                    {/* <li>
-                      <Link to="/report/balance" className="flex items-center px-4 py-2 text-gray-800 hover:bg-gray-100">
-                        Balance
-                      </Link>
-                    </li> */}
                   </ul>
                 </div>
               )}
@@ -397,14 +368,6 @@ const Sidebar = () => {
                         My Wallet
                       </Link>
                     </li>
-                    {/* <li>
-                      <Link
-                        to="/ewallet-management/member-wallet"
-                        className="flex items-center px-4 py-2"
-                      >
-                        Member Wallet
-                      </Link>
-                    </li> */}
                     <li>
                       <Link
                         to="/ewallet-management/credit-fund"

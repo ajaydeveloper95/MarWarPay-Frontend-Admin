@@ -164,19 +164,25 @@ const MemberWlt = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {loading ? (
-                  <TableRow>
-                    <TableCell colSpan={9} align="center">
-                      Loading...
-                    </TableCell>
-                  </TableRow>
-                ) : error ? (
-                  <TableRow>
-                    <TableCell colSpan={9} align="center">
-                      Error: {error.message}
-                    </TableCell>
-                  </TableRow>
-                ) : (
+              {loading ? (
+                <TableRow>
+                  <TableCell colSpan={8} align="center">
+                    Loading...
+                  </TableCell>
+                </TableRow>
+              ) : error ? (
+                <TableRow>
+                  <TableCell colSpan={8} align="center">
+                    Error: {error.message}
+                  </TableCell>
+                </TableRow>
+              ) : paginatedMembers.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={8} align="center">
+                    No data available.
+                  </TableCell>
+                </TableRow>
+              ) : (
                   paginatedMembers.map((member, index) => (
                     <TableRow key={member._id}>
                       <TableCell sx={{ border: '1px solid rgba(224, 224, 224, 1)' }}>{startIndex + index + 1}</TableCell>
