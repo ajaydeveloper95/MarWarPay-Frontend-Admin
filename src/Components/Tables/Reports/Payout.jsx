@@ -279,7 +279,7 @@ const Payout = () => {
               ) : error ? (
                 <TableRow>
                   <TableCell colSpan={10} align="center">
-                    Error: {error.message}
+                  No data available
                   </TableCell>
                 </TableRow>
               ) : filteredData.length === 0 ? (

@@ -165,21 +165,21 @@ const AllPayout = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {loading ? (
+            {loading ? (
                 <TableRow>
-                  <TableCell colSpan={5} align="center">
+                  <TableCell colSpan={8} align="center">
                     Loading...
                   </TableCell>
                 </TableRow>
               ) : error ? (
                 <TableRow>
-                  <TableCell colSpan={5} align="center">
-                    Error: {error.message}
+                  <TableCell colSpan={8} align="center">
+                  No data available.
                   </TableCell>
                 </TableRow>
               ) : data.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={5} align="center">
+                  <TableCell colSpan={8} align="center">
                     No data available.
                   </TableCell>
                 </TableRow>

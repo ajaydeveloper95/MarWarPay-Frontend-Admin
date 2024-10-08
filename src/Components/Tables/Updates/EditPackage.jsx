@@ -208,7 +208,7 @@ const EditPackage = () => {
         }}
       >
         <Typography variant="h6" color="error">
-          {error.message}
+        No data available
         </Typography>
         <Button
           variant="contained"

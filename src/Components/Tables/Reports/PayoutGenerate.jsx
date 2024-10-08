@@ -276,7 +276,7 @@ const PayoutGenerate = () => {
               ) : error ? (
                 <TableRow>
                   <TableCell colSpan={8} align="center">
-                    Error: {error.message}
+                  No data available
                   </TableCell>
                 </TableRow>
               ) : paginatedData.length === 0 ? (

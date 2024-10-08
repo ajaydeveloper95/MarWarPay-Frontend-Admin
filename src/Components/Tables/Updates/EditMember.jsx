@@ -258,7 +258,7 @@ const EditMember = () => {
                 fullWidth
                 value={userData.EwalletBalance || "0"}
                 InputProps={{
-                  readOnly: true, // Make the field read-only
+                  readOnly: true, 
                 }}
               />
             </Grid>
@@ -270,7 +270,7 @@ const EditMember = () => {
                 fullWidth
                 value={userData.upiWalletBalance || "0"}
                 InputProps={{
-                  readOnly: true, // Make the field read-only
+                  readOnly: true,
                 }}
               />
             </Grid>

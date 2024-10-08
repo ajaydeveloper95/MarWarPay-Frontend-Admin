@@ -237,6 +237,7 @@ const My_Wllt = () => {
               </TableRow>
             </TableHead>
             <TableBody>
+              
               {paginatedData.length > 0 ? (
                 paginatedData.map((transaction, index) => {
                   const rowNumber = startIndex + index + 1;

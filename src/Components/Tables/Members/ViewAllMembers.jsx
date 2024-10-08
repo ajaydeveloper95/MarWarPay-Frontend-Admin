@@ -314,19 +314,25 @@ const ViewAllMembers = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {loading ? (
-                  <TableRow>
-                    <TableCell colSpan={6} align="center">
-                      Loading...
-                    </TableCell>
-                  </TableRow>
-                ) : error ? (
-                  <TableRow>
-                    <TableCell colSpan={6} align="center">
-                      Error: {error.message}
-                    </TableCell>
-                  </TableRow>
-                ) : (
+              {loading ? (
+                <TableRow>
+                  <TableCell colSpan={8} align="center">
+                    Loading...
+                  </TableCell>
+                </TableRow>
+              ) : error ? (
+                <TableRow>
+                  <TableCell colSpan={8} align="center">
+                  No data available.
+                  </TableCell>
+                </TableRow>
+              ) : paginatedUsers.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={8} align="center">
+                    No data available.
+                  </TableCell>
+                </TableRow>
+              ) : (
                   paginatedUsers.map((user, index) => (
                     <TableRow key={user._id}>
                       <TableCell

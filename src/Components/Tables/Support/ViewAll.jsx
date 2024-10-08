@@ -180,7 +180,7 @@ const ViewAll = () => {
               ) : error ? (
                 <TableRow>
                   <TableCell colSpan={7} align="center">
-                    Error: {error.message}
+                  No data available
                   </TableCell>
                 </TableRow>
               ) : filteredTickets.length === 0 ? (

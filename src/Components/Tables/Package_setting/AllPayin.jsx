@@ -238,7 +238,7 @@ const AllPayin = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {loading ? (
+            {loading ? (
                 <TableRow>
                   <TableCell colSpan={8} align="center">
                     Loading...
@@ -247,7 +247,13 @@ const AllPayin = () => {
               ) : error ? (
                 <TableRow>
                   <TableCell colSpan={8} align="center">
-                    Error: {error.message}
+                  No data available.
+                  </TableCell>
+                </TableRow>
+              ) : paginatedMembers.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={8} align="center">
+                    No data available.
                   </TableCell>
                 </TableRow>
               ) : (

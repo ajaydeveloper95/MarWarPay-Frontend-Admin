@@ -305,24 +305,24 @@ const MemberWllt = () => {
             </TableHead>
             <TableBody>
             {loading ? (
-                  <TableRow>
-                    <TableCell colSpan={10} align="center">
-                      Loading...
-                    </TableCell>
-                  </TableRow>
-                ) : error ? (
-                  <TableRow>
-                    <TableCell colSpan={10} align="center">
-                      Error loading data
-                    </TableCell>
-                  </TableRow>
-                ) : paginatedData.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={10} align="center">
-                      No records found
-                    </TableCell>
-                  </TableRow>
-                ) : (
+                <TableRow>
+                  <TableCell colSpan={8} align="center">
+                    Loading...
+                  </TableCell>
+                </TableRow>
+              ) : error ? (
+                <TableRow>
+                  <TableCell colSpan={8} align="center">
+                  No data available.
+                  </TableCell>
+                </TableRow>
+              ) : paginatedData.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={8} align="center">
+                    No data available.
+                  </TableCell>
+                </TableRow>
+              ) : (
               paginatedData.map((transaction, index) => {
                 const rowNumber = startIndex + index + 1;
 

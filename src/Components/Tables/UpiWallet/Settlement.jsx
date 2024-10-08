@@ -39,6 +39,7 @@ const Settlement = () => {
   const [userList, setUserList] = useState([]);
   const [dropdownValue, setDropdownValue] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState()
   const { isSidebarOpen } = useSidebar();
   const navigate = useNavigate();
 
@@ -52,7 +53,7 @@ const Settlement = () => {
         });
         setUserList(response.data.data);
       } catch (err) {
-        console.error("Error fetching user list:", err);
+        setError(err)
       }
     };
     fetchUserList();
@@ -299,19 +300,25 @@ const Settlement = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {loading ? (
-                  <TableRow>
-                    <TableCell colSpan={3} align="center">
-                      Loading...
-                    </TableCell>
-                  </TableRow>
-                ) : filteredTransactions.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={3} align="center">
-                      No Data Available
-                    </TableCell>
-                  </TableRow>
-                ) : (
+              {loading ? (
+                <TableRow>
+                  <TableCell colSpan={8} align="center">
+                    Loading...
+                  </TableCell>
+                </TableRow>
+              ) : error ? (
+                <TableRow>
+                  <TableCell colSpan={8} align="center">
+                  No data available.
+                  </TableCell>
+                </TableRow>
+              ) : filteredTransactions.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={8} align="center">
+                    No data available.
+                  </TableCell>
+                </TableRow>
+              ) : (
                   filteredTransactions.map((transaction, index) => (
                     <TableRow key={transaction._id}>
                       <TableCell
