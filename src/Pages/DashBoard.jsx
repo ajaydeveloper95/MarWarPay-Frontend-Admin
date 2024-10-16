@@ -13,11 +13,12 @@ function DashBoard() {
 
   return (
     <>
-      <Typography
+    <div className="dashboard-background">
+    <Typography
         variant="h4"
         sx={{
           textAlign: "center",
-          marginTop: "8%",
+          marginTop: "7%",
           marginLeft: isSidebarOpen ? "16rem" : "10rem",
           minWidth: "600px",
           maxWidth: "80%",
@@ -48,11 +49,13 @@ function DashBoard() {
       >
         <Total_Blnc />
         <DashUtilitys />
-        <WlltSummary />
         <MnyTransfer />
+        <WlltSummary />
         <DistributeSmy />
         <ApiSummary />
       </Box>
+    </div>
+     
     </>
   );
 }

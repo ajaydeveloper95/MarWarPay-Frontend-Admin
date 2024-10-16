@@ -98,7 +98,10 @@ const Sidebar = () => {
         }`}
         style={{
           width: isSidebarOpen ? "calc(100% - 15.5rem)" : "100%",
-        }}
+          background: isDarkMode
+          ? "bg-gray-600"
+          : "linear-gradient(to right, #d6f5f5, #b3e6ff, #ffffff, #e6ffe6)", // Apply gradient background
+      }}
       >
          <button
             onClick={toggleSidebar}
