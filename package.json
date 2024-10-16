@@ -20,7 +20,7 @@
     "@mui/x-date-pickers-pro": "^7.15.0",
     "autoprefixer": "^10.4.20",
     "axios": "^1.7.7",
-    "chart.js": "^4.4.4",
+    "chart.js": "^4.4.5",
     "dayjs": "^1.11.13",
     "postcss": "^8.4.41",
     "react": "^18.3.1",

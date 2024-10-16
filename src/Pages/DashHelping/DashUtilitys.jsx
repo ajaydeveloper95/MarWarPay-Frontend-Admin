@@ -1,9 +1,6 @@
 import { useEffect, useState } from 'react';
-import { Grid, Box, Typography } from '@mui/material';
-import SupervisorAccountIcon from '@mui/icons-material/SupervisorAccount';
-import PersonIcon from '@mui/icons-material/Person';
-import GroupIcon from '@mui/icons-material/Group';
-import ApiIcon from '@mui/icons-material/Api';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, LabelList } from 'recharts';
+import { Box } from '@mui/material';
 import axios from 'axios';
 import { domainBase, accessToken } from '../../helpingFile';
 
@@ -20,180 +17,60 @@ function DashUtilities() {
   const [totalMembers, setTotalMembers] = useState(0);
 
   useEffect(() => {
-    // Fetch total users from API
-    const fetchTotalUsers = async () => {
+    const fetchData = async () => {
       try {
-        const response = await axios.get(API_GET_USERS_ENDPOINT, {
-          headers: {
-            Authorization: `Bearer ${ACCESS_TOKEN}`,
-          },
-        });
-        if (response.status === 200) {
-          setTotalUsers(response.data.data.length);
-        }
+        const [usersResponse, packagesResponse, ticketsResponse, membersResponse] = await Promise.all([
+          axios.get(API_GET_USERS_ENDPOINT, { headers: { Authorization: `Bearer ${ACCESS_TOKEN}` } }),
+          axios.get(API_GET_PACKAGES_ENDPOINT, { headers: { Authorization: `Bearer ${ACCESS_TOKEN}` } }),
+          axios.get(API_GET_PENDING_TICKETS_ENDPOINT, { headers: { Authorization: `Bearer ${ACCESS_TOKEN}` } }),
+          axios.get(API_GET_ALL_MEMBERS_ENDPOINT, { headers: { Authorization: `Bearer ${ACCESS_TOKEN}` } }),
+        ]);
+
+        setTotalUsers(usersResponse.data.data.length);
+        setTotalPackages(packagesResponse.data.data.length);
+        setPendingTickets(ticketsResponse.data.data.length);
+        setTotalMembers(membersResponse.data.data.length);
       } catch (error) {
-        console.error('Error fetching total users:', error);
+        console.error('Error fetching data:', error);
       }
     };
 
-    const fetchTotalMembers = async () => {
-      try {
-        const response = await axios.get(API_GET_ALL_MEMBERS_ENDPOINT, {
-          headers: {
-            Authorization: `Bearer ${ACCESS_TOKEN}`,
-          },
-        });
-        if (response.status === 200) {
-          setTotalMembers(response.data.data.length);
-        }
-      } catch (error) {
-        console.error('Error fetching total members:', error);
-      }
-    };
-
-    // Fetch total packages from API
-    const fetchTotalPackages = async () => {
-      try {
-        const response = await axios.get(API_GET_PACKAGES_ENDPOINT, {
-          headers: {
-            Authorization: `Bearer ${ACCESS_TOKEN}`,
-          },
-        });
-        if (response.status === 200) {
-          setTotalPackages(response.data.data.length);
-        }
-      } catch (error) {
-        console.error('Error fetching total packages:', error);
-      }
-    };
-
-    // Fetch pending tickets from API
-    const fetchPendingTickets = async () => {
-      try {
-        const response = await axios.get(API_GET_PENDING_TICKETS_ENDPOINT, {
-          headers: {
-            Authorization: `Bearer ${ACCESS_TOKEN}`,
-          },
-        });
-        if (response.status === 200) {
-          // Set pendingTickets to the length of the data array
-          setPendingTickets(response.data.data.length);
-        }
-      } catch (error) {
-        console.error('Error fetching pending tickets:', error);
-      }
-    };
-
-    fetchTotalUsers();
-    fetchTotalPackages();
-    fetchPendingTickets();
-    fetchTotalMembers();
+    fetchData();
   }, []);
 
-  const boxStyles = {
-    width: '210px',
-    height: '200px',
-    p: 2,
-    borderRadius: 2,
-    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    textAlign: 'center',
-    // mx: 'auto',
-    position: 'relative',
-    overflow: 'hidden',
-    transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-    '&:hover': {
-      transform: 'scale(1.1)',
-      boxShadow: '0 8px 16px rgba(0, 0, 0, 0.3)',
-    },
-    '&:before': {
-      content: '""',
-      position: 'absolute',
-      top: '50%',
-      left: '50%',
-      width: '300%',
-      height: '300%',
-      background: 'rgba(255, 255, 255, 0.2)',
-      borderRadius: '50%',
-      transform: 'translate(-50%, -50%)',
-      transition: 'opacity 0.3s ease',
-      opacity: 0,
-    },
-    '&:hover:before': {
-      opacity: 1,
-    },
-  };
-
-  const iconContainerStyles = {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#00796B',
-    borderRadius: '50%',
-    width: '50px',
-    height: '50px',
-    // mb: 2,
-    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.4)',
-    transition: 'background-color 0.3s ease, box-shadow 0.3s ease',
-    '&:hover': {
-      backgroundColor: '#004D40',
-      boxShadow: '0 6px 12px rgba(0, 0, 0, 0.5)',
-    },
-  };
-
-  const dataItems = [
-    {
-      label: 'Total Members',
-      count: totalMembers, // Assuming you will update this value later
-      icon: <SupervisorAccountIcon sx={{ fontSize: 20, color: 'white' }} />,
-      background: 'linear-gradient(135deg, #E0F7FA, #80DEEA)',
-    },
-    {
-      label: 'Total Users',
-      count: totalUsers,
-      icon: <PersonIcon sx={{ fontSize: 20, color: 'white' }} />,
-      background: 'linear-gradient(135deg, #FFF9C4, #FBC02D)',
-    },
-    {
-      label: 'Pending Tickets',
-      count: pendingTickets,
-      icon: <GroupIcon sx={{ fontSize: 20, color: 'white' }} />,
-      background: 'linear-gradient(135deg, #E1BEE7, #CE93D8)',
-    },
-    {
-      label: 'Total Packages',
-      count: totalPackages,
-      icon: <ApiIcon sx={{ fontSize: 20, color: 'white' }} />,
-      background: 'linear-gradient(135deg, #CFD8DC, #B0BEC5)',
-    },
+  // Prepare the data array
+  const data = [
+    { name: 'Total Members', value: totalMembers },
+    { name: 'Total Users', value: totalUsers },
+    { name: 'Pending Tickets', value: pendingTickets },
+    { name: 'Total Packages', value: totalPackages },
   ];
 
+  // Single color for all bars
+  const barColor = '#4BC0C0'; // Change this to your desired color
+
   return (
-    <Grid container spacing={6} marginTop={1}>
-      {dataItems.map((item, index) => (
-        <Grid item xs={12} md={3} key={index}>
-          <Box
-            sx={{
-              ...boxStyles,
-              // m:1,
-              background: item.background, // Set gradient background from item
-            }}
-          >
-            <Box sx={iconContainerStyles}>{item.icon}</Box>
-            <Typography variant="h6" sx={{ color: '#004D40', fontWeight: 'bold', mt: 1 }}>
-              {item.label}
-            </Typography>
-            <Typography sx={{ color: '#004D40', fontSize: '1.5rem', fontWeight: 'bold' }}>
-              {item.count}
-            </Typography>
-          </Box>
-        </Grid>
-      ))}
-    </Grid>
+    <Box className="box-container"
+      sx={{ p: 3, borderRadius: 2, backgroundColor: "background.paper" }}>
+      <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+        <BarChart
+          width={1200}
+          height={400}
+          data={data}
+          margin={{ top: 20, bottom: 5 }}
+        >
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Tooltip />
+          <Legend />
+          <Bar dataKey="value" fill={barColor}>
+            {/* Adding LabelList to show values above the bars */}
+            <LabelList dataKey="value" position="top" style={{ fill: '#000', fontWeight: 'bold' }} />
+          </Bar>
+        </BarChart>
+      </Box>
+    </Box>
   );
 }
 
