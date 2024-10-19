@@ -31,52 +31,52 @@ const Login = () => {
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const navigate = useNavigate();
 
-  const handleLogin = async (event) => {
+  const handleLogin = (event) => {
     event.preventDefault();
-
-    try {
-      const response = await axios.post(API_ENDPOINT, {
+  
+    axios
+      .post(API_ENDPOINT, {
         username,
         password,
-      });
-
-      // Extract tokens from response data
-      const { accessToken, refreshToken } = response.data.data;
-      
-
-      if (accessToken && refreshToken) {
-        // Save tokens or user data if needed
-        localStorage.setItem("accessToken", accessToken);
-        localStorage.setItem("refreshToken", refreshToken);
-
-        if (rememberMe) {
-          // Save the expiration time for 24 hours
-          const expirationTime = new Date().getTime() + 24 * 60 * 60 * 1000;
-          localStorage.setItem("expirationTime", expirationTime);
+      })
+      .then((response) => {
+        // Extract tokens from response data
+        const { accessToken, refreshToken } = response.data.data;
+  
+        if (accessToken && refreshToken) {
+          // Save tokens or user data if needed
+          localStorage.setItem("accessToken", accessToken);
+          localStorage.setItem("refreshToken", refreshToken);
+  
+          if (rememberMe) {
+            // Save the expiration time for 24 hours
+            const expirationTime = new Date().getTime() + 24 * 60 * 60 * 1000;
+            localStorage.setItem("expirationTime", expirationTime);
+          } else {
+            // Save a shorter expiration time if "Remember me" is not checked
+            const expirationTime = new Date().getTime() + 60 * 60 * 1000;
+            localStorage.setItem("expirationTime", expirationTime);
+          }
+  
+          // Show success message
+          setSnackbarMessage("Login successful!");
+          setOpenSnackbar(true);
+  
+          // Redirect to homepage/dashboard after a short delay
+          setTimeout(() => {
+            navigate("/dashboard");
+          }, 2000);
         } else {
-          // Save a shorter expiration time if "Remember me" is not checked
-          const expirationTime = new Date().getTime() + 60 * 60 * 1000;
-          localStorage.setItem("expirationTime", expirationTime);
+          throw new Error("Access token or refresh token is missing in response.");
         }
-
-        // Show success message
-        setSnackbarMessage("Login successful!");
+      })
+      .catch((err) => {
+        console.error("Login error:", err);
+        setSnackbarMessage("Login failed. Please try again.");
         setOpenSnackbar(true);
-
-        // Redirect to homepage/dashboard after a short delay
-        setTimeout(() => {
-          navigate("/dashboard");
-        }, 2000);
-      } else {
-        throw new Error("Access token or refresh token is missing in response.");
-      }
-
-    } catch (err) {
-      console.error("Login error:", err);
-      setSnackbarMessage("Login failed. Please try again.");
-      setOpenSnackbar(true);
-    }
+      });
   };
+  
 
   const handleCloseSnackbar = () => {
     setOpenSnackbar(false);
