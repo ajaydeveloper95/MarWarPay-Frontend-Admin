@@ -33,6 +33,8 @@ import Dr from './Components/Tables/E_wallet/Dr';
 import AllPayout from './Components/Tables/Package_setting/AllPayout';
 import UpdatePayout from './Components/Tables/Package_setting/UpdatePayout';
 import Settlement from './Components/Tables/UpiWallet/Settlement';
+import PayoutSW from './Components/Tables/SwitchingAPI/PayoutSW';
+import PayinSW from './Components/Tables/SwitchingAPI/PayinSW';
 
 function App() {
   return (
@@ -97,6 +99,10 @@ function App() {
 
                     {/* Settings route */}
                     <Route path="settings/payoutCharge" element={<PayoutCharge />} />
+
+                     {/* Api Switching routes */}
+                     <Route path="/main-setting/payout-switch" element={<PayoutSW />} />
+                    <Route path="/main-setting/payin-switch" element={<PayinSW />} />
                   </Routes>
                   <Footer />
                 </>

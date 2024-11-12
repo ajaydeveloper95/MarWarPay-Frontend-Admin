@@ -73,7 +73,10 @@ const Sidebar = () => {
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (profileMenuRef.current && !profileMenuRef.current.contains(event.target)) {
+      if (
+        profileMenuRef.current &&
+        !profileMenuRef.current.contains(event.target)
+      ) {
         setProfileMenuVisible(false);
       }
     };
@@ -99,20 +102,20 @@ const Sidebar = () => {
         style={{
           width: isSidebarOpen ? "calc(100% - 15.5rem)" : "100%",
           background: isDarkMode
-          ? "bg-gray-600"
-          : "linear-gradient(to right, #d6f5f5, #b3e6ff, #ffffff, #e6ffe6)", // Apply gradient background
-      }}
+            ? "bg-gray-600"
+            : "linear-gradient(to right, #d6f5f5, #b3e6ff, #ffffff, #e6ffe6)", // Apply gradient background
+        }}
       >
-         <button
-            onClick={toggleSidebar}
-            className={`text-white ${
-              isSidebarOpen ? "bg-gray-600" : "bg-gray-900"
-            } rounded-full`}
-          >
-            <span className="material-icons text-gray-100 p-1">
-              {isSidebarOpen ? "chevron_left" : "menu"}
-            </span>
-          </button>
+        <button
+          onClick={toggleSidebar}
+          className={`text-white ${
+            isSidebarOpen ? "bg-gray-600" : "bg-gray-900"
+          } rounded-full`}
+        >
+          <span className="material-icons text-gray-100 p-1">
+            {isSidebarOpen ? "chevron_left" : "menu"}
+          </span>
+        </button>
         <div className="flex items-center space-x-4">
           <NotificationsIcon
             className={`cursor-pointer text-4xl ${
@@ -130,7 +133,14 @@ const Sidebar = () => {
               account_circle
             </span>
             {profileMenuVisible ? (
-            <div ref={profileMenuRef}  className={`absolute top-12 right-0 ${isDarkMode ? "bg-gray-700 text-white" : "bg-white text-gray-800"} shadow-lg border border-gray-200 rounded-lg`}>
+              <div
+                ref={profileMenuRef}
+                className={`absolute top-12 right-0 ${
+                  isDarkMode
+                    ? "bg-gray-700 text-white"
+                    : "bg-white text-gray-800"
+                } shadow-lg border border-gray-200 rounded-lg`}
+              >
                 <button
                   onClick={handleLogoutClick}
                   className="block px-4 py-2 w-full text-left "
@@ -138,9 +148,8 @@ const Sidebar = () => {
                   Logout
                 </button>
               </div>
-            ) : null }
+            ) : null}
           </div>
-         
         </div>
       </div>
 
@@ -151,17 +160,20 @@ const Sidebar = () => {
         } w-50 z-40 overflow-y-auto ${
           isDarkMode ? "bg-gray-600 text-white" : " text-gray-800"
         }`}
-        style={{ borderRight: isDarkMode ? "1px solid #4b4b4b" : "1px solid #e0e0e0" }}
+        style={{
+          borderRight: isDarkMode ? "1px solid #4b4b4b" : "1px solid #e0e0e0",
+        }}
       >
         <div className="flex-1 mt-10">
           <ul className="space-y-2">
-          <img src="/logo.png" alt="Logo" className={`h-30 mt-3 mb-5 ${isDarkMode ? "invert" : ""}`} />
+            <img
+              src="/logo.png"
+              alt="Logo"
+              className={`h-30 mt-3 mb-5 ${isDarkMode ? "invert" : ""}`}
+            />
             {/* Dashboard */}
             <li>
-              <Link
-                to="/dashboard"
-                className="flex items-center px-4 py-2 "
-              >
+              <Link to="/dashboard" className="flex items-center px-4 py-2 ">
                 <span
                   className={`material-icons mr-2 ${
                     !isSidebarOpen && "text-sm"
@@ -214,7 +226,6 @@ const Sidebar = () => {
                         View All Member
                       </Link>
                     </li>
-                    
                   </ul>
                 </div>
               )}
@@ -441,54 +452,52 @@ const Sidebar = () => {
             </li>
 
             {/* Package Settings Section with Dropdown */}
-<li>
-  <button
-    onClick={() => toggleDropdown("package-settings")}
-    className="flex items-center px-4 py-2 w-full text-left"
-  >
-    <span
-      className={`material-icons mr-2 ${
-        !isSidebarOpen && "text-sm"
-      }`}
-    >
-      settings
-    </span>
-    {isSidebarOpen && "Package Settings"}
-    <span
-      className={`material-icons ml-auto transition-transform ${
-        isDropdownOpen["package-settings"]
-          ? "rotate-180"
-          : "rotate-0"
-      }`}
-    >
-      arrow_drop_down
-    </span>
-  </button>
-  {isDropdownOpen["package-settings"] && isSidebarOpen && (
-    <div className="m-5">
-      <ul className="pl-6 list-disc">
-        <li>
-          <Link
-            // to="/package/settings/payin"
-            className="flex items-center px-4 py-2"
-          >
-            Paying
-          </Link>
-        </li>
-        <li>
-          <Link
-            to="/package/settings/payout"
-            className="flex items-center px-4 py-2"
-          >
-           Payout
-          </Link>
-        </li>
-       
-      </ul>
-    </div>
-  )}
-</li>
-
+            <li>
+              <button
+                onClick={() => toggleDropdown("package-settings")}
+                className="flex items-center px-4 py-2 w-full text-left"
+              >
+                <span
+                  className={`material-icons mr-2 ${
+                    !isSidebarOpen && "text-sm"
+                  }`}
+                >
+                  settings
+                </span>
+                {isSidebarOpen && "Package Settings"}
+                <span
+                  className={`material-icons ml-auto transition-transform ${
+                    isDropdownOpen["package-settings"]
+                      ? "rotate-180"
+                      : "rotate-0"
+                  }`}
+                >
+                  arrow_drop_down
+                </span>
+              </button>
+              {isDropdownOpen["package-settings"] && isSidebarOpen && (
+                <div className="m-5">
+                  <ul className="pl-6 list-disc">
+                    <li>
+                      <Link
+                        // to="/package/settings/payin"
+                        className="flex items-center px-4 py-2"
+                      >
+                        Paying
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        to="/package/settings/payout"
+                        className="flex items-center px-4 py-2"
+                      >
+                        Payout
+                      </Link>
+                    </li>
+                  </ul>
+                </div>
+              )}
+            </li>
 
             {/* support Section with Dropdown */}
             <li>
@@ -541,19 +550,47 @@ const Sidebar = () => {
               <button
                 onClick={() => toggleDropdown("main-setting")}
                 className="flex items-center px-4 py-2 w-full text-left"
+                aria-expanded={isDropdownOpen["main-setting"]}
               >
+                {/* Main Setting Icon */}
                 <SettingsIcon
-                  className={`mr-2 ${
-                    !isSidebarOpen && "text-sm"
-                  }`}
+                  className={`mr-2 ${!isSidebarOpen && "text-sm"}`}
                 />
-                {isSidebarOpen && "Main Setting"}
+                {/* Main Setting Label shown only when sidebar is open */}
+                {isSidebarOpen && <span>Main Setting</span>}
+                {/* Dropdown Arrow with rotation effect */}
                 <ArrowDropDownIcon
                   className={`ml-auto transition-transform ${
                     isDropdownOpen["main-setting"] ? "rotate-180" : "rotate-0"
                   }`}
                 />
               </button>
+
+              {/* Dropdown items, visible only when dropdown and sidebar are open */}
+              {isDropdownOpen["main-setting"] && isSidebarOpen && (
+                <div className="ml-5">
+                  <ul className="pl-6 list-disc">
+                    {/* Payout Switch Link */}
+                    <li>
+                      <Link
+                        to="/main-setting/payout-switch"
+                        className="flex items-center px-4 py-2"
+                      >
+                        Payout Switch
+                      </Link>
+                    </li>
+                    {/* Payin Switch Link */}
+                    <li>
+                      <Link
+                        to="/main-setting/payin-switch"
+                        className="flex items-center px-4 py-2"
+                      >
+                        Payin Switch
+                      </Link>
+                    </li>
+                  </ul>
+                </div>
+              )}
             </li>
           </ul>
         </div>

@@ -244,7 +244,7 @@ const MnyTransfer = () => {
               {loading ? (
                 <CircularProgress size={24} />
               ) : error ? (
-                <Typography color="error">Error</Typography>
+                <Typography color="error">Total</Typography>
               ) : (
                 <Typography variant="h4">{pieData[2].value}</Typography>
               )}
