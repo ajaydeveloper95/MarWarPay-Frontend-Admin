@@ -31,7 +31,7 @@ import { useSidebar } from "../../../Context/SidebarContext";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { accessToken, domainBase } from "../../../helpingFile";
-import AddPayoutAPI from "./AddPayoutApi";
+// import AddPayoutAPI from "./AddPayoutApi";
 
 const ACCESS_TOKEN = accessToken;
 const USER_LIST_API = `${domainBase}apiAdmin/v1/utility/getUserListSwitchApi`;
