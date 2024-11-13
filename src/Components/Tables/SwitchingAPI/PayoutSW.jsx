@@ -31,7 +31,7 @@ import { useSidebar } from "../../../Context/SidebarContext";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { accessToken, domainBase } from "../../../helpingFile";
-// import AddPayoutAPI from "./AddPayoutApi";
+import AddPayout from "./AddPayout";
 
 const ACCESS_TOKEN = accessToken;
 const USER_LIST_API = `${domainBase}apiAdmin/v1/utility/getUserListSwitchApi`;
@@ -232,7 +232,7 @@ const PayoutSW = () => {
         <Dialog open={isDialogOpen} onClose={handleCloseDialog}>
           <DialogTitle>Add Payout API</DialogTitle>
           <DialogContent>
-            <AddPayoutAPI onClose={handleCloseDialog} />
+            <AddPayout onClose={handleCloseDialog} />
           </DialogContent>
         </Dialog>
 
