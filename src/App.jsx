@@ -35,6 +35,8 @@ import UpdatePayout from './Components/Tables/Package_setting/UpdatePayout';
 import Settlement from './Components/Tables/UpiWallet/Settlement';
 import PayoutSW from './Components/Tables/SwitchingAPI/PayoutSW';
 import PayinSW from './Components/Tables/SwitchingAPI/PayinSW';
+import UpdatePayin from './Components/Tables/SwitchingAPI/UpdatePayin';
+import UpdatePayoutAPI from './Components/Tables/SwitchingAPI/UpdatePayoutAPI';
 
 function App() {
   return (
@@ -103,6 +105,8 @@ function App() {
                      {/* Api Switching routes */}
                      <Route path="/main-setting/payout-switch" element={<PayoutSW />} />
                     <Route path="/main-setting/payin-switch" element={<PayinSW />} />
+                    <Route path="/main-setting/viewPayin" element={<UpdatePayin />} />
+                    <Route path="/main-setting/viewPayout" element={<UpdatePayoutAPI />} />
                   </Routes>
                   <Footer />
                 </>

@@ -579,6 +579,14 @@ const Sidebar = () => {
                         Payout Switch
                       </Link>
                     </li>
+                    <li>
+                      <Link
+                        to="/main-setting/viewPayout"
+                        className="flex items-center px-4 py-2"
+                      >
+                        View AllPayout
+                      </Link>
+                    </li>
                     {/* Payin Switch Link */}
                     <li>
                       <Link
@@ -588,6 +596,15 @@ const Sidebar = () => {
                         Payin Switch
                       </Link>
                     </li>
+                    <li>
+                      <Link
+                        to="/main-setting/viewPayin"
+                        className="flex items-center px-4 py-2"
+                      >
+                        View AllPayin
+                      </Link>
+                    </li>
+                   
                   </ul>
                 </div>
               )}
