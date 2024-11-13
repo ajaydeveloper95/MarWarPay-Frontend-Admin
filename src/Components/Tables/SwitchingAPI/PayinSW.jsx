@@ -60,7 +60,7 @@ const PayinSW = () => {
         });
         setUserList(response.data.data);
       } catch (err) {
-        setError("Failed to fetch users. Please try again.", err);
+        setError("Please Wait...", err);
       }
     };
 
@@ -73,7 +73,7 @@ const PayinSW = () => {
         });
         setPayInApiList(response.data.data);
       } catch (err) {
-        setError("Failed to fetch PayIn APIs. Please try again.", err);
+        setError("Please Wait...", err);
       }
     };
 
