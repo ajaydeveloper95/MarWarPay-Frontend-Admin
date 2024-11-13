@@ -78,8 +78,9 @@ const UpdatePayoutAPI = () => {
           `${domainBase}apiAdmin/v1/apiswitch/updatePayOutSwitch/${selectedApi._id}`,
           {
             apiName: selectedApi.apiName,
-            apiURL: selectedApi.apiURL,  // Include apiURL in the request body
-            isActive: selectedApi.isActive,  // Include isActive (status) in the request body
+            apiURL: selectedApi.apiURL,
+            apiInfo: selectedApi.apiInfo,
+            isActive: selectedApi.isActive, 
           },
           { headers: { Authorization: `Bearer ${ACCESS_TOKEN}` } }
         );
@@ -88,7 +89,7 @@ const UpdatePayoutAPI = () => {
           const updatedResponse = await axios.get(PAYOUT_API_LIST, {
             headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
           });
-          setPayInApiList(updatedResponse.data.data); // Update the state with the new data
+          setPayInApiList(updatedResponse.data.data); 
           showSnackbar("API details updated successfully!");
         } else {
           showSnackbar("Failed to update API details.");
@@ -132,6 +133,7 @@ const UpdatePayoutAPI = () => {
               <TableRow>
                 <TableCell>#</TableCell>
                 <TableCell>API Name</TableCell>
+                <TableCell>API Info</TableCell>
                 <TableCell>Status</TableCell>
                 <TableCell>Action</TableCell>
               </TableRow>
@@ -141,6 +143,7 @@ const UpdatePayoutAPI = () => {
                 <TableRow key={api._id}>
                   <TableCell>{index + 1}</TableCell>
                   <TableCell>{api.apiName}</TableCell>
+                  <TableCell>{api.apiInfo}</TableCell>
                   <TableCell>{api.isActive ? "Active" : "Inactive"}</TableCell>
                   <TableCell>
                     <IconButton onClick={() => handleEditClick(api)}>
@@ -170,6 +173,13 @@ const UpdatePayoutAPI = () => {
               label="API URL"
               value={selectedApi?.apiURL || ""}
               onChange={(e) => setSelectedApi((prev) => ({ ...prev, apiURL: e.target.value }))} 
+            />
+             <TextField
+              fullWidth
+              margin="dense"
+              label="API Info"
+              value={selectedApi?.apiInfo || ""}
+              onChange={(e) => setSelectedApi((prev) => ({ ...prev, apiInfo: e.target.value }))} 
             />
             <div>
               <Typography variant="body1">Status</Typography>

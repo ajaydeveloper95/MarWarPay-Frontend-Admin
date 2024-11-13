@@ -16,16 +16,18 @@ import {
   const AddPayout = ({ onClose }) => {
     const [newApiName, setNewApiName] = useState("");
     const [newApiURL, setNewApiURL] = useState("");
+    const [newApiInfo, setNewApiInfo] = useState("");
     const [snackbarMessage, setSnackbarMessage] = useState("");
     const [openSnackbar, setOpenSnackbar] = useState(false);
     const [error, setError] = useState(null);
   
     const handleApiNameChange = (e) => setNewApiName(e.target.value);
     const handleApiUrlChange = (e) => setNewApiURL(e.target.value);
+    const handleApiInfoChange = (e) => setNewApiInfo(e.target.value);
   
     const handleSubmit = async () => {
       if (!newApiName || !newApiURL) {
-        setError("Please fill in both fields.");
+        setError("All fields are require.");
         return;
       }
   
@@ -34,7 +36,8 @@ import {
           ADD_PAYOUT_API,
           {
             apiName: newApiName,
-            apiURL: newApiURL, // Update to use "apiURL" as required by the server
+            apiURL: newApiURL,
+            apiInfo: newApiInfo
           },
           {
             headers: {
@@ -48,6 +51,7 @@ import {
           setOpenSnackbar(true);
           setNewApiName("");
           setNewApiURL("");
+          setNewApiInfo("");
           onClose(); // Close form after successful addition
         }
       } catch (err) {
@@ -75,6 +79,13 @@ import {
           label="API URL"
           value={newApiURL}
           onChange={handleApiUrlChange}
+        />
+         <TextField
+          fullWidth
+          margin="normal"
+          label="API Info"
+          value={newApiInfo}
+          onChange={handleApiInfoChange}
         />
         {error && <Typography color="error">{error}</Typography>}
         <Button
