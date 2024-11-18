@@ -40,7 +40,6 @@ const Login = () => {
         password,
       })
       .then((response) => {
-        // Extract tokens from response data
         const { accessToken, refreshToken } = response.data.data;
   
         if (accessToken && refreshToken) {
