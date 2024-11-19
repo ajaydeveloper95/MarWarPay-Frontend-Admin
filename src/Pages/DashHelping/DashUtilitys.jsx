@@ -19,6 +19,7 @@ function DashUtilities() {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        console.log(ACCESS_TOKEN,"accessTOken")
         const [usersResponse, packagesResponse, ticketsResponse, membersResponse] = await Promise.all([
           axios.get(API_GET_USERS_ENDPOINT, { headers: { Authorization: `Bearer ${ACCESS_TOKEN}` } }),
           axios.get(API_GET_PACKAGES_ENDPOINT, { headers: { Authorization: `Bearer ${ACCESS_TOKEN}` } }),

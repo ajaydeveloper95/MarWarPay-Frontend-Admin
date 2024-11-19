@@ -43,25 +43,20 @@ const Login = () => {
         const { accessToken, refreshToken } = response.data.data;
   
         if (accessToken && refreshToken) {
-          // Save tokens or user data if needed
           localStorage.setItem("accessToken", accessToken);
           localStorage.setItem("refreshToken", refreshToken);
   
           if (rememberMe) {
-            // Save the expiration time for 24 hours
             const expirationTime = new Date().getTime() + 24 * 60 * 60 * 1000;
             localStorage.setItem("expirationTime", expirationTime);
           } else {
-            // Save a shorter expiration time if "Remember me" is not checked
             const expirationTime = new Date().getTime() + 60 * 60 * 1000;
             localStorage.setItem("expirationTime", expirationTime);
           }
-  
-          // Show success message
+
           setSnackbarMessage("Login successful!");
           setOpenSnackbar(true);
-  
-          // Redirect to homepage/dashboard after a short delay
+
           setTimeout(() => {
             navigate("/dashboard");
           }, 2000);
@@ -86,7 +81,6 @@ const Login = () => {
       sx={{
         height: "100vh",
         width: "100vw",
-        // backgroundImage: "url('logo.png')",
         backgroundSize: "cover",
         backgroundPosition: "center",
         display: "flex",
