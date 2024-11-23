@@ -203,7 +203,7 @@ function Total_Blnc() {
       </Grid>
 
       {/* Snackbar for low balance alerts */}
-      <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleSnackbarClose}>
+      <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleSnackbarClose} anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}>
         <Alert onClose={handleSnackbarClose} severity="warning" sx={{ width: '100%' }}>
           {snackbarMessage}
         </Alert>

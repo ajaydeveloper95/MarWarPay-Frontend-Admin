@@ -19,17 +19,24 @@ function DashUtilities() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [usersResponse, packagesResponse, ticketsResponse, membersResponse] = await Promise.all([
-          axios.get(API_GET_USERS_ENDPOINT, { headers: { Authorization: `Bearer ${ACCESS_TOKEN}` } }),
-          axios.get(API_GET_PACKAGES_ENDPOINT, { headers: { Authorization: `Bearer ${ACCESS_TOKEN}` } }),
-          axios.get(API_GET_PENDING_TICKETS_ENDPOINT, { headers: { Authorization: `Bearer ${ACCESS_TOKEN}` } }),
-          axios.get(API_GET_ALL_MEMBERS_ENDPOINT, { headers: { Authorization: `Bearer ${ACCESS_TOKEN}` } }),
+        const usersPromise = axios.get(API_GET_USERS_ENDPOINT, { headers: { Authorization: `Bearer ${ACCESS_TOKEN}` } });
+        const packagesPromise = axios.get(API_GET_PACKAGES_ENDPOINT, { headers: { Authorization: `Bearer ${ACCESS_TOKEN}` } });
+        const ticketsPromise = axios.get(API_GET_PENDING_TICKETS_ENDPOINT, { headers: { Authorization: `Bearer ${ACCESS_TOKEN}` } });
+        const membersPromise = axios.get(API_GET_ALL_MEMBERS_ENDPOINT, { headers: { Authorization: `Bearer ${ACCESS_TOKEN}` } });
+
+        // Await all promises and handle each response individually
+        const [usersResponse, packagesResponse, ticketsResponse, membersResponse] = await Promise.allSettled([
+          usersPromise,
+          packagesPromise,
+          ticketsPromise,
+          membersPromise,
         ]);
 
-        setTotalUsers(usersResponse.data.data.length);
-        setTotalPackages(packagesResponse.data.data.length);
-        setPendingTickets(ticketsResponse.data.data.length);
-        setTotalMembers(membersResponse.data.data.length);
+        // Safely update the state using the responses
+        setTotalUsers(usersResponse.status === 'fulfilled' ? usersResponse.value.data.data?.length || 0 : 0);
+        setTotalPackages(packagesResponse.status === 'fulfilled' ? packagesResponse.value.data.data?.length || 0 : 0);
+        setPendingTickets(ticketsResponse.status === 'fulfilled' ? ticketsResponse.value.data.data?.length || 0 : 0);
+        setTotalMembers(membersResponse.status === 'fulfilled' ? membersResponse.value.data.data?.length || 0 : 0);
       } catch (error) {
         console.error('Error fetching data:', error);
       }
@@ -47,7 +54,7 @@ function DashUtilities() {
   ];
 
   // Single color for all bars
-  const barColor = '#4BC0C0'; // Change this to your desired color
+  const barColor = '#4BC0C0';
 
   return (
     <Box className="box-container"
@@ -65,7 +72,6 @@ function DashUtilities() {
           <Tooltip />
           <Legend />
           <Bar dataKey="value" fill={barColor}>
-            {/* Adding LabelList to show values above the bars */}
             <LabelList dataKey="value" position="top" style={{ fill: '#000', fontWeight: 'bold' }} />
           </Bar>
         </BarChart>
