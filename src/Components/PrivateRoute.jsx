@@ -1,12 +1,11 @@
 import { Navigate, Outlet } from "react-router-dom";
-import { accessToken } from "../helpingFile";
 
 const PrivateRoute = () => {
+  // Retrieve the accessToken from localStorage
+  const accessToken = localStorage.getItem("accessToken");
 
-  const ACCESS_TOKEN = accessToken
-  
-  // const accessToken = localStorage.getItem("accessToken");
-  return ACCESS_TOKEN ? <Outlet /> : <Navigate to="/" />;
+  // Allow access if accessToken exists; otherwise, redirect to login
+  return accessToken ? <Outlet /> : <Navigate to="/" />;
 };
 
 export default PrivateRoute;
