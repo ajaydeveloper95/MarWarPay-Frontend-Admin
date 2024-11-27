@@ -13,7 +13,7 @@ function Footer() {
           
         }}
       >
-        Copyright © Marwarpay info Solutions Private Limited 2024
+        Copyright © Zanithpay info Solutions Private Limited 2024
       </Typography>
   );
 }
