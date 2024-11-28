@@ -25,34 +25,33 @@ import { accessToken, domainBase } from '../../../helpingFile';
 
 const ACCESS_TOKEN = accessToken;
 const API_PayoutCharge = `${domainBase}apiAdmin/v1/utility/getPayOutPackageList`;
+const API_PayinCharge = `${domainBase}apiAdmin/v1/utility/getPayInPackageList`;
 
 const EditPackage = () => {
   const navigate = useNavigate();
   const { isSidebarOpen } = useSidebar();
-  const { id } = useParams(); // Package ID from URL parameters
+  const { id } = useParams(); 
 
-  // State for payout packages
   const [payOutPackages, setPayOutPackages] = useState([]);
+  const [payInPackages, setPayInPackages] = useState([]);
 
-  // State for package data
   const [packageData, setPackageData] = useState({
     packageName: '',
     packagePayInCharge: '',
     packagePayOutCharge: '',
     isActive: true,
-    // isDefault: false, // Uncomment if needed
   });
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Fetch package data and payout packages on component mount
+  
   useEffect(() => {
     const fetchPackageData = async () => {
       try {
         const response = await axios.get(
-          `${domainBase}apiAdmin/v1/package/getSinglePackage/${id}`, // API endpoint with package ID
+          `${domainBase}apiAdmin/v1/package/getSinglePackage/${id}`,
           {
             headers: {
               Authorization: `Bearer ${ACCESS_TOKEN}`,
@@ -95,9 +94,27 @@ const EditPackage = () => {
       }
     };
 
+    const fetchPayInPackages = async () => {
+      try {
+        const response = await axios.get(API_PayinCharge, {
+          headers: {
+            Authorization: `Bearer ${ACCESS_TOKEN}`,
+          },
+        });
+        if (response.data.statusCode === 200) {
+          setPayInPackages(response.data.data);
+        } else {
+          setError(new Error(response.data.message || 'Failed to fetch payin packages.'));
+        }
+      } catch (err) {
+        console.error('Error fetching payin packages:', err);
+        setError(err);
+      }
+    };
+
     // Fetch both package data and payout packages concurrently
     const fetchData = async () => {
-      await Promise.all([fetchPackageData(), fetchPayOutPackages()]);
+      await Promise.all([fetchPackageData(), fetchPayOutPackages(), fetchPayInPackages()]);
       setLoading(false);
     };
 
@@ -271,29 +288,34 @@ const EditPackage = () => {
 
             {/* Payin Charge */}
             <Grid item xs={12} sm={6}>
-              <TextField
-                label="Package Pay In Charge (%)"
-                variant="outlined"
-                fullWidth
-                name="packagePayInCharge" // Ensure this matches the state key
-                value={packageData.packagePayInCharge}
-                onChange={handleChange}
-                required
-                type="number"
-                inputProps={{ min: 0, step: '0.01' }}
-              />
+              <FormControl fullWidth variant="outlined" required>
+                <InputLabel id="pay-in-charge-label">select Payin Package</InputLabel>
+                <Select
+                  labelId="pay-in-charge-label"
+                  name='packagePayInCharge'
+                  value={packageData?.packagePayInCharge}
+                  onChange={handleChange}
+                  label="Select Payin Package"
+                >
+                  {payInPackages.map((pkg) => (
+                    <MenuItem key={pkg._id} value={pkg._id}>
+                      {pkg.payInPackageName}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
             </Grid>
 
             {/* Payout Charge */}
             <Grid item xs={12} sm={6}>
               <FormControl fullWidth variant="outlined" required>
-                <InputLabel id="pay-out-charge-label">Package Pay Out Charge</InputLabel>
+                <InputLabel id="pay-out-charge-label">Select Payout Package</InputLabel>
                 <Select
                   labelId="pay-out-charge-label"
                   name='packagePayOutCharge'
                   value={packageData?.packagePayOutCharge}
                   onChange={handleChange}
-                  label="Package Pay Out Charge"
+                  label="Select Payout Package"
                 >
                   {payOutPackages.map((pkg) => (
                     <MenuItem key={pkg._id} value={pkg._id}>

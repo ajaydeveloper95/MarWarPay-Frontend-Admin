@@ -37,6 +37,8 @@ import PayoutSW from './Components/Tables/SwitchingAPI/PayoutSW';
 import PayinSW from './Components/Tables/SwitchingAPI/PayinSW';
 import UpdatePayin from './Components/Tables/SwitchingAPI/UpdatePayin';
 import UpdatePayoutAPI from './Components/Tables/SwitchingAPI/UpdatePayoutAPI';
+import AllPayin from './Components/Tables/Package_setting/AllPayin';
+import UpdatePayinPkg from './Components/Tables/Package_setting/UpdatePayinPkg';
 
 function App() {
   return (
@@ -92,7 +94,10 @@ function App() {
 
                     {/* Package Management routes */}
                     <Route path="/package/settings/payout" element={<AllPayout />} />
-                    <Route path="update-payout/:id" element={<UpdatePayout />} />
+                    <Route path="/package/settings/payin" element={<AllPayin />} />
+                    <Route path="update-payout/:id" element={<UpdatePayout />} />.
+                    <Route path="update-payin/:id" element={<UpdatePayinPkg />} />
+                    
 
                     {/* Support routes */}
                     <Route path="/support/pandingTicket" element={<Panding />} />

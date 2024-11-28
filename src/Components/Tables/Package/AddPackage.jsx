@@ -24,6 +24,7 @@ import { accessToken, domainBase } from '../../../helpingFile';
 
 const API_ENDPOINT = `${domainBase}apiAdmin/v1/package/addPackage`;
 const API_PayoutCharge = `${domainBase}apiAdmin/v1/utility/getPayOutPackageList`;
+const API_PayinCharge = `${domainBase}apiAdmin/v1/utility/getPayInPackageList`;
 const ACCESS_TOKEN = accessToken;
 
 const AddPackage = () => {
@@ -34,6 +35,7 @@ const AddPackage = () => {
   const [status, setStatus] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [payOutPackages, setPayOutPackages] = useState([]);
+  const [payInPackages, setPayInPackages] = useState([]);
   const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState('');
 
@@ -55,6 +57,21 @@ const AddPackage = () => {
         setError('Failed to load payout packages. Please try again later.');
       }
     };
+
+    const fetchPayInPackages = async () => {
+      try {
+        const response = await axios.get(API_PayinCharge, {
+          headers: {
+            Authorization: `Bearer ${ACCESS_TOKEN}`,
+          },
+        });
+        setPayInPackages(response.data.data);
+      } catch (err) {
+        console.error('Error fetching payin packages:', err);
+        setError('Failed to load payin packages. Please try again later.');
+      }
+    };
+    fetchPayInPackages();
     fetchPayOutPackages();
   }, []);
 
@@ -159,7 +176,7 @@ const AddPackage = () => {
             </Grid>
             <Grid item xs={12} sm={6}>
               <FormControl fullWidth variant="outlined" required>
-                <InputLabel id="pay-out-charge-label">Package Pay Out Charge</InputLabel>
+                <InputLabel id="pay-out-charge-label">Select PayOut Package</InputLabel>
                 <Select
                   labelId="pay-out-charge-label"
                   value={packagePayOutCharge}
@@ -175,6 +192,23 @@ const AddPackage = () => {
               </FormControl>
             </Grid>
             <Grid item xs={12} sm={6}>
+              <FormControl fullWidth variant="outlined" required>
+                <InputLabel id="pay-in-charge-label">Select PayIn Package</InputLabel>
+                <Select
+                  labelId="pay-in-charge-label"
+                  value={packagePayOutCharge}
+                  onChange={(e) => setPackagePayOutCharge(e.target.value)}
+                  label="Package PayIn Charge"
+                >
+                  {payInPackages.map((pkg) => (
+                    <MenuItem key={pkg._id} value={pkg._id}>
+                      {pkg.payInPackageName}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+            {/* <Grid item xs={12} sm={6}>
               <TextField
                 label="Package Pay In Charge"
                 variant="outlined"
@@ -183,7 +217,7 @@ const AddPackage = () => {
                 value={packagePayInCharge}
                 onChange={(e) => setPackagePayInCharge(e.target.value)}
               />
-            </Grid>
+            </Grid> */}
             <Grid item xs={12} sm={6}>
               <FormControl fullWidth variant="outlined" required>
                 <InputLabel id="status-label">Status</InputLabel>

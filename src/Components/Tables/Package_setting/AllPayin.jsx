@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import {
   Container,
   Typography,
@@ -7,77 +8,133 @@ import {
   TableBody,
   TableCell,
   TableContainer,
-  Link,
   TableHead,
   TableRow,
   Paper,
   IconButton,
-  Grid,
-  TextField,
   Button,
-  MenuItem,
-  Select,
-  InputLabel,
-  FormControl,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  TextField,
   Box,
+  MenuItem,
 } from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useSidebar } from "../../../Context/SidebarContext";
+import { accessToken, domainBase } from "../../../helpingFile";
+
+const API_ENDPOINT = `${domainBase}apiAdmin/v1/package/getPayInPackage`;
+const ADD_PACKAGE_ENDPOINT = `${domainBase}apiAdmin/v1/package/addPayInPackage`;
+const ACCESS_TOKEN = accessToken;
 
 const AllPayin = () => {
   const navigate = useNavigate();
   const { isSidebarOpen } = useSidebar();
-  const [searchQuery, setSearchQuery] = useState("");
-  const [date, setDate] = useState("");
-  const [pageSize, setPageSize] = useState("25");
-  const [currentPage, setCurrentPage] = useState(0);
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, ] = useState(null);
+  const [error, setError] = useState(null);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [newPackage, setNewPackage] = useState({
+    payInPackageName: "",
+    payInChargeRange: [],
+  });
+  const formatDateTime = (dateString) => {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const seconds = String(date.getSeconds()).padStart(2, '0');
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+  };
 
   useEffect(() => {
-    // Simulate data fetching
-    setLoading(true);
-    setTimeout(() => {
-      setData([
-        { _id: 1, packageName: "Package 1", packagePayOutCharge: 10, packagePayInCharge: 20, isActive: true, createdAt: "2023-09-01" },
-        { _id: 2, packageName: "Package 2", packagePayOutCharge: 15, packagePayInCharge: 25, isActive: false, createdAt: "2023-09-02" },
-        // Add more placeholder data as needed
-      ]);
-      setLoading(false);
-    }, 1000);
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const response = await axios.get(API_ENDPOINT, {
+          headers: {
+            Authorization: `Bearer ${ACCESS_TOKEN}`,
+          },
+        });
+        setData(response.data.data);
+        setLoading(false);
+      } catch (err) {
+        setError(err);
+        setLoading(false);
+      }
+    };
+
+    fetchData();
   }, []);
-
-  const filteredMembers = data.filter((member) => {
-    return member.packageName.toLowerCase().includes(searchQuery.toLowerCase());
-  });
-
-  const itemsToDisplay = pageSize === "all" ? filteredMembers.length : parseInt(pageSize, 10);
-
-  const startIndex = currentPage * itemsToDisplay;
-  const endIndex = startIndex + itemsToDisplay;
-  const paginatedMembers = filteredMembers.slice(startIndex, endIndex);
-
-  const handlePageSizeChange = (event) => {
-    setPageSize(event.target.value);
-    setCurrentPage(0); // Reset to first page when page size changes
-  };
-
-  const handlePageChange = (direction) => {
-    if (direction === "next" && endIndex < filteredMembers.length) {
-      setCurrentPage(currentPage + 1);
-    } else if (direction === "prev" && currentPage > 0) {
-      setCurrentPage(currentPage - 1);
-    }
-  };
-
-  const handleViewPackage = (_id) => {
-    navigate(`/package/EditPackage/${_id}`);
-  };
 
   const handleBackButtonClick = () => {
     navigate(-1);
+  };
+
+  const handleViewPackage = (_id) => {
+    navigate(`/update-payin/${_id}`);
+  };
+
+  const handleAddPackageOpen = () => {
+    setOpenDialog(true);
+  };
+
+  const handleAddPackageClose = () => {
+    setOpenDialog(false);
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setNewPackage({ ...newPackage, [name]: value });
+  };
+
+  const handleChargeRangeChange = (index, field, value) => {
+    const updatedChargeRanges = [...newPackage.payInChargeRange];
+    updatedChargeRanges[index] = {
+      ...updatedChargeRanges[index],
+      [field]: value,
+    };
+    setNewPackage({ ...newPackage, payInChargeRange: updatedChargeRanges });
+  };
+
+  const handleAddChargeRange = () => {
+    setNewPackage({
+      ...newPackage,
+      payInChargeRange: [
+        ...newPackage.payInChargeRange,
+        { lowerLimit: "", upperLimit: "", chargeType: "Flat", charge: "" },
+      ],
+    });
+  };
+
+  const handleRemoveChargeRange = (index) => {
+    const updatedChargeRanges = newPackage.payInChargeRange.filter((_, i) => i !== index);
+    setNewPackage({ ...newPackage, payInChargeRange: updatedChargeRanges });
+  };
+
+  const handleAddPackageSubmit = async () => {
+    try {
+      await axios.post(ADD_PACKAGE_ENDPOINT, newPackage, {
+        headers: {
+          Authorization: `Bearer ${ACCESS_TOKEN}`,
+        },
+      });
+      handleAddPackageClose();
+      // Optionally refresh the data after adding a package
+      const response = await axios.get(API_ENDPOINT, {
+        headers: {
+          Authorization: `Bearer ${ACCESS_TOKEN}`,
+        },
+      });
+      setData(response.data.data);
+    } catch (err) {
+      console.error("Error adding package:", err);
+    }
   };
 
   return (
@@ -92,149 +149,29 @@ const AllPayin = () => {
       }}
     >
       <Paper sx={{ p: 2, boxShadow: 3 }}>
-        <Grid item>
-          <IconButton color="primary" onClick={handleBackButtonClick}>
+      <IconButton color="primary" onClick={handleBackButtonClick}>
             <ArrowBackIcon />
           </IconButton>
-        </Grid>
-        <Grid container alignItems="center" spacing={1} mb={2}>
-          <Grid item xs={12} md={3}>
-            <Grid container alignItems="center" spacing={1}>
-              <Grid item>
-                <Typography variant="h4" component="h1" gutterBottom sx={{ color: 'teal' }}>
-                 Payin Package
-                </Typography>
-              </Grid>
-            </Grid>
-          </Grid>
-          <Grid item xs={12} md={3}>
-            <TextField
-              label="Search by Package Name"
-              variant="outlined"
-              fullWidth
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </Grid>
-          <Grid item xs={12} md={2}>
-            <TextField
-              label="Select Date"
-              type="date"
-              fullWidth
-              InputLabelProps={{
-                shrink: true,
-              }}
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-            />
-          </Grid>
-          <Grid item xs={12} md={2}>
-            <FormControl fullWidth>
-              <InputLabel id="page-size-label">Items Per Page</InputLabel>
-              <Select
-                labelId="page-size-label"
-                value={pageSize}
-                onChange={handlePageSizeChange}
-                label="Items Per Page"
-              >
-                <MenuItem value={25}>25</MenuItem>
-                <MenuItem value={50}>50</MenuItem>
-                <MenuItem value={100}>100</MenuItem>
-                <MenuItem value="all">View All</MenuItem>
-              </Select>
-            </FormControl>
-          </Grid>
-          <Grid item xs={12} md={2}>
-            <Link href="/package/add">
-              <Button
-                variant="contained"
-                color="primary"
-                fullWidth
-                sx={{ height: "56px", background: 'teal' }}
-              >
-                Add Package
-              </Button>
-            </Link>
-          </Grid>
-        </Grid>
+        <Box display="flex" alignItems="center" justifyContent="space-between" mb={2}>
+         
+          <Typography variant="h4" component="h1" gutterBottom sx={{ color: "teal" }}>
+            View PayIn Packages
+          </Typography>
+          <Button variant="contained" color="primary" onClick={handleAddPackageOpen}>
+            Add Package
+          </Button>
+        </Box>
 
-        {/* Table Section */}
+        {/* Main Table Section */}
         <TableContainer component={Paper}>
           <Table sx={{ borderCollapse: "collapse" }}>
             <TableHead>
               <TableRow>
-                <TableCell
-                  sx={{
-                    fontWeight: "bold",
-                    fontSize: "16px",
-                    border: "1px solid rgba(224, 224, 224, 1)",
-                  }}
-                >
-                  #
-                </TableCell>
-                <TableCell
-                  sx={{
-                    fontWeight: "bold",
-                    fontSize: "16px",
-                    border: "1px solid rgba(224, 224, 224, 1)",
-                  }}
-                >
-                  Package Name
-                </TableCell>
-                <TableCell
-                  sx={{
-                    fontWeight: "bold",
-                    fontSize: "16px",
-                    border: "1px solid rgba(224, 224, 224, 1)",
-                  }}
-                >
-                  PayOut Cr.
-                </TableCell>
-                <TableCell
-                  sx={{
-                    fontWeight: "bold",
-                    fontSize: "16px",
-                    border: "1px solid rgba(224, 224, 224, 1)",
-                  }}
-                >
-                  PayIn Cr.
-                </TableCell>
-                <TableCell
-                  sx={{
-                    fontWeight: "bold",
-                    fontSize: "16px",
-                    border: "1px solid rgba(224, 224, 224, 1)",
-                  }}
-                >
-                  Status
-                </TableCell>
-                <TableCell
-                  sx={{
-                    fontWeight: "bold",
-                    fontSize: "16px",
-                    border: "1px solid rgba(224, 224, 224, 1)",
-                  }}
-                >
-                  Is Default?
-                </TableCell>
-                <TableCell
-                  sx={{
-                    fontWeight: "bold",
-                    fontSize: "16px",
-                    border: "1px solid rgba(224, 224, 224, 1)",
-                  }}
-                >
-                  Created
-                </TableCell>
-                <TableCell
-                  sx={{
-                    fontWeight: "bold",
-                    fontSize: "16px",
-                    border: "1px solid rgba(224, 224, 224, 1)",
-                  }}
-                >
-                  Action
-                </TableCell>
+                <TableCell sx={{ fontWeight: "bold" }}>Package Name</TableCell>
+                <TableCell sx={{ fontWeight: "bold" }}>Charge Ranges</TableCell>
+                <TableCell sx={{ fontWeight: "bold" }}>Status</TableCell>
+                <TableCell sx={{ fontWeight: "bold" }}>Created At</TableCell>
+                <TableCell sx={{ fontWeight: "bold" }}>Action</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -250,80 +187,208 @@ const AllPayin = () => {
                   No data available.
                   </TableCell>
                 </TableRow>
-              ) : paginatedMembers.length === 0 ? (
+              ) : data.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={8} align="center">
                     No data available.
                   </TableCell>
                 </TableRow>
               ) : (
-                paginatedMembers.map((member, index) => {
-                  // Calculate row number based on pagination
-                  const rowNumber = startIndex + index + 1;
+                data.map((packageItem) => (
+                  <TableRow key={packageItem._id}>
+                    <TableCell>{packageItem.payInPackageName}</TableCell>
+                    <TableContainer
+                      component={Paper}
+                      sx={{ borderRadius: 2, marginTop: 2, marginBottom: 1 }}
+                    >
+                      <Table size="small" aria-label="charge ranges">
+                        <TableHead>
+                          <TableRow>
+                            <TableCell
+                              sx={{
+                                fontWeight: "bold",
+                                backgroundColor: "#f0f0f0",
+                                borderBottom: "2px solid #ccc",
+                              }}
+                            >
+                              Lower Limit
+                            </TableCell>
+                            <TableCell
+                              sx={{
+                                fontWeight: "bold",
+                                backgroundColor: "#f0f0f0",
+                                borderBottom: "2px solid #ccc",
+                              }}
+                            >
+                              Upper Limit
+                            </TableCell>
+                            <TableCell
+                              sx={{
+                                fontWeight: "bold",
+                                backgroundColor: "#f0f0f0",
+                                borderBottom: "2px solid #ccc",
+                              }}
+                            >
+                              Charge Type
+                            </TableCell>
+                            <TableCell
+                              sx={{
+                                fontWeight: "bold",
+                                backgroundColor: "#f0f0f0",
+                                borderBottom: "2px solid #ccc",
+                              }}
+                            >
+                              Charge
+                            </TableCell>
+                          </TableRow>
+                        </TableHead>
+                        <TableBody>
+                          {packageItem.payInChargeRange.map((range, index) => (
+                            <TableRow key={range._id || index}>
+                              <TableCell
+                                sx={{ padding: 1, border: "1px solid #ccc" }}
+                              >
+                                {range.lowerLimit}
+                              </TableCell>
+                              <TableCell
+                                sx={{ padding: 1, border: "1px solid #ccc" }}
+                              >
+                                {range.upperLimit}
+                              </TableCell>
+                              <TableCell
+                                sx={{ padding: 1, border: "1px solid #ccc" }}
+                              >
+                                {range.chargeType}
+                              </TableCell>
+                              <TableCell
+                                sx={{ padding: 1, border: "1px solid #ccc" }}
+                              >
+                                {range.chargeType === "Flat"
+                                  ? `${range.charge}/-`
+                                  : `${range.charge}%`}
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </TableContainer>
+                    <TableCell>
+                      <Button
+                        sx={{
+                          color: packageItem.isActive ? "green" : "red",
+                          backgroundColor: packageItem.isActive
+                            ? "rgba(0, 128, 0, 0.1)"
+                            : "rgba(255, 0, 0, 0.1)", // Light background
+                          border: `${
+                            packageItem.isActive ? "green" : "red"
+                          }`,
+                          borderRadius: 2,
+                          padding: "2px 10px",
+                        }}
+                      >
+                        {packageItem.isActive ? "Active" : "Inactive"}
+                      </Button>
+                    </TableCell>
 
-                  return (
-                    <TableRow key={member._id}>
-                      <TableCell sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}>
-                        {rowNumber}
-                      </TableCell>
-                      <TableCell sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}>
-                        {member.packageName}
-                      </TableCell>
-                      <TableCell sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}>
-                        {member.packagePayOutCharge}
-                      </TableCell>
-                      <TableCell sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}>
-                        {member.packagePayInCharge}
-                      </TableCell>
-                      <TableCell sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}>
-                        {member.isActive ? "Active" : "Inactive"}
-                      </TableCell>
-                      <TableCell sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}>
-                        {member.isDefault ? "Yes" : "No"}
-                      </TableCell>
-                      <TableCell sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}>
-                        {member.createdAt}
-                      </TableCell>
-                      <TableCell sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}>
-                        <IconButton
-                          aria-label="view"
-                          color="primary"
-                          onClick={() => handleViewPackage(member._id)}
-                        >
-                          <VisibilityIcon />
-                        </IconButton>
-                      </TableCell>
-                    </TableRow>
-                  );
-                })
+                    <TableCell>
+                      {formatDateTime(packageItem.createdAt)}
+                    </TableCell>
+                    <TableCell>
+                      <IconButton onClick={() => handleViewPackage(packageItem._id)}>
+                        <VisibilityIcon />
+                      </IconButton>
+                    </TableCell>
+                  </TableRow>
+                ))
               )}
             </TableBody>
           </Table>
         </TableContainer>
-
-        {/* Pagination Buttons */}
-        <Box display="flex" justifyContent="center" marginTop={2}>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => handlePageChange("prev")}
-            disabled={currentPage === 0}
-          >
-            Previous
-          </Button>
-          <Box mx={2} display="flex" alignItems="center">
-            Page {currentPage + 1} of {Math.ceil(filteredMembers.length / itemsToDisplay)}
-          </Box>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => handlePageChange("next")}
-            disabled={endIndex >= filteredMembers.length}
-          >
-            Next
-          </Button>
-        </Box>
       </Paper>
+
+      {/* Dialog for Adding Package */}
+      <Dialog open={openDialog} onClose={handleAddPackageClose}>
+        <DialogTitle>Add PayIn Package</DialogTitle>
+        <DialogContent>
+          <TextField
+            autoFocus
+            margin="dense"
+            label="Package Name"
+            fullWidth
+            variant="outlined"
+            name="payInPackageName"
+            value={newPackage.payInPackageName}
+            onChange={handleInputChange}
+          />
+          <Typography variant="h6" gutterBottom>
+            Charge Ranges
+          </Typography>
+          {newPackage.payInChargeRange.map((chargeRange, index) => (
+            <Box key={index} display="flex" justifyContent="space-between" mb={2}>
+              <TextField
+                label="Lower Limit"
+                type="number"
+                variant="outlined"
+                value={chargeRange.lowerLimit}
+                onChange={(e) =>
+                  handleChargeRangeChange(index, "lowerLimit", e.target.value)
+                }
+                style={{ marginRight: 8 }}
+              />
+              <TextField
+                label="Upper Limit"
+                type="number"
+                variant="outlined"
+                value={chargeRange.upperLimit}
+                onChange={(e) =>
+                  handleChargeRangeChange(index, "upperLimit", e.target.value)
+                }
+                style={{ marginRight: 8 }}
+              />
+              <TextField
+                label="Charge Type"
+                select
+                variant="outlined"
+                value={chargeRange.chargeType}
+                onChange={(e) =>
+                  handleChargeRangeChange(index, "chargeType", e.target.value)
+                }
+                style={{ marginRight: 8 }}
+              >
+                <MenuItem value="Flat">Flat</MenuItem>
+                <MenuItem value="Percentage">Percentage</MenuItem>
+              </TextField>
+              <TextField
+                label="Charge"
+                type="number"
+                variant="outlined"
+                value={chargeRange.charge}
+                onChange={(e) =>
+                  handleChargeRangeChange(index, "charge", e.target.value)
+                }
+              />
+              <Button
+                variant="outlined"
+                color="secondary"
+                onClick={() => handleRemoveChargeRange(index)}
+              >
+                Remove
+              </Button>
+            </Box>
+          ))}
+          <Button variant="outlined" onClick={handleAddChargeRange}>
+            Add Charge Range
+          </Button>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleAddPackageClose} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleAddPackageSubmit} color="primary">
+            Add Package
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Container>
   );
 };

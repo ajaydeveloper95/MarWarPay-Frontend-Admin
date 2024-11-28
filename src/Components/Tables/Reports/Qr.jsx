@@ -56,6 +56,19 @@ const Qr = () => {
   const [qrDialogOpen, setQrDialogOpen] = useState(false);
   const [qrData, setQrData] = useState(null);
 
+  const formatDateTime = (dateString) => {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const seconds = String(date.getSeconds()).padStart(2, '0');
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+  };
+  
+  
+
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
@@ -99,7 +112,8 @@ const Qr = () => {
   const filteredMembers = data.filter((member) => {
     const matchesName = member.userInfo.memberId
       .toLowerCase()
-      .includes(searchQuery.toLowerCase());
+      .includes(searchQuery.toLowerCase()) ||
+      member.txnID.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesDate =
       (!startDate || new Date(member.createdAt) >= new Date(startDate)) &&
       (!endDate || new Date(member.createdAt) <= new Date(endDate));
@@ -212,36 +226,6 @@ const Qr = () => {
               <Typography>{data.length}</Typography>
             </Box>
           </Grid>
-          {/* <Grid item xs={12} md={3}>
-            <Box
-              sx={{
-                p: 2,
-                borderRadius: 2,
-                backgroundColor: "background.paper",
-                boxShadow: "5px 0 10px -3px rgba(0, 128, 128, 0.6)",
-              }}
-            >
-              <Typography variant="h6" sx={{ color: "teal" }}>
-                Total success QR balance
-              </Typography>
-              <Typography>₹</Typography>
-            </Box>
-          </Grid>
-          <Grid item xs={12} md={3}>
-            <Box
-              sx={{
-                p: 2,
-                borderRadius: 2,
-                backgroundColor: "background.paper",
-                boxShadow: "5px 0 10px -3px rgba(0, 128, 128, 0.6)",
-              }}
-            >
-              <Typography variant="h6" sx={{ color: "teal" }}>
-                Total success QR Transaction
-              </Typography>
-              <Typography>₹</Typography>
-            </Box>
-          </Grid> */}
         </Grid>
       </Box>
 
@@ -279,7 +263,7 @@ const Qr = () => {
           <Grid container alignItems="center" spacing={1} mb={2}>
             <Grid item xs={12} md={4}>
               <TextField
-                label="Search by Member ID"
+                label="Search by Member ID or txnID"
                 variant="outlined"
                 fullWidth
                 value={searchQuery}
@@ -308,9 +292,9 @@ const Qr = () => {
             </Grid>
             <Grid item xs={12} md={2}>
               <TextField
-                label="Start Date"
-                type="date"
                 fullWidth
+                label="Start Date & Time"
+                type="date"
                 InputLabelProps={{
                   shrink: true,
                 }}
@@ -320,9 +304,9 @@ const Qr = () => {
             </Grid>
             <Grid item xs={12} md={2}>
               <TextField
-                label="End Date"
-                type="date"
                 fullWidth
+                label="End Date & Time"
+                type="date"
                 InputLabelProps={{
                   shrink: true,
                 }}
@@ -508,7 +492,7 @@ const Qr = () => {
                         </Button>
                       </TableCell>
                       <TableCell>
-                        {new Date(member.createdAt).toLocaleDateString()}
+                        {formatDateTime(member.createdAt)}
                       </TableCell>
                       <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}

@@ -16,6 +16,7 @@ import {
   Button,
   MenuItem,
   Select,
+  Box,
   InputLabel,
   FormControl,
 } from "@mui/material";
@@ -38,6 +39,17 @@ const PayoutGenerate = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const formatDateTime = (dateString) => {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const seconds = String(date.getSeconds()).padStart(2, '0');
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
@@ -57,7 +69,7 @@ const PayoutGenerate = () => {
             amount: `${item.amount}`,
             txnId: item.trxId,
             status: item.isSuccess,
-            dateTime: new Date(item.createdAt).toISOString().split("T")[0],
+            dateTime: formatDateTime(item.createdAt),
           }))
         );
         setLoading(false);
@@ -106,6 +118,56 @@ const PayoutGenerate = () => {
 
   return (
     <>
+                    <Box
+        sx={{ padding: 3, marginBottom: 2, marginTop: 12 }}
+        maxWidth="xl"
+        style={{
+          marginLeft: isSidebarOpen ? "16rem" : "10rem",
+          transition: "margin-left 0.3s ease",
+          minWidth: "600px",
+          maxWidth: "80%",
+        }}
+      >
+        <Grid container spacing={2} mb={2}>
+          <Grid item xs={12} md={6}>
+            <Box
+              sx={{
+                p: 2,
+                borderRadius: 2,
+                backgroundColor: "background.paper",
+                boxShadow: "5px 0 10px -3px rgba(0, 128, 128, 0.6)",
+              }}
+            >
+              <Typography variant="h6" sx={{ color: "teal" }}>
+                Total balance
+              </Typography>
+              <Typography>
+          ₹{" "}
+          {data.length > 0
+            ? data
+                .reduce((total, user) => total + parseFloat(user.amount || 0), 0)
+                .toLocaleString("en-IN", { minimumFractionDigits: 2 })
+            : "0.00"}
+        </Typography>
+            </Box>
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <Box
+              sx={{
+                p: 2,
+                borderRadius: 2,
+                backgroundColor: "background.paper",
+                boxShadow: "5px 0 10px -3px rgba(0, 128, 128, 0.6)",
+              }}
+            >
+              <Typography variant="h6" sx={{ color: "teal" }}>
+                Total Transaction Generate
+              </Typography>
+              <Typography>{data.length}</Typography>
+            </Box>
+          </Grid>
+        </Grid>
+      </Box>
       <Container
         maxWidth="xl"
         style={{
@@ -113,7 +175,7 @@ const PayoutGenerate = () => {
           transition: "margin-left 0.3s ease",
           minWidth: "600px",
           maxWidth: "80%",
-          marginTop: "8%",
+          // marginTop: "8%",
         }}
       >
         <Paper sx={{ p: 2, boxShadow: 3 }}>
@@ -149,7 +211,7 @@ const PayoutGenerate = () => {
             </Grid>
             <Grid item xs={12} md={2}>
               <TextField
-                label="Date"
+               label="Date"
                 type="date"
                 variant="outlined"
                 fullWidth

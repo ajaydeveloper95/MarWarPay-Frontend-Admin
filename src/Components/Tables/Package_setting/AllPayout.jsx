@@ -27,7 +27,7 @@ import { useSidebar } from "../../../Context/SidebarContext";
 import { accessToken, domainBase } from "../../../helpingFile";
 
 const API_ENDPOINT = `${domainBase}apiAdmin/v1/package/getPayOutPackage`;
-const ADD_PACKAGE_ENDPOINT = `https://api.yunicare.in/apiAdmin/v1/package/addPayOutPackage`;
+const ADD_PACKAGE_ENDPOINT = `${domainBase}apiAdmin/v1/package/addPayOutPackage`;
 const ACCESS_TOKEN = accessToken;
 
 const AllPayout = () => {
@@ -41,6 +41,16 @@ const AllPayout = () => {
     payOutPackageName: "",
     payOutChargeRange: [],
   });
+  const formatDateTime = (dateString) => {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const seconds = String(date.getSeconds()).padStart(2, '0');
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -281,7 +291,7 @@ const AllPayout = () => {
                     </TableCell>
 
                     <TableCell>
-                      {new Date(packageItem.createdAt).toLocaleDateString()}
+                      {formatDateTime(packageItem.createdAt)}
                     </TableCell>
                     <TableCell>
                       <IconButton onClick={() => handleViewPackage(packageItem._id)}>

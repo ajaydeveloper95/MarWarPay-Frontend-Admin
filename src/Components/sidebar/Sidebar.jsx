@@ -480,10 +480,10 @@ const Sidebar = () => {
                   <ul className="pl-6 list-disc">
                     <li>
                       <Link
-                        // to="/package/settings/payin"
+                        to="/package/settings/payin"
                         className="flex items-center px-4 py-2"
                       >
-                        Paying
+                        Payin
                       </Link>
                     </li>
                     <li>
