@@ -80,7 +80,10 @@ const ViewAllMembers = () => {
 
   // Filter users based on search query and date
   const filteredUsers = usersData.filter((user) => {
-    const matchesName = user.userName
+    const matchesName = user.memberId
+      .toLowerCase()
+      .includes(searchQuery.toLowerCase())||
+      user.fullName
       .toLowerCase()
       .includes(searchQuery.toLowerCase());
     const matchesDate = date ? user.createdAt.split("T")[0] === date : true;
