@@ -42,7 +42,7 @@ const Qr = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  const [pageSize, setPageSize] = useState("all");
+  const [pageSize, setPageSize] = useState("25");
   const [currentPage, setCurrentPage] = useState(0);
   const [previousPage, setPreviousPage] = useState(0);
   const [dropdownValue, setDropdownValue] = useState("");

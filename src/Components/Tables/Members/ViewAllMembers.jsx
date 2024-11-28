@@ -35,7 +35,7 @@ const ViewAllMembers = () => {
   const { isSidebarOpen } = useSidebar();
   const [searchQuery, setSearchQuery] = useState("");
   const [date, setDate] = useState("");
-  const [pageSize, setPageSize] = useState("all");
+  const [pageSize, setPageSize] = useState("25");
   const [currentPage, setCurrentPage] = useState(0);
   const [previousPage, setPreviousPage] = useState(0);
   const [usersData, setUsersData] = useState([]);
