@@ -24,9 +24,12 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useSidebar } from "../../../Context/SidebarContext";
 import axios from "axios";
 import { accessToken, domainBase } from "../../../helpingFile";
+import { saveAs } from "file-saver";
+import Papa from "papaparse"; 
 
 const API_ENDPOINT = `${domainBase}apiAdmin/v1/payout/allPayOutOnSuccess`;
 const ACCESS_TOKEN = accessToken;
+
 
 const Payout = () => {
   const navigate = useNavigate();
@@ -117,6 +120,27 @@ const Payout = () => {
     navigate(-1);
   };
 
+  const handleExport = () => {
+    const csvData = filteredData.map((item) => ({
+      ID: item.id,
+      MemberID: item.memberId,
+      Name: item.name,
+      AccountNumber: item.accountNumber,
+      IFSC: item.ifsc,
+      Amount: item.amount,
+      ChargeAmount: item.chargeAmount,
+      FinalAmount: item.finalAmount,
+      TxnID: item.txnId,
+      RRN: item.rrn,
+      Status: item.status ? "Success" : "Failed",
+      DateTime: item.dateTime,
+    }));
+
+    const csv = Papa.unparse(csvData); // Convert to CSV format
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" }); // Create Blob
+    saveAs(blob, `Payout_History_${new Date().toISOString().split("T")[0]}.csv`); // Save file
+  };
+
   return (
     <>
                 <Box
@@ -179,7 +203,17 @@ const Payout = () => {
         // marginTop: "8%",
       }}
     >
+      
       <Paper sx={{ p: 2, boxShadow: 3 }}>
+      <Grid item xs={12} md={2} align="right" marginBottom={2}>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleExport}
+        >
+          Export
+        </Button>
+      </Grid>
         {/* Header Section */}
         <Grid container alignItems="center" spacing={1} mb={2}>
           <Grid item xs={12} md={5}>
@@ -193,8 +227,11 @@ const Payout = () => {
                 <Typography variant="h4" component="h1" gutterBottom sx={{color: 'teal'}}>
                   Payout History
                 </Typography>
+
               </Grid>
+              
             </Grid>
+            
           </Grid>
           <Grid item xs={12} md={3}>
             <TextField
@@ -234,6 +271,8 @@ const Payout = () => {
               </Select>
             </FormControl>
           </Grid>
+
+          
         </Grid>
 
         {/* Table Section */}

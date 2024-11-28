@@ -29,13 +29,13 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useSidebar } from "../../../Context/SidebarContext";
 import axios from "axios";
 import { accessToken, domainBase } from "../../../helpingFile";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle"; // Icon for success
-import CancelIcon from "@mui/icons-material/Cancel"; // Icon for failure
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import CancelIcon from "@mui/icons-material/Cancel";
+import * as XLSX from "xlsx";
 
 const API_ENDPOINT = `${domainBase}apiAdmin/v1/payin/allSuccessPayIn`;
 const USER_LIST_API = `${domainBase}apiAdmin/v1/utility/getUserList`;
 const ACCESS_TOKEN = accessToken;
-
 
 const Payin = () => {
   const navigate = useNavigate();
@@ -56,14 +56,40 @@ const Payin = () => {
   const [dialogSeverity, setDialogSeverity] = useState("info");
   const [userList, setUserList] = useState([]);
 
+  const handleExport = () => {
+    const exportData = filteredMembers.map((member) => ({
+      ID: member.id,
+      MemberID: member.memberId,
+      Name: member.fullName,
+      TxnID: member.txnID,
+      RRN: member.bankRRN || "N/A",
+      Amount: member.amount,
+      Charge: member.charge,
+      Credit: member.credit,
+      VPA_ID: member.vpaID || "N/A",
+      Description: member.description,
+      DateTime: member.dateTime,
+      Status: member.status ? "Success" : "Failed",
+    }));
+
+    // Create a worksheet
+    const worksheet = XLSX.utils.json_to_sheet(exportData);
+    // Create a workbook and append the worksheet
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Payin Data");
+
+    // Export the workbook
+    XLSX.writeFile(workbook, "Payin_Data.xlsx");
+  };
+
   const formatDateTime = (dateString) => {
     const date = new Date(dateString);
     const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
-    const day = String(date.getDate()).padStart(2, '0');
-    const hours = String(date.getHours()).padStart(2, '0');
-    const minutes = String(date.getMinutes()).padStart(2, '0');
-    const seconds = String(date.getSeconds()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are zero-based
+    const day = String(date.getDate()).padStart(2, "0");
+    const hours = String(date.getHours()).padStart(2, "0");
+    const minutes = String(date.getMinutes()).padStart(2, "0");
+    const seconds = String(date.getSeconds()).padStart(2, "0");
     return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
   };
 
@@ -177,7 +203,7 @@ const Payin = () => {
 
   return (
     <>
-            <Box
+      <Box
         sx={{ padding: 3, marginBottom: 2, marginTop: 12 }}
         maxWidth="xl"
         style={{
@@ -201,13 +227,16 @@ const Payin = () => {
                 Total balance
               </Typography>
               <Typography>
-          ₹{" "}
-          {data.length > 0
-            ? data
-                .reduce((total, user) => total + parseFloat(user.amount || 0), 0)
-                .toLocaleString("en-IN", { minimumFractionDigits: 2 })
-            : "0.00"}
-        </Typography>
+                ₹{" "}
+                {data.length > 0
+                  ? data
+                      .reduce(
+                        (total, user) => total + parseFloat(user.amount || 0),
+                        0
+                      )
+                      .toLocaleString("en-IN", { minimumFractionDigits: 2 })
+                  : "0.00"}
+              </Typography>
             </Box>
           </Grid>
           <Grid item xs={12} md={6}>
@@ -239,26 +268,34 @@ const Payin = () => {
       >
         <Paper sx={{ p: 2, boxShadow: 3 }}>
           <Grid container alignItems="center" spacing={1} mb={2}>
-            <Grid item xs={12} md={3}>
-              <Grid item>
-                <IconButton color="primary" onClick={handleBackButtonClick}>
-                  <ArrowBackIcon />
-                </IconButton>
-              </Grid>
-              <Grid container alignItems="center" spacing={1}>
-                <Grid item>
-                  <Typography
-                    variant="h4"
-                    component="h1"
-                    gutterBottom
-                    sx={{ color: "teal" }}
-                  >
-                    UPI Collection
-                  </Typography>
-                </Grid>
-              </Grid>
-            </Grid>
-          </Grid>
+  {/* Back Button and Title */}
+  <Grid item xs={12} md={6} display="flex" alignItems="center">
+    <IconButton color="primary" onClick={handleBackButtonClick} sx={{ mr: 1 }}>
+      <ArrowBackIcon />
+    </IconButton>
+    <Typography
+      variant="h4"
+      component="h1"
+      gutterBottom
+      sx={{ color: "teal", flexGrow: 1 }}
+    >
+      UPI Collection
+    </Typography>
+  </Grid>
+
+  {/* Export Button */}
+  <Grid item xs={12} md={6} display="flex" justifyContent={{ xs: "flex-start", md: "flex-end" }}>
+    <Button
+      variant="contained"
+      color="success"
+      onClick={handleExport}
+      sx={{ marginBottom: 2 }}
+    >
+      Export
+    </Button>
+  </Grid>
+</Grid>
+
           <Grid container alignItems="center" spacing={1} mb={2}>
             <Grid item xs={12} md={3}>
               <TextField
@@ -287,32 +324,32 @@ const Payin = () => {
               </FormControl>
             </Grid>
             <Grid item xs={12} md={2}>
-            <TextField
-              fullWidth
-              label="Date"
+              <TextField
+                fullWidth
+                label="Date"
                 type="date"
-              value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
-              InputLabelProps={{
-                shrink: true,
-              }}
-              variant="outlined"
-            />
-          </Grid>
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                variant="outlined"
+              />
+            </Grid>
 
-          <Grid item xs={12} md={2}>
-            <TextField
-              fullWidth
-              label="Date"
+            <Grid item xs={12} md={2}>
+              <TextField
+                fullWidth
+                label="Date"
                 type="date"
-              value={endDate}
+                value={endDate}
                 onChange={(e) => setEndDate(e.target.value)}
-              InputLabelProps={{
-                shrink: true,
-              }}
-              variant="outlined"
-            />
-          </Grid>
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                variant="outlined"
+              />
+            </Grid>
             <Grid item xs={12} md={3}>
               <FormControl fullWidth>
                 <InputLabel id="page-size-label">Page Size</InputLabel>
@@ -329,6 +366,7 @@ const Payin = () => {
                 </Select>
               </FormControl>
             </Grid>
+            
           </Grid>
           <TableContainer component={Paper}>
             <Table>

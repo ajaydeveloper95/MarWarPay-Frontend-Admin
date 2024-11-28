@@ -27,10 +27,8 @@ import { accessToken, domainBase } from "../../../helpingFile";
 
 const ACCESS_TOKEN = accessToken;
 const USER_LIST_API = `${domainBase}apiAdmin/v1/utility/getUserList`;
-const SETTLEMENT_API =
-  `${domainBase}apiAdmin/v1/wallet/getSettlementAmountAll`;
-const SETTLEMENT_ONE_API =
-  `${domainBase}apiAdmin/v1/wallet/getSettlementAmountOne/`; // Adjusted API endpoint
+const SETTLEMENT_API = `${domainBase}apiAdmin/v1/wallet/getSettlementAmountAll`;
+const SETTLEMENT_ONE_API = `${domainBase}apiAdmin/v1/wallet/getSettlementAmountOne/`; // Adjusted API endpoint
 
 const Settlement = () => {
   const [startDateTime, setStartDateTime] = useState("");
@@ -39,7 +37,7 @@ const Settlement = () => {
   const [userList, setUserList] = useState([]);
   const [dropdownValue, setDropdownValue] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState()
+  const [error, setError] = useState();
   const { isSidebarOpen } = useSidebar();
   const navigate = useNavigate();
 
@@ -53,7 +51,7 @@ const Settlement = () => {
         });
         setUserList(response.data.data);
       } catch (err) {
-        setError(err)
+        setError(err);
       }
     };
     fetchUserList();
@@ -141,6 +139,29 @@ const Settlement = () => {
     setFilteredTransactions([]);
   };
 
+  const exportToCSV = () => {
+    const headers = ["User", "Settlement Amount"];
+
+    const rows = filteredTransactions.map((transaction) => [
+      `${transaction.userInfo?.fullName || "N/A"} (${
+        transaction.userInfo?.memberId || "N/A"
+      })`,
+      transaction.amount || "N/A",
+    ]);
+
+    const csvContent = [
+      headers.join(","), // Add headers
+      ...rows.map((row) => row.join(",")), // Add data rows
+    ].join("\n");
+
+    // Create a Blob with CSV content and trigger download
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "transactions.csv";
+    link.click();
+  };
+
   return (
     <Container
       maxWidth="xl"
@@ -198,7 +219,7 @@ const Settlement = () => {
             </FormControl>
           </Grid>
 
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid item xs={12} md={2}>
             <TextField
               fullWidth
               label="Start Date & Time"
@@ -211,8 +232,9 @@ const Settlement = () => {
               variant="outlined"
             />
           </Grid>
+          
 
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid item xs={12} md={2}>
             <TextField
               fullWidth
               label="End Date & Time"
@@ -238,12 +260,18 @@ const Settlement = () => {
           </Grid>
 
           <Grid item xs={12} md={2}>
-            <Button
-              variant="outlined"
-              color="secondary"
-              onClick={handleReset}
-            >
+            <Button variant="outlined" color="secondary" onClick={handleReset}>
               Reset
+            </Button>
+          </Grid>
+          <Grid item xs={12} md={2}>
+            <Button
+              variant="contained"
+              color="success"
+              onClick={exportToCSV}
+              disabled={filteredTransactions.length === 0} // Disable if no transactions
+            >
+              Export
             </Button>
           </Grid>
         </Grid>
@@ -300,25 +328,25 @@ const Settlement = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-              {loading ? (
-                <TableRow>
-                  <TableCell colSpan={8} align="center">
-                    Loading...
-                  </TableCell>
-                </TableRow>
-              ) : error ? (
-                <TableRow>
-                  <TableCell colSpan={8} align="center">
-                  No data available.
-                  </TableCell>
-                </TableRow>
-              ) : filteredTransactions.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={8} align="center">
-                    No data available.
-                  </TableCell>
-                </TableRow>
-              ) : (
+                {loading ? (
+                  <TableRow>
+                    <TableCell colSpan={8} align="center">
+                      Loading...
+                    </TableCell>
+                  </TableRow>
+                ) : error ? (
+                  <TableRow>
+                    <TableCell colSpan={8} align="center">
+                      No data available.
+                    </TableCell>
+                  </TableRow>
+                ) : filteredTransactions.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={8} align="center">
+                      No data available.
+                    </TableCell>
+                  </TableRow>
+                ) : (
                   filteredTransactions.map((transaction, index) => (
                     <TableRow key={transaction._id}>
                       <TableCell
@@ -329,7 +357,7 @@ const Settlement = () => {
                       <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
                       >
-                        {transaction._id|| "N/A"}{" "}
+                        {transaction._id || "N/A"}{" "}
                         {/* Adjusted to show user name */}
                       </TableCell>
                       <TableCell

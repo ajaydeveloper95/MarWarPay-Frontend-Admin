@@ -77,6 +77,52 @@ const My_Wllt = () => {
     }
   };
 
+  // Function to convert JSON to CSV
+const convertToCSV = (data) => {
+  const headers = [
+    "MemberID",
+    "Before Amount",
+    "Cr/Dr Amount",
+    "After Amount",
+    "Date Time",
+    "Type",
+    "Description",
+    "Status",
+  ];
+
+  const rows = data.map((transaction) => [
+    transaction.userInfo.memberId,
+    transaction.beforeAmount,
+    transaction.transactionAmount,
+    transaction.afterAmount,
+    new Date(transaction.createdAt).toLocaleString(),
+    transaction.transactionType === "Cr." ? "Cr." : "Dr.",
+    transaction.description,
+    transaction.transactionStatus ? "Success" : "Failed",
+  ]);
+
+  // Combine headers and rows
+  const csvContent = [headers, ...rows].map((row) => row.join(",")).join("\n");
+
+  return csvContent;
+};
+
+// Function to handle export action
+const handleExport = () => {
+  const csvContent = convertToCSV(paginatedData);
+
+  // Create a blob from the CSV data
+  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+
+  // Create a download link
+  const link = document.createElement("a");
+  const url = URL.createObjectURL(blob);
+  link.setAttribute("href", url);
+  link.setAttribute("download", "transactions.csv");
+  link.click();
+};
+
+
   return (
     <Container
       maxWidth="xl"
@@ -109,7 +155,7 @@ const My_Wllt = () => {
               </Grid>
             </Grid>
           </Grid>
-          <Grid item xs={12} md={4}>
+          <Grid item xs={12} md={2}>
             <TextField
               label="Search by Member ID"
               variant="outlined"
@@ -146,7 +192,16 @@ const My_Wllt = () => {
               </Select>
             </FormControl>
           </Grid>
-        </Grid>
+            <Grid item xs={12} md={2}>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleExport}
+              >
+                Export
+              </Button>
+            </Grid>
+          </Grid>
 
         {/* Table Section */}
         <TableContainer component={Paper}>
@@ -237,7 +292,6 @@ const My_Wllt = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              
               {paginatedData.length > 0 ? (
                 paginatedData.map((transaction, index) => {
                   const rowNumber = startIndex + index + 1;
