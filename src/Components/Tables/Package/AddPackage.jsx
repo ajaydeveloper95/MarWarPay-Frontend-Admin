@@ -30,8 +30,8 @@ const ACCESS_TOKEN = accessToken;
 const AddPackage = () => {
   const [packageName, setPackageName] = useState('');
   const [packageInfo, setPackageInfo] = useState('');
-  const [packagePayOutCharge, setPackagePayOutCharge] = useState('');
-  const [packagePayInCharge, setPackagePayInCharge] = useState('');
+  const [packagePayOutCharge, setPackagePayOutCharge] = useState('');  // For PayOut
+  const [packagePayInCharge, setPackagePayInCharge] = useState('');    // For PayIn
   const [status, setStatus] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [payOutPackages, setPayOutPackages] = useState([]);
@@ -42,7 +42,7 @@ const AddPackage = () => {
   const navigate = useNavigate();
   const { isSidebarOpen } = useSidebar();
 
-  // Fetch the payout package list
+  // Fetch the payout and payin package list
   useEffect(() => {
     const fetchPayOutPackages = async () => {
       try {
@@ -71,6 +71,7 @@ const AddPackage = () => {
         setError('Failed to load payin packages. Please try again later.');
       }
     };
+
     fetchPayInPackages();
     fetchPayOutPackages();
   }, []);
@@ -91,7 +92,7 @@ const AddPackage = () => {
         },
       });
 
-      setSuccessMessage('The package has been successfully added!'); // Set success message
+      setSuccessMessage('The package has been successfully added!');
       setIsDialogOpen(true);
 
       // Reset form fields after a successful POST request
@@ -102,13 +103,13 @@ const AddPackage = () => {
       setStatus(true);
     } catch (err) {
       console.error('Error posting data:', err);
-      setError('Failed to add package. Please check your input and try again.'); // Set error message
+      setError('Failed to add package. Please check your input and try again.');
     }
   };
 
   const handleCloseDialog = () => {
     setIsDialogOpen(false);
-    navigate('/package/view'); // Navigate to the /view page after closing the dialog
+    navigate('/package/view');
   };
 
   const handleCancel = () => {
@@ -196,8 +197,8 @@ const AddPackage = () => {
                 <InputLabel id="pay-in-charge-label">Select PayIn Package</InputLabel>
                 <Select
                   labelId="pay-in-charge-label"
-                  value={packagePayOutCharge}
-                  onChange={(e) => setPackagePayOutCharge(e.target.value)}
+                  value={packagePayInCharge}
+                  onChange={(e) => setPackagePayInCharge(e.target.value)}
                   label="Package PayIn Charge"
                 >
                   {payInPackages.map((pkg) => (
@@ -208,16 +209,6 @@ const AddPackage = () => {
                 </Select>
               </FormControl>
             </Grid>
-            {/* <Grid item xs={12} sm={6}>
-              <TextField
-                label="Package Pay In Charge"
-                variant="outlined"
-                fullWidth
-                type="number"
-                value={packagePayInCharge}
-                onChange={(e) => setPackagePayInCharge(e.target.value)}
-              />
-            </Grid> */}
             <Grid item xs={12} sm={6}>
               <FormControl fullWidth variant="outlined" required>
                 <InputLabel id="status-label">Status</InputLabel>

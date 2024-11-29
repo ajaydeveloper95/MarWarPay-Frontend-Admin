@@ -14,7 +14,7 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-  CircularProgress, // Added for loading indicator
+  CircularProgress,
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -24,13 +24,15 @@ import axios from 'axios';
 import { accessToken, domainBase } from '../../../helpingFile';
 
 const ACCESS_TOKEN = accessToken;
+const API_GET_PACKAGE = `${domainBase}apiAdmin/v1/package/getSinglePackage/`
+const API_UPDATE_PACKAGE = `${domainBase}apiAdmin/v1/package/updatePackage/`
 const API_PayoutCharge = `${domainBase}apiAdmin/v1/utility/getPayOutPackageList`;
 const API_PayinCharge = `${domainBase}apiAdmin/v1/utility/getPayInPackageList`;
 
 const EditPackage = () => {
   const navigate = useNavigate();
   const { isSidebarOpen } = useSidebar();
-  const { id } = useParams(); 
+  const { id } = useParams();
 
   const [payOutPackages, setPayOutPackages] = useState([]);
   const [payInPackages, setPayInPackages] = useState([]);
@@ -46,12 +48,11 @@ const EditPackage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  
   useEffect(() => {
     const fetchPackageData = async () => {
       try {
         const response = await axios.get(
-          `${domainBase}apiAdmin/v1/package/getSinglePackage/${id}`,
+          `${API_GET_PACKAGE}${id}`,
           {
             headers: {
               Authorization: `Bearer ${ACCESS_TOKEN}`,
@@ -65,7 +66,6 @@ const EditPackage = () => {
             packagePayInCharge: data.packagePayInCharge || '',
             packagePayOutCharge: data.packagePayOutCharge || '',
             isActive: data.isActive !== undefined ? data.isActive : true,
-            // isDefault: data.isDefault || false, // Uncomment if needed
           });
         } else {
           setError(new Error(response.data.message || 'Failed to fetch package data.'));
@@ -112,7 +112,6 @@ const EditPackage = () => {
       }
     };
 
-    // Fetch both package data and payout packages concurrently
     const fetchData = async () => {
       await Promise.all([fetchPackageData(), fetchPayOutPackages(), fetchPayInPackages()]);
       setLoading(false);
@@ -121,7 +120,6 @@ const EditPackage = () => {
     fetchData();
   }, [id]);
 
-  // Handle form field changes
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setPackageData((prevData) => ({
@@ -129,13 +127,10 @@ const EditPackage = () => {
       [name]: type === 'checkbox' ? checked : value,
     }));
   };
-  
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validate required fields
     if (
       !packageData.packageName ||
       !packageData.packagePayInCharge ||
@@ -147,13 +142,12 @@ const EditPackage = () => {
 
     try {
       const response = await axios.post(
-        `${domainBase}apiAdmin/v1/package/updatePackage/${id}`, // API endpoint with package ID
+        `${API_UPDATE_PACKAGE}${id}`,
         {
           packageName: packageData.packageName,
-          packagePayInCharge: parseFloat(packageData.packagePayInCharge),
+          packagePayInCharge:packageData.packagePayInCharge,
           packagePayOutCharge: packageData.packagePayOutCharge,
           isActive: packageData.isActive,
-          // isDefault: packageData.isDefault, // Uncomment if needed
         },
         {
           headers: {
@@ -177,19 +171,15 @@ const EditPackage = () => {
     }
   };
 
-  // Handle closing of the success dialog
-  // Handle closing of the success dialog
   const handleCloseDialog = () => {
     setIsDialogOpen(false);
-    navigate('/package/view'); // Navigate to the all_packages page
+    navigate('/package/view'); // Redirect to the '/package/view' page after successful update
   };
 
-  // Handle cancel button click
   const handleCancel = () => {
-    navigate('/package/view'); // Navigate to the all_packages page
+    navigate('/package/view'); // Navigate back to the all_packages page if the user cancels
   };
 
-  // Loading state
   if (loading) {
     return (
       <Container
@@ -211,7 +201,6 @@ const EditPackage = () => {
     );
   }
 
-  // Error state
   if (error) {
     return (
       <Container
@@ -225,7 +214,7 @@ const EditPackage = () => {
         }}
       >
         <Typography variant="h6" color="error">
-        No data available
+          No data available
         </Typography>
         <Button
           variant="contained"
@@ -289,11 +278,11 @@ const EditPackage = () => {
             {/* Payin Charge */}
             <Grid item xs={12} sm={6}>
               <FormControl fullWidth variant="outlined" required>
-                <InputLabel id="pay-in-charge-label">select Payin Package</InputLabel>
+                <InputLabel id="pay-in-charge-label">Select Payin Package</InputLabel>
                 <Select
                   labelId="pay-in-charge-label"
-                  name='packagePayInCharge'
-                  value={packageData?.packagePayInCharge}
+                  name="packagePayInCharge"
+                  value={packageData.packagePayInCharge}
                   onChange={handleChange}
                   label="Select Payin Package"
                 >
@@ -312,8 +301,8 @@ const EditPackage = () => {
                 <InputLabel id="pay-out-charge-label">Select Payout Package</InputLabel>
                 <Select
                   labelId="pay-out-charge-label"
-                  name='packagePayOutCharge'
-                  value={packageData?.packagePayOutCharge}
+                  name="packagePayOutCharge"
+                  value={packageData.packagePayOutCharge}
                   onChange={handleChange}
                   label="Select Payout Package"
                 >
@@ -344,7 +333,7 @@ const EditPackage = () => {
               </FormControl>
             </Grid>
 
-            {/* Submit and Cancel Buttons */}
+            {/* Submit and Cancel */}
             <Grid item xs={12} display="flex" justifyContent="flex-end">
               <Button
                 type="submit"
@@ -364,20 +353,19 @@ const EditPackage = () => {
             </Grid>
           </Grid>
         </form>
-
-        {/* Success Dialog */}
-        <Dialog open={isDialogOpen} onClose={handleCloseDialog}>
-          <DialogTitle>Success</DialogTitle>
-          <DialogContent>
-            <Typography>The package has been successfully updated!</Typography>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleCloseDialog} color="primary">
-              OK
-            </Button>
-          </DialogActions>
-        </Dialog>
       </Box>
+
+      <Dialog open={isDialogOpen} onClose={handleCloseDialog}>
+        <DialogTitle>Package Update Successful</DialogTitle>
+        <DialogContent>
+          <Typography variant="body1">Your package has been updated successfully!</Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog} color="primary">
+            Ok
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Container>
   );
 };
