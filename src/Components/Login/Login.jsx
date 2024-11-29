@@ -59,6 +59,7 @@ const Login = () => {
 
           setTimeout(() => {
             navigate("/dashboard");
+            window.location.reload();
           }, 2000);
         } else {
           throw new Error("Access token or refresh token is missing in response.");
