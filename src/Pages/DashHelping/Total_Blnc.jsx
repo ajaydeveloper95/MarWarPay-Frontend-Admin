@@ -14,13 +14,14 @@ import {
 } from 'recharts';
 
 const API_GET_USERS_ENDPOINT = `${domainBase}apiAdmin/v1/utility/getUserWithWallet`;
+const API_GET_BANK_BALANCE = `${domainBase}apiAdmin/v1/utility/getBalanceFetch`;
 const ACCESS_TOKEN = accessToken;
 
 function Total_Blnc() {
   const [data, setData] = useState([]);
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
-  const [openMoneyBalance, ] = useState(550000); 
+  const [openMoneyBalance, setOpenMoneyBalance] = useState(-1);
   const [intervalId, setIntervalId] = useState(null);
 
   useEffect(() => {
@@ -40,15 +41,36 @@ function Total_Blnc() {
   }, []);
 
   useEffect(() => {
+    const fetchBankData = async () => {
+      try {
+        const response = await axios.get(API_GET_BANK_BALANCE, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+        if (response.data && response.data.data !== undefined) {
+          setOpenMoneyBalance(response.data.data);
+        } else {
+          console.error('Invalid response data for open money balance');
+        }
+      } catch (error) {
+        console.error('Error fetching open money balance', error);
+      }
+    };
+
+    fetchBankData();
+  }, []);
+
+  useEffect(() => {
     if (intervalId) clearInterval(intervalId);
 
-    if (openMoneyBalance < 300000) {
+    if (openMoneyBalance < 30000) {
       const id = setInterval(() => {
         setSnackbarMessage('Very low balance! Manage it immediately, or services may be suspended.');
         setOpenSnackbar(true);
       }, 1000);
       setIntervalId(id);
-    } else if (openMoneyBalance >= 300000 && openMoneyBalance <= 600000) {
+    } else if (openMoneyBalance >= 30000 && openMoneyBalance <= 200000) {
       const id = setInterval(() => {
         setSnackbarMessage('Your balance is low, consider managing it.');
         setOpenSnackbar(true);
@@ -184,11 +206,11 @@ function Total_Blnc() {
             <Typography variant="h4" sx={{ color: 'white', fontWeight: 'bold', mb: 2 }}>
               ₹ {openMoneyBalance.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
             </Typography>
-            {openMoneyBalance < 300000 && (
+            {/* {openMoneyBalance < 300000 && (
               <Typography variant="body2" sx={{ color: 'white', mb: 2 }}>
                 Very low balance! Manage it immediately.
               </Typography>
-            )}
+            )} */}
             <ResponsiveContainer width="100%" height={100}>
               <LineChart data={chartData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.3)" />
