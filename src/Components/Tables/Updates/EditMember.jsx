@@ -246,7 +246,7 @@ const EditMember = () => {
                 name="minWalletBalance"
                 variant="outlined"
                 fullWidth
-                value={userData.minWalletBalance || "0"}
+                value={userData.minWalletBalance}
                 onChange={onhandle2}
               />
             </Grid>
