@@ -201,7 +201,7 @@ function Total_Blnc() {
               <Money sx={{ color: 'white', fontSize: 40, position: 'absolute', top: 16, right: 16 }} />
             </Tooltip>
             <Typography variant="h6" sx={{ color: 'white', mb: 1, mt: 2 }}>
-              Open Money Balance
+              Bank Balance
             </Typography>
             <Typography variant="h4" sx={{ color: 'white', fontWeight: 'bold', mb: 2 }}>
               ₹ {openMoneyBalance.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
