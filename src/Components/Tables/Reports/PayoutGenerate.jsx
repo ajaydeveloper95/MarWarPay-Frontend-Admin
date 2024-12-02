@@ -135,7 +135,7 @@ const PayoutGenerate = () => {
       FinalAmount: item.finalAmount,
       TxnID: item.txnId,
       RRN: item.rrn,
-      Status: item.isSuccess === null ? "Pending" : item.isSuccess ? "Success" : "Failed",
+      Status: item.status,
       DateTime: item.dateTime,
     }));
 

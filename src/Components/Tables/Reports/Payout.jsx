@@ -132,7 +132,7 @@ const Payout = () => {
       FinalAmount: item.finalAmount,
       TxnID: item.txnId,
       RRN: item.rrn,
-      Status: item.status ? "Success" : "Failed",
+      Status: item.status,
       DateTime: item.dateTime,
     }));
 

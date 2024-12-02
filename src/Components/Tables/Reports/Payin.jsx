@@ -69,7 +69,7 @@ const Payin = () => {
       VPA_ID: member.vpaID || "N/A",
       Description: member.description,
       DateTime: member.dateTime,
-      Status: member.status ? "Success" : "Failed",
+      Status: member.status
     }));
 
     // Create a worksheet
