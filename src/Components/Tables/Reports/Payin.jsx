@@ -216,7 +216,7 @@ const Payin = () => {
         }}
       >
         <Grid container spacing={2} mb={2}>
-          <Grid item xs={12} md={6}>
+        <Grid item xs={12} sm={6} md={4}>
             <Box
               sx={{
                 p: 2,
@@ -241,7 +241,29 @@ const Payin = () => {
               </Typography>
             </Box>
           </Grid>
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} sm={6} md={4}>
+            <Box
+              sx={{
+                p: 2,
+                borderRadius: 2,
+                backgroundColor: "background.paper",
+                boxShadow: "5px 0 10px -3px rgba(0, 128, 128, 0.6)",
+              }}
+            >
+              <Typography variant="h6" sx={{ color: "teal" }}>
+                Total Charges
+              </Typography>
+              <Typography>
+          ₹{" "}
+          {data.length > 0
+            ? data
+                .reduce((total, user) => total + parseFloat(user.charge || 0), 0)
+                .toLocaleString("en-IN", { minimumFractionDigits: 2 })
+            : "0.00"}
+        </Typography>
+            </Box>
+          </Grid>
+          <Grid item xs={12} sm={6} md={4}>
             <Box
               sx={{
                 p: 2,
