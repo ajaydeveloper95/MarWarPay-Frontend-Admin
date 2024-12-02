@@ -113,7 +113,7 @@ const Qr = () => {
     const matchesName = member.userInfo.memberId
       .toLowerCase()
       .includes(searchQuery.toLowerCase()) ||
-      member.txnID.toLowerCase().includes(searchQuery.toLowerCase());
+      member.trxId.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesDate =
       (!startDate || new Date(member.createdAt) >= new Date(startDate)) &&
       (!endDate || new Date(member.createdAt) <= new Date(endDate));
