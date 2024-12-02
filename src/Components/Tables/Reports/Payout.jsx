@@ -36,8 +36,8 @@ const Payout = () => {
   const { isSidebarOpen } = useSidebar();
   const [searchQuery, setSearchQuery] = useState("");
   const [date, setDate] = useState("");
-  const [pageSize, setPageSize] = useState("25"); // Default to 25 items per page
-  const [currentPage, setCurrentPage] = useState(1); // Pagination starts at 1
+  const [pageSize, setPageSize] = useState("25"); 
+  const [currentPage, setCurrentPage] = useState(1); 
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -45,7 +45,7 @@ const Payout = () => {
   const formatDateTime = (dateString) => {
     const date = new Date(dateString);
     const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+    const month = String(date.getMonth() + 1).padStart(2, '0'); 
     const day = String(date.getDate()).padStart(2, '0');
     const hours = String(date.getHours()).padStart(2, '0');
     const minutes = String(date.getMinutes()).padStart(2, '0');
@@ -73,9 +73,9 @@ const Payout = () => {
             chargeAmount: item.chargeAmount,
             finalAmount: item.finalAmount,
             txnId: item.trxId,
-            rrn: item.bankRRN, // No RRN field in the response
+            rrn: item.bankRRN, 
             status: item.isSuccess,
-            dateTime: formatDateTime(item.createdAt), // Convert to 'YYYY-MM-DD'
+            dateTime: formatDateTime(item.createdAt), 
           }))
         );
         setLoading(false);

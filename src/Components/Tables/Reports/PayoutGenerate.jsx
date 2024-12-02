@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Container,
@@ -24,6 +24,8 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useSidebar } from "../../../Context/SidebarContext";
 import axios from "axios";
 import { accessToken, domainBase } from "../../../helpingFile";
+import { saveAs } from "file-saver";
+import Papa from "papaparse";
 
 const API_ENDPOINT = `${domainBase}apiAdmin/v1/payout/allPayOutPayment`;
 const ACCESS_TOKEN = accessToken;
@@ -33,20 +35,21 @@ const PayoutGenerate = () => {
   const { isSidebarOpen } = useSidebar();
   const [searchQuery, setSearchQuery] = useState("");
   const [date, setDate] = useState("");
-  const [pageSize, setPageSize] = useState("25"); // Default to 25 items per page
-  const [currentPage, setCurrentPage] = useState(1); // Pagination starts at 1
+  const [pageSize, setPageSize] = useState("25");
+  const [currentPage, setCurrentPage] = useState(1);
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [status, setStatus] = useState("");
 
   const formatDateTime = (dateString) => {
     const date = new Date(dateString);
     const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
-    const day = String(date.getDate()).padStart(2, '0');
-    const hours = String(date.getHours()).padStart(2, '0');
-    const minutes = String(date.getMinutes()).padStart(2, '0');
-    const seconds = String(date.getSeconds()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    const hours = String(date.getHours()).padStart(2, "0");
+    const minutes = String(date.getMinutes()).padStart(2, "0");
+    const seconds = String(date.getSeconds()).padStart(2, "0");
     return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
   };
 
@@ -82,13 +85,16 @@ const PayoutGenerate = () => {
     fetchData();
   }, []);
 
-  const filteredData = data.filter((item) => {
-    const matchesSearch =
-      item.memberId.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.txnId.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesDate = date ? item.dateTime.startsWith(date) : true;
-    return matchesSearch && matchesDate;
-  });
+  const filteredData = useMemo(() => {
+    return data.filter((item) => {
+      const matchesSearch =
+        item.memberId.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        item.txnId.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesDate = date ? item.dateTime.startsWith(date) : true;
+      const matchesStatus = status ? item.status === status : true;
+      return matchesSearch && matchesDate && matchesStatus;
+    });
+  }, [data, searchQuery, date, status]);
 
   const itemsToDisplay =
     pageSize === "all" ? filteredData.length : parseInt(pageSize, 10);
@@ -99,6 +105,10 @@ const PayoutGenerate = () => {
   const handlePageSizeChange = (event) => {
     setPageSize(event.target.value);
     setCurrentPage(1);
+  };
+
+  const handleStatusChange = (event) => {
+    setStatus(event.target.value);
   };
 
   const handlePageChange = (direction) => {
@@ -113,12 +123,33 @@ const PayoutGenerate = () => {
     navigate(-1);
   };
 
-  // if (loading) return <div>Loading...</div>;
-  // if (error) return <div>Error: {error.message}</div>;
+  const handleExport = () => {
+    const csvData = filteredData.map((item) => ({
+      ID: item.id,
+      MemberID: item.memberId,
+      Name: item.name,
+      AccountNumber: item.accountNumber,
+      IFSC: item.ifsc,
+      Amount: item.amount,
+      ChargeAmount: item.chargeAmount,
+      FinalAmount: item.finalAmount,
+      TxnID: item.txnId,
+      RRN: item.rrn,
+      Status: item.isSuccess === null ? "Pending" : item.isSuccess ? "Success" : "Failed",
+      DateTime: item.dateTime,
+    }));
+
+    const csv = Papa.unparse(csvData); // Convert to CSV format
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" }); // Create Blob
+    saveAs(
+      blob,
+      `Payout_History_${new Date().toISOString().split("T")[0]}.csv`
+    ); // Save file
+  };
 
   return (
     <>
-                    <Box
+      <Box
         sx={{ padding: 3, marginBottom: 2, marginTop: 12 }}
         maxWidth="xl"
         style={{
@@ -142,13 +173,16 @@ const PayoutGenerate = () => {
                 Total balance
               </Typography>
               <Typography>
-          ₹{" "}
-          {data.length > 0
-            ? data
-                .reduce((total, user) => total + parseFloat(user.amount || 0), 0)
-                .toLocaleString("en-IN", { minimumFractionDigits: 2 })
-            : "0.00"}
-        </Typography>
+                ₹{" "}
+                {data.length > 0
+                  ? data
+                      .reduce(
+                        (total, user) => total + parseFloat(user.amount || 0),
+                        0
+                      )
+                      .toLocaleString("en-IN", { minimumFractionDigits: 2 })
+                  : "0.00"}
+              </Typography>
             </Box>
           </Grid>
           <Grid item xs={12} md={6}>
@@ -211,7 +245,7 @@ const PayoutGenerate = () => {
             </Grid>
             <Grid item xs={12} md={2}>
               <TextField
-               label="Date"
+                label="Date"
                 type="date"
                 variant="outlined"
                 fullWidth
@@ -221,6 +255,15 @@ const PayoutGenerate = () => {
                   shrink: true,
                 }}
               />
+            </Grid>
+            <Grid item xs={12} md={2} align="right" marginBottom={2}>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleExport}
+              >
+                Export
+              </Button>
             </Grid>
             <Grid item xs={12} md={2}>
               <FormControl fullWidth>
@@ -238,6 +281,23 @@ const PayoutGenerate = () => {
                 </Select>
               </FormControl>
             </Grid>
+            <Grid item xs={12} md={2}>
+          <FormControl variant="outlined" fullWidth>
+            <InputLabel>Status</InputLabel>
+            <Select
+              value={status}
+              onChange={handleStatusChange}
+              label="Status"
+            >
+              <MenuItem value="">
+                <em>All</em>
+              </MenuItem>
+              <MenuItem value="Success">Success</MenuItem>
+              <MenuItem value="Pending">Pending</MenuItem>
+              <MenuItem value="Failed">Failed</MenuItem>
+            </Select>
+          </FormControl>
+        </Grid>
           </Grid>
 
           {/* Table Section */}
@@ -329,25 +389,25 @@ const PayoutGenerate = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-              {loading ? (
-                <TableRow>
-                  <TableCell colSpan={8} align="center">
-                    Loading...
-                  </TableCell>
-                </TableRow>
-              ) : error ? (
-                <TableRow>
-                  <TableCell colSpan={8} align="center">
-                  No data available
-                  </TableCell>
-                </TableRow>
-              ) : paginatedData.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={8} align="center">
-                    No data available.
-                  </TableCell>
-                </TableRow>
-              ) : (
+                {loading ? (
+                  <TableRow>
+                    <TableCell colSpan={8} align="center">
+                      Loading...
+                    </TableCell>
+                  </TableRow>
+                ) : error ? (
+                  <TableRow>
+                    <TableCell colSpan={8} align="center">
+                      No data available
+                    </TableCell>
+                  </TableRow>
+                ) : paginatedData.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={8} align="center">
+                      No data available.
+                    </TableCell>
+                  </TableRow>
+                ) : (
                   paginatedData.map((item, index) => (
                     <TableRow key={item.id}>
                       <TableCell

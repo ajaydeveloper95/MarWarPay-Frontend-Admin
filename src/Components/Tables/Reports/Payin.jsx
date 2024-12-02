@@ -133,6 +133,7 @@ const Payin = () => {
             Authorization: `Bearer ${ACCESS_TOKEN}`,
           },
         });
+        console.log(response);
         setUserList(response.data.data); // Store user data
       } catch (err) {
         setError(err);
@@ -154,13 +155,14 @@ const Payin = () => {
       member.memberId.toLowerCase().includes(searchQuery.toLowerCase()) ||
       member.txnID.toLowerCase().includes(searchQuery.toLowerCase()) ||
       (member.bankRRN &&
-        member.bankRRN.toLowerCase().includes(searchQuery.toLowerCase())); // Check for bankRRN if it exists
-
+        member.bankRRN.toLowerCase().includes(searchQuery.toLowerCase()));
     const matchesDate =
       (!startDate || new Date(member.dateTime) >= new Date(startDate)) &&
       (!endDate || new Date(member.dateTime) <= new Date(endDate));
+    const matchesUser =
+      !dropdownValue || member.userInfo.memberId === dropdownValue;
 
-    return matchesSearch && matchesDate;
+    return matchesSearch && matchesDate && matchesUser;
   });
 
   const itemsToDisplay =
@@ -268,33 +270,43 @@ const Payin = () => {
       >
         <Paper sx={{ p: 2, boxShadow: 3 }}>
           <Grid container alignItems="center" spacing={1} mb={2}>
-  {/* Back Button and Title */}
-  <Grid item xs={12} md={6} display="flex" alignItems="center">
-    <IconButton color="primary" onClick={handleBackButtonClick} sx={{ mr: 1 }}>
-      <ArrowBackIcon />
-    </IconButton>
-    <Typography
-      variant="h4"
-      component="h1"
-      gutterBottom
-      sx={{ color: "teal", flexGrow: 1 }}
-    >
-      UPI Collection
-    </Typography>
-  </Grid>
+            {/* Back Button and Title */}
+            <Grid item xs={12} md={6} display="flex" alignItems="center">
+              <IconButton
+                color="primary"
+                onClick={handleBackButtonClick}
+                sx={{ mr: 1 }}
+              >
+                <ArrowBackIcon />
+              </IconButton>
+              <Typography
+                variant="h4"
+                component="h1"
+                gutterBottom
+                sx={{ color: "teal", flexGrow: 1 }}
+              >
+                UPI Collection
+              </Typography>
+            </Grid>
 
-  {/* Export Button */}
-  <Grid item xs={12} md={6} display="flex" justifyContent={{ xs: "flex-start", md: "flex-end" }}>
-    <Button
-      variant="contained"
-      color="success"
-      onClick={handleExport}
-      sx={{ marginBottom: 2 }}
-    >
-      Export
-    </Button>
-  </Grid>
-</Grid>
+            {/* Export Button */}
+            <Grid
+              item
+              xs={12}
+              md={6}
+              display="flex"
+              justifyContent={{ xs: "flex-start", md: "flex-end" }}
+            >
+              <Button
+                variant="contained"
+                color="success"
+                onClick={handleExport}
+                sx={{ marginBottom: 2 }}
+              >
+                Export
+              </Button>
+            </Grid>
+          </Grid>
 
           <Grid container alignItems="center" spacing={1} mb={2}>
             <Grid item xs={12} md={3}>
@@ -366,7 +378,6 @@ const Payin = () => {
                 </Select>
               </FormControl>
             </Grid>
-            
           </Grid>
           <TableContainer component={Paper}>
             <Table>
