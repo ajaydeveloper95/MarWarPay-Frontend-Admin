@@ -251,6 +251,15 @@ const handleExport = () => {
                     border: "1px solid rgba(224, 224, 224, 1)",
                   }}
                 >
+                  Crarge Amount
+                </TableCell>
+                <TableCell
+                  sx={{
+                    fontWeight: "bold",
+                    fontSize: "16px",
+                    border: "1px solid rgba(224, 224, 224, 1)",
+                  }}
+                >
                   After Amount
                 </TableCell>
                 <TableCell
@@ -317,6 +326,11 @@ const handleExport = () => {
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
                       >
                         {transaction.transactionAmount}
+                      </TableCell>
+                      <TableCell
+                        sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
+                      >
+                        {transaction.chargeAmount}
                       </TableCell>
                       <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
