@@ -39,6 +39,9 @@ import UpdatePayin from './Components/Tables/SwitchingAPI/UpdatePayin';
 import UpdatePayoutAPI from './Components/Tables/SwitchingAPI/UpdatePayoutAPI';
 import AllPayin from './Components/Tables/Package_setting/AllPayin';
 import UpdatePayinPkg from './Components/Tables/Package_setting/UpdatePayinPkg';
+import AllUserIP from './Components/Tables/UserIP/AllUserIP';
+import AddIP from './Components/Tables/UserIP/AddIP';
+import UpdateIP from './Components/Tables/UserIP/UpdareIP';
 
 function App() {
   return (
@@ -112,6 +115,11 @@ function App() {
                     <Route path="/main-setting/payin-switch" element={<PayinSW />} />
                     <Route path="/main-setting/viewPayin" element={<UpdatePayin />} />
                     <Route path="/main-setting/viewPayout" element={<UpdatePayoutAPI />} />
+
+                     {/* IP route */}
+                     <Route path="/ipManagement/allUsersIP" element={<AllUserIP />} />
+                     <Route path="/ip-whitelist/add" element={<AddIP />} />
+                     <Route path="/ip-whitelist/:id" element={<UpdateIP />} />
                   </Routes>
                   <Footer />
                 </>

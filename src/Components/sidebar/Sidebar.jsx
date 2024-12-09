@@ -164,7 +164,7 @@ const Sidebar = () => {
           borderRight: isDarkMode ? "1px solid #4b4b4b" : "1px solid #e0e0e0",
         }}
       >
-        <div className="flex-1 mt-10">
+        <div className="flex-1 mt-10 mb-10">
           <ul className="space-y-2">
             <img
               src="/logo.png"
@@ -604,7 +604,60 @@ const Sidebar = () => {
                         View AllPayin
                       </Link>
                     </li>
-                   
+                  </ul>
+                </div>
+              )}
+            </li>
+
+            {/* IP Management Section with Dropdown */}
+            <li>
+              <button
+                onClick={() => toggleDropdown("ipManagement")}
+                className="flex items-center px-4 py-2 w-full text-left"
+              >
+                <span
+                  className={`material-icons mr-2 ${
+                    !isSidebarOpen && "text-sm"
+                  }`}
+                >
+                  settings_ethernet
+                </span>
+                {isSidebarOpen && "IP Management"}
+                <span
+                  className={`material-icons ml-auto transition-transform ${
+                    isDropdownOpen["ipManagement"] ? "rotate-180" : "rotate-0"
+                  }`}
+                >
+                  arrow_drop_down
+                </span>
+              </button>
+              {isDropdownOpen["ipManagement"] && isSidebarOpen && (
+                <div className="m-5">
+                  <ul className="pl-6 list-disc">
+                    <li>
+                      <Link
+                        to="/ipManagement/allUsersIP"
+                        className="flex items-center px-4 py-2"
+                      >
+                        All Users IP
+                      </Link>
+                    </li>
+                    {/* <li>
+                      <Link
+                        to="/ipManagement/updateIP"
+                        className="flex items-center px-4 py-2"
+                      >
+                        Update IP
+                      </Link>
+                    </li> */}
+                    <li>
+                      <Link
+                        to="/ip-whitelist/add"
+                        className="flex items-center px-4 py-2"
+                      >
+                        Add IP
+                      </Link>
+                    </li>
                   </ul>
                 </div>
               )}
