@@ -26,7 +26,7 @@ const ACCESS_TOKEN = accessToken;
 const AddIP = () => {
   const [memberId, setMemberId] = useState("");
   const [ipUser, setIpUser] = useState("");
-  const [ipUserDev, setIpUserDev] = useState("*");
+  const [ipUserDev, setIpUserDev] = useState("null");
   const [isStatus, setIsStatus] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -175,6 +175,7 @@ const AddIP = () => {
                 onChange={(e) => setIpUserDev(e.target.value)}
                 required
               />
+              <p style={{color: 'red'}}>Note:- If you use * allow all IP (only use in IP User Dev)</p>
             </Grid>
 
             <Grid item xs={12} sm={6}>
