@@ -131,21 +131,41 @@ const UpdatePayoutAPI = () => {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>#</TableCell>
-                <TableCell>API Name</TableCell>
-                <TableCell>API Info</TableCell>
-                <TableCell>Status</TableCell>
-                <TableCell>Action</TableCell>
+                <TableCell sx={{
+                      fontWeight: "bold",
+                      fontSize: "16px",
+                      border: "1px solid rgba(224, 224, 224, 1)",
+                    }}>#</TableCell>
+                <TableCell sx={{
+                      fontWeight: "bold",
+                      fontSize: "16px",
+                      border: "1px solid rgba(224, 224, 224, 1)",
+                    }}>API Name</TableCell>
+                <TableCell sx={{
+                      fontWeight: "bold",
+                      fontSize: "16px",
+                      border: "1px solid rgba(224, 224, 224, 1)",
+                    }}>API Info</TableCell>
+                <TableCell sx={{
+                      fontWeight: "bold",
+                      fontSize: "16px",
+                      border: "1px solid rgba(224, 224, 224, 1)",
+                    }}>Status</TableCell>
+                <TableCell sx={{
+                      fontWeight: "bold",
+                      fontSize: "16px",
+                      border: "1px solid rgba(224, 224, 224, 1)",
+                    }}>Action</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {payInApiList.map((api, index) => (
                 <TableRow key={api._id}>
-                  <TableCell>{index + 1}</TableCell>
-                  <TableCell>{api.apiName}</TableCell>
-                  <TableCell>{api.apiInfo}</TableCell>
-                  <TableCell>{api.isActive ? "Active" : "Inactive"}</TableCell>
-                  <TableCell>
+                  <TableCell sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}>{index + 1}</TableCell>
+                  <TableCell sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}>{api.apiName}</TableCell>
+                  <TableCell sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}>{api.apiInfo}</TableCell>
+                  <TableCell sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}>{api.isActive ? "Active" : "Inactive"}</TableCell>
+                  <TableCell sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}>
                     <IconButton onClick={() => handleEditClick(api)}>
                       <VisibilityIcon color="primary" />
                     </IconButton>

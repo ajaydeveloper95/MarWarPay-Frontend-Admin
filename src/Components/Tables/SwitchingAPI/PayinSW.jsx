@@ -254,17 +254,17 @@ const PayinSW = () => {
                 <TableHead>
                   <TableRow>
                     <TableCell
-                      sx={{ fontWeight: "bold", bgcolor: "lightgray" }}
+                      sx={{ fontWeight: "bold", bgcolor: "lightgray", border: "1px solid rgba(224, 224, 224, 1)"  }}
                     >
                       #
                     </TableCell>
                     <TableCell
-                      sx={{ fontWeight: "bold", bgcolor: "lightgray" }}
+                      sx={{ fontWeight: "bold", bgcolor: "lightgray" , border: "1px solid rgba(224, 224, 224, 1)" }}
                     >
                       API
                     </TableCell>
                     <TableCell
-                      sx={{ fontWeight: "bold", bgcolor: "lightgray" }}
+                      sx={{ fontWeight: "bold", bgcolor: "lightgray", border: "1px solid rgba(224, 224, 224, 1)"  }}
                     >
                       Status
                     </TableCell>
@@ -273,9 +273,9 @@ const PayinSW = () => {
                 <TableBody>
                   {payInApiList.map((api, index) => (
                     <TableRow key={api._id}>
-                      <TableCell>{index + 1}</TableCell>
-                      <TableCell>{api.apiName}</TableCell>
-                      <TableCell>
+                      <TableCell sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}>{index + 1}</TableCell>
+                      <TableCell sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}>{api.apiName}</TableCell>
+                      <TableCell sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}>
                         {dropdownValue !== "false" ? (
                           <FormControlLabel
                             value={api._id}
