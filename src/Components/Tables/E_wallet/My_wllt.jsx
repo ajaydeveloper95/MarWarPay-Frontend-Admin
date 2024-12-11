@@ -53,9 +53,16 @@ const My_Wllt = () => {
       });
   }, []);
 
-  const filteredData = transactions.filter((item) =>
-    item.userInfo.memberId.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredData = transactions.filter((item) => {
+    const matchesMemberId = item.userInfo.memberId
+      .toLowerCase()
+      .includes(searchQuery.toLowerCase());
+    const matchesDate = date
+      ? new Date(item.createdAt).toLocaleDateString() ===
+        new Date(date).toLocaleDateString()
+      : true;
+    return matchesMemberId && matchesDate;
+  })
 
   const itemsToDisplay =
     pageSize === "all" ? filteredData.length : parseInt(pageSize, 10);
@@ -244,7 +251,7 @@ const handleExport = () => {
                 >
                   Cr/Dr Amount
                 </TableCell>
-                <TableCell
+                {/* <TableCell
                   sx={{
                     fontWeight: "bold",
                     fontSize: "16px",
@@ -252,7 +259,7 @@ const handleExport = () => {
                   }}
                 >
                   Crarge Amount
-                </TableCell>
+                </TableCell> */}
                 <TableCell
                   sx={{
                     fontWeight: "bold",
@@ -325,13 +332,13 @@ const handleExport = () => {
                       <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
                       >
-                        {transaction.transactionAmount}
+                        {transaction.transactionAmount + transaction.chargeAmount}
                       </TableCell>
-                      <TableCell
+                      {/* <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
                       >
                         {transaction.chargeAmount}
-                      </TableCell>
+                      </TableCell> */}
                       <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
                       >
