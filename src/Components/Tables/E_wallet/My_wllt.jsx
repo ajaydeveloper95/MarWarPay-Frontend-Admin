@@ -332,7 +332,7 @@ const handleExport = () => {
                       <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
                       >
-                        {transaction.transactionAmount + transaction.chargeAmount}
+                        {(transaction.transactionAmount ?? 0) + (transaction.chargeAmount ?? 0)}
                       </TableCell>
                       {/* <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
