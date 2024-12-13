@@ -50,40 +50,45 @@ const PayinSW = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchUserList = async () => {
-      try {
-        const response = await axios.get(USER_LIST_API, {
-          headers: {
-            Authorization: `Bearer ${ACCESS_TOKEN}`,
-          },
-        });
-        setUserList(response.data.data);
-      } catch (err) {
-        setError("Please Wait...", err);
-      }
-    };
+  const fetchUserList = async () => {
+    try {
+      const response = await axios.get(USER_LIST_API, {
+        headers: {
+          Authorization: `Bearer ${ACCESS_TOKEN}`,
+        },
+      });
+      setUserList(response.data.data);
+    } catch (err) {
+      setError("Please Wait...", err);
+    }
+  };
 
-    const fetchPayInApiList = async () => {
-      try {
-        const response = await axios.get(PAYIN_API_LIST, {
-          headers: {
-            Authorization: `Bearer ${ACCESS_TOKEN}`,
-          },
-        });
-        setPayInApiList(response.data.data);
-      } catch (err) {
-        setError("Please Wait...", err);
-      }
-    };
+  const fetchPayInApiList = async () => {
+    try {
+      const response = await axios.get(PAYIN_API_LIST, {
+        headers: {
+          Authorization: `Bearer ${ACCESS_TOKEN}`,
+        },
+      });
+      setPayInApiList(response.data.data);
+    } catch (err) {
+      setError("Please Wait...", err);
+    }
+  };
+  useEffect(() => {
 
     fetchUserList();
     fetchPayInApiList();
-  }, [payInApiList]);
+  }, []);
 
   const handleCancel = () => navigate(-1);
   const handleOpenDialog = () => setIsDialogOpen(true);
-  const handleCloseDialog = () => setIsDialogOpen(false);
+  const handleCloseDialog = () => {
+    setIsDialogOpen(false)
+    fetchUserList();
+    fetchPayInApiList();
+
+  };
 
   const handleUserChange = (e, custom) => {
     const value = e.target.value;
