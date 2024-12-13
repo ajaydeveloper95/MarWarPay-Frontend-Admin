@@ -31,7 +31,8 @@ import axios from "axios";
 import { accessToken, domainBase } from "../../../helpingFile";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
-import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
+import Papa from "papaparse"; 
 
 const API_ENDPOINT = `${domainBase}apiAdmin/v1/payin/allSuccessPayIn`;
 const USER_LIST_API = `${domainBase}apiAdmin/v1/utility/getUserList`;
@@ -57,7 +58,7 @@ const Payin = () => {
   const [userList, setUserList] = useState([]);
 
   const handleExport = () => {
-    const exportData = filteredMembers.map((member) => ({
+    const csvData = filteredMembers.map((member) => ({
       ID: member.id,
       MemberID: member.memberId,
       Name: member.fullName,
@@ -71,16 +72,12 @@ const Payin = () => {
       DateTime: member.dateTime,
       Status: member.status
     }));
-
-    // Create a worksheet
-    const worksheet = XLSX.utils.json_to_sheet(exportData);
-    // Create a workbook and append the worksheet
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Payin Data");
-
-    // Export the workbook
-    XLSX.writeFile(workbook, "Payin_Data.xlsx");
+  
+    const csv = Papa.unparse(csvData); // Convert to CSV format
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" }); // Create Blob
+    saveAs(blob, `Payout_History_${new Date().toISOString().split("T")[0]}.csv`); // Save file
   };
+  
 
   const formatDateTime = (dateString) => {
     const date = new Date(dateString);
