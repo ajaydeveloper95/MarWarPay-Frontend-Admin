@@ -31,6 +31,7 @@ import CancelIcon from "@mui/icons-material/Cancel"; // Icon for failure
 import { useSidebar } from "../../../Context/SidebarContext";
 import axios from "axios";
 import { accessToken, domainBase } from "../../../helpingFile";
+import { apiGet } from "../../../utils/http";
 
 const API_ENDPOINT = `${domainBase}apiAdmin/v1/payin/allPaymentGenerated`;
 const USER_LIST_API = `${domainBase}/apiAdmin/v1/utility/getUserList`;
@@ -40,6 +41,12 @@ const Qr = () => {
   const navigate = useNavigate();
   const { isSidebarOpen } = useSidebar();
   const [searchQuery, setSearchQuery] = useState("");
+  const [filterData, setFilterData] = useState({
+    page: 1,
+    limit: 25,
+    keyword: "",
+    startDate: ""
+  });
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [pageSize, setPageSize] = useState("25");
@@ -69,78 +76,85 @@ const Qr = () => {
   
   
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const response = await axios.get(API_ENDPOINT, {
-          headers: {
-            Authorization: `Bearer ${ACCESS_TOKEN}`,
-          },
-        });
-        setData(response.data.data); // Updated to use API data structure
-        setLoading(false);
-      } catch (err) {
-        setError(err);
-        setLoading(false);
-      }
-    };
-
-    const fetchUserList = async () => {
-      try {
-        const response = await axios.get(USER_LIST_API, {
-          headers: {
-            Authorization: `Bearer ${ACCESS_TOKEN}`,
-          },
-        });
-        setUserList(response.data.data); // Store user data
-      } catch (err) {
-        setError(err);
-      }
-    };
-
-    fetchData();
-    fetchUserList();
-  }, []);
-
-  useEffect(() => {
-    setCurrentPage(0);
-    setPreviousPage(0);
-  }, [pageSize]);
-
-  // Filter members based on search query, date range, and selected user
-  const filteredMembers = data.filter((member) => {
-    const matchesName = member.userInfo.memberId
-      .toLowerCase()
-      .includes(searchQuery.toLowerCase()) ||
-      member.trxId.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesDate =
-      (!startDate || new Date(member.createdAt) >= new Date(startDate)) &&
-      (!endDate || new Date(member.createdAt) <= new Date(endDate));
-    const matchesUser =
-      !dropdownValue || member.userInfo.memberId === dropdownValue;
-    return matchesName && matchesDate && matchesUser;
-  });
-
-  const itemsToDisplay =
-    pageSize === "all" ? filteredMembers.length : parseInt(pageSize, 10);
-  const startIndex = currentPage * itemsToDisplay;
-  const endIndex = startIndex + itemsToDisplay;
-  const paginatedMembers = filteredMembers.slice(startIndex, endIndex);
-
-  const handlePageSizeChange = (event) => {
-    setPageSize(event.target.value);
-  };
-
-  const handlePageChange = (direction) => {
-    if (direction === "next" && endIndex < filteredMembers.length) {
-      setPreviousPage(previousPage);
-      setCurrentPage(currentPage + 1);
-    } else if (direction === "prev" && currentPage > 0) {
-      setPreviousPage(currentPage);
-      setCurrentPage(currentPage - 1);
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      const response = await apiGet(API_ENDPOINT,{...filterData}); 
+      setData(response?.data?.data); 
+      setLoading(false);
+    } catch (err) {
+      setError(err);
+      setLoading(false);
     }
   };
+
+  const fetchUserList = async () => {
+    try {
+      const response = await axios.get(USER_LIST_API, {
+        headers: {
+          Authorization: `Bearer ${ACCESS_TOKEN}`,
+        },
+      });
+      setUserList(response.data.data); // Store user data
+    } catch (err) {
+      // setError(err);
+    }
+  };
+  useEffect(() => {
+    fetchData();
+  }, [filterData]);
+  useEffect(()=>{
+    fetchUserList();
+  },[])
+
+  useEffect(()=>{
+    const timeOutId = setTimeout(() => {
+      setFilterData({
+        ...filterData,
+        keyword: searchQuery
+      })
+    }, 500);
+    return clearTimeout(timeOutId)
+  },[searchQuery])
+
+  // useEffect(() => {
+  //   setCurrentPage(0);
+  //   setPreviousPage(0);
+  // }, [pageSize]);
+
+  // Filter members based on search query, date range, and selected user
+  // const filteredMembers = data.filter((member) => {
+  //   const matchesName = member.userInfo.memberId
+  //     .toLowerCase()
+  //     .includes(searchQuery.toLowerCase()) ||
+  //     member.trxId.toLowerCase().includes(searchQuery.toLowerCase());
+  //   const matchesDate =
+  //     (!startDate || new Date(member.createdAt) >= new Date(startDate)) &&
+  //     (!endDate || new Date(member.createdAt) <= new Date(endDate));
+  //   const matchesUser =
+  //     !dropdownValue || member.userInfo.memberId === dropdownValue;
+  //   return matchesName && matchesDate && matchesUser;
+  // });
+
+  // const itemsToDisplay =
+  //   pageSize === "all" ? filteredMembers.length : parseInt(pageSize, 10);
+  // const startIndex = currentPage * itemsToDisplay;
+  // const endIndex = startIndex + itemsToDisplay;
+  // const paginatedMembers = filteredMembers.slice(startIndex, endIndex);
+
+  // const handlePageSizeChange = (event) => {
+  //   setPageSize(event.target.value);
+  // };
+
+  // const handlePageChange = (direction) => {
+  //   if (direction === "next" && endIndex < filteredMembers.length) {
+  //     setPreviousPage(previousPage);
+  //     setCurrentPage(currentPage + 1);
+  //   } else if (direction === "prev" && currentPage > 0) {
+  //     setPreviousPage(currentPage);
+  //     setCurrentPage(currentPage - 1);
+  //   }
+  // };
 
   const handleBackButtonClick = () => {
     navigate(-1);
@@ -299,7 +313,11 @@ const Qr = () => {
                   shrink: true,
                 }}
                 value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
+                onChange={(e) => setFilterData({
+                  ...filterData,
+                  startDate: e.target.value
+                })}
+                // onChange={(e) => setStartDate(e.target.value)}
               />
             </Grid>
             <Grid item xs={12} md={2}>
@@ -320,13 +338,16 @@ const Qr = () => {
                 <Select
                   label="page"
                   value={pageSize}
-                  onChange={handlePageSizeChange}
+                  onChange={(e)=>setFilterData({
+                    ...filterData,
+                    limit: e.target.value
+                  })}
                 >
                   <MenuItem value="25">25</MenuItem>
                   <MenuItem value="50">50</MenuItem>
                   <MenuItem value="100">100</MenuItem>
-                  <MenuItem value="500">500</MenuItem>
-                  <MenuItem value="all">View All</MenuItem>
+                  {/* <MenuItem value="500">500</MenuItem> */}
+                  <MenuItem value="500">View All</MenuItem>
                 </Select>
               </FormControl>
             </Grid>
@@ -427,7 +448,7 @@ const Qr = () => {
                   </TableCell>
                 </TableRow>
               </TableHead>
-              <TableBody>
+              <TableBody>  
               {loading ? (
                 <TableRow>
                   <TableCell colSpan={8} align="center">
@@ -440,19 +461,20 @@ const Qr = () => {
                     No data available
                   </TableCell>
                 </TableRow>
-              ) : paginatedMembers.length === 0 ? (
+              ) : data.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={8} align="center">
                     No data available.
                   </TableCell>
                 </TableRow>
               ) : (
-                  paginatedMembers.map((member, index) => (
+                  data?.map((member, index) => (
                     <TableRow key={member._id}>
                       <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
                       >
-                        {startIndex + index + 1}
+                        {/* {startIndex + index + 1} */}
+                        {index+1}
                       </TableCell>
                       <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
@@ -555,7 +577,7 @@ const Qr = () => {
               <Button
                 variant="contained"
                 color="primary"
-                disabled={endIndex >= filteredMembers.length}
+                // disabled={endIndex >= filteredMembers.length}
                 onClick={() => handlePageChange("next")}
               >
                 Next

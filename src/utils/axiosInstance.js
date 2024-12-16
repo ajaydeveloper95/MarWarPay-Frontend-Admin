@@ -1,0 +1,51 @@
+import axios from "axios";
+// import { useRouter } from "next/router";
+// import { AxiosError } from "@/utils/axioInstance/axiosError";
+
+// export const HandleAxiosError = (err) => {
+//   const router = useRouter();
+//   if (!err) {
+//     return;
+//   }
+
+//   if (err.code === "ERR_BAD_REQUEST") {
+//     if (
+//       localStorage.getItem("token") !== "undefined" &&
+//       localStorage.getItem("token") !== null
+//     ) {
+//       localStorage.removeItem("token");
+//     }
+//     router.push("/login");
+//   }
+// };
+
+const axiosInstance = axios.create({
+  baseURL: "https://api.udtaxratangarh.org",
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
+
+// Add a request interceptor
+axiosInstance.interceptors.request.use(function (config) {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    return config;
+  }
+  config = {
+    ...config,
+    headers: { ...config.headers, Authorization: `Bearer ${token}` },
+  };
+  return config;
+});
+
+// Add a response interceptor
+axiosInstance.interceptors.response.use(
+  (res) => res,
+  (err) => {
+    // AxiosError(err);
+    return Promise.reject(err);
+  }
+);
+
+export { axiosInstance };
