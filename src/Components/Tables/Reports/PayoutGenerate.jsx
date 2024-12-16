@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Container,
@@ -19,28 +19,34 @@ import {
   Box,
   InputLabel,
   FormControl,
+  Pagination,
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useSidebar } from "../../../Context/SidebarContext";
-import axios from "axios";
-import { accessToken, domainBase } from "../../../helpingFile";
+import { domainBase } from "../../../helpingFile";
 import { saveAs } from "file-saver";
 import Papa from "papaparse";
+import { apiGet } from "../../../utils/http";
+
+
 
 const API_ENDPOINT = `${domainBase}apiAdmin/v1/payout/allPayOutPayment`;
-const ACCESS_TOKEN = accessToken;
 
 const PayoutGenerate = () => {
   const navigate = useNavigate();
   const { isSidebarOpen } = useSidebar();
   const [searchQuery, setSearchQuery] = useState("");
-  const [date, setDate] = useState("");
-  const [pageSize, setPageSize] = useState("25");
-  const [currentPage, setCurrentPage] = useState(1);
+  const [filterData, setFilterData] = useState({
+    page: 1,
+    limit: 25,
+    keyword: "",
+    startDate: "",
+  });
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [status, setStatus] = useState("");
+  const [totalCount, setTotalCount] = useState(0); // Total records count
 
   const formatDateTime = (dateString) => {
     const date = new Date(dateString);
@@ -57,11 +63,7 @@ const PayoutGenerate = () => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const response = await axios.get(API_ENDPOINT, {
-          headers: {
-            Authorization: `Bearer ${ACCESS_TOKEN}`,
-          },
-        });
+        const response =  await apiGet(API_ENDPOINT, { ...filterData })
         setData(
           response.data.data.map((item, index) => ({
             id: index + 1,
@@ -75,6 +77,7 @@ const PayoutGenerate = () => {
             dateTime: formatDateTime(item.createdAt),
           }))
         );
+        setTotalCount(response.data.totalCount);
         setLoading(false);
       } catch (err) {
         setError(err);
@@ -85,38 +88,29 @@ const PayoutGenerate = () => {
     fetchData();
   }, []);
 
-  const filteredData = useMemo(() => {
-    return data.filter((item) => {
-      const matchesSearch =
-        item.memberId.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        item.txnId.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesDate = date ? item.dateTime.startsWith(date) : true;
-      const matchesStatus = status ? item.status === status : true;
-      return matchesSearch && matchesDate && matchesStatus;
-    });
-  }, [data, searchQuery, date, status]);
 
-  const itemsToDisplay =
-    pageSize === "all" ? filteredData.length : parseInt(pageSize, 10);
-  const startIndex = (currentPage - 1) * itemsToDisplay;
-  const endIndex = startIndex + itemsToDisplay;
-  const paginatedData = filteredData.slice(startIndex, endIndex);
-
-  const handlePageSizeChange = (event) => {
-    setPageSize(event.target.value);
-    setCurrentPage(1);
-  };
 
   const handleStatusChange = (event) => {
     setStatus(event.target.value);
   };
 
-  const handlePageChange = (direction) => {
-    if (direction === "next" && endIndex < filteredData.length) {
-      setCurrentPage(currentPage + 1);
-    } else if (direction === "prev" && currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
+  useEffect(() => {
+    const timeOutId = setTimeout(() => {
+      setFilterData({
+        ...filterData,
+        keyword: searchQuery,
+      });
+    }, 500);
+    return () => clearTimeout(timeOutId);
+  }, [searchQuery]);
+
+  const handleFilterChange = (key, value) => {
+    setFilterData((prev) => ({ ...prev, [key]: value }));
+  };
+
+  // console.log(filterData)
+  const handlePageChange = (event, value) => {
+    handleFilterChange("page", value);
   };
 
   const handleBackButtonClick = () => {
@@ -124,7 +118,7 @@ const PayoutGenerate = () => {
   };
 
   const handleExport = () => {
-    const csvData = filteredData.map((item) => ({
+    const csvData = data.map((item) => ({
       ID: item.id,
       MemberID: item.memberId,
       Name: item.name,
@@ -249,8 +243,13 @@ const PayoutGenerate = () => {
                 type="date"
                 variant="outlined"
                 fullWidth
-                value={date}
-                onChange={(e) => setDate(e.target.value)}
+                value={filterData?.startDate}
+                onChange={(e) =>
+                  setFilterData({
+                    ...filterData,
+                    startDate: e.target.value,
+                  })
+                }
                 InputLabelProps={{
                   shrink: true,
                 }}
@@ -265,22 +264,22 @@ const PayoutGenerate = () => {
                 Export
               </Button>
             </Grid>
-            <Grid item xs={12} md={2}>
-              <FormControl fullWidth>
-                <InputLabel id="page-size-label">Items Per Page</InputLabel>
-                <Select
-                  labelId="page-size-label"
-                  value={pageSize}
-                  onChange={handlePageSizeChange}
-                  label="Items Per Page"
-                >
-                  <MenuItem value={25}>25</MenuItem>
-                  <MenuItem value={50}>50</MenuItem>
-                  <MenuItem value={100}>100</MenuItem>
-                  <MenuItem value="all">View All</MenuItem>
-                </Select>
-              </FormControl>
-            </Grid>
+            <Grid item xs={12} sm={3}>
+          <FormControl fullWidth>
+            <InputLabel>Items per Page</InputLabel>
+            <Select
+              value={filterData.limit}
+              onChange={(e) => handleFilterChange("limit", e.target.value)}
+              label="Items per Page"
+            >
+              {[25, 50, 100, 500].map((value) => (
+                <MenuItem key={value} value={value}>
+                  {value}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Grid>
             <Grid item xs={12} md={2}>
           <FormControl variant="outlined" fullWidth>
             <InputLabel>Status</InputLabel>
@@ -401,123 +400,39 @@ const PayoutGenerate = () => {
                       No data available
                     </TableCell>
                   </TableRow>
-                ) : paginatedData.length === 0 ? (
+                ) : data?.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={8} align="center">
                       No data available.
                     </TableCell>
                   </TableRow>
-                ) : (
-                  paginatedData.map((item, index) => (
-                    <TableRow key={item.id}>
-                      <TableCell
-                        sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
-                      >
-                        {startIndex + index + 1}
-                      </TableCell>
-                      <TableCell
-                        sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
-                      >
-                        {item.memberId}
-                      </TableCell>
-                      <TableCell
-                        sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
-                      >
-                        {item.name}
-                      </TableCell>
-                      <TableCell
-                        sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
-                      >
-                        {item.accountNumber}
-                      </TableCell>
-                      <TableCell
-                        sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
-                      >
-                        {item.ifsc}
-                      </TableCell>
-                      <TableCell
-                        sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
-                      >
-                        {item.amount}
-                      </TableCell>
-                      <TableCell
-                        sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
-                      >
-                        {item.txnId}
-                      </TableCell>
-                      <TableCell
-                        sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
-                      >
-                        {item.status === "Success" ? (
-                          <Button
-                            sx={{
-                              color: "green",
-                              backgroundColor: "rgba(0, 128, 0, 0.1)",
-                              borderRadius: 2,
-                              padding: "2px 10px",
-                            }}
-                          >
-                            Success
-                          </Button>
-                        ) : item.status === "Failed" ? (
-                          <Button
-                            sx={{
-                              color: "red",
-                              backgroundColor: "rgba(255, 0, 0, 0.1)",
-                              borderRadius: 2,
-                              padding: "2px 10px",
-                            }}
-                          >
-                            Failed
-                          </Button>
-                        ) : (
-                          <Button
-                            sx={{
-                              color: "orange", // Color for Pending
-                              backgroundColor: "rgba(255, 165, 0, 0.1)", // Light orange background
-                              borderRadius: 2,
-                              padding: "2px 10px",
-                            }}
-                          >
-                            Pending
-                          </Button>
-                        )}
-                      </TableCell>
-                      <TableCell
-                        sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
-                      >
-                        {item.dateTime}
-                      </TableCell>
-                    </TableRow>
-                  ))
-                )}
+               ) : (
+                data.map((item) => (
+                  <TableRow key={item.id}>
+                    <TableCell>{item.id}</TableCell>
+                    <TableCell>{item.memberId}</TableCell>
+                    <TableCell>{item.name}</TableCell>
+                    <TableCell>{item.accountNumber}</TableCell>
+                    <TableCell>{item.ifsc}</TableCell>
+                    <TableCell>{item.amount}</TableCell>
+                    <TableCell>{item.txnId}</TableCell>
+                    <TableCell>{item.status}</TableCell>
+                    <TableCell>{item.dateTime}</TableCell>
+                  </TableRow>
+                ))
+              )}
               </TableBody>
             </Table>
           </TableContainer>
-          {pageSize !== "all" && (
-            <Grid container spacing={2} justifyContent="center" mt={2}>
-              <Grid item>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={() => handlePageChange("prev")}
-                  disabled={currentPage === 1}
-                >
-                  Previous
-                </Button>
-              </Grid>
-              <Grid item>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={() => handlePageChange("next")}
-                  disabled={endIndex >= filteredData.length}
-                >
-                  Next
-                </Button>
-              </Grid>
-            </Grid>
-          )}
+          
+                <Box sx={{ display: "flex", justifyContent: "center", marginTop: 2 }}>
+                  <Pagination
+                    count={Math.ceil(totalCount / filterData.limit)}
+                    page={filterData.page}
+                    onChange={handlePageChange}
+                    color="primary"
+                  />
+                </Box>
         </Paper>
       </Container>
     </>

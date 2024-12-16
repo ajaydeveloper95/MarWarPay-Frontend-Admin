@@ -62,7 +62,7 @@ const My_Wllt = () => {
         new Date(date).toLocaleDateString()
       : true;
     return matchesMemberId && matchesDate;
-  })
+  });
 
   const itemsToDisplay =
     pageSize === "all" ? filteredData.length : parseInt(pageSize, 10);
@@ -85,50 +85,51 @@ const My_Wllt = () => {
   };
 
   // Function to convert JSON to CSV
-const convertToCSV = (data) => {
-  const headers = [
-    "MemberID",
-    "Before Amount",
-    "Cr/Dr Amount",
-    "After Amount",
-    "Date Time",
-    "Type",
-    "Description",
-    "Status",
-  ];
+  const convertToCSV = (data) => {
+    const headers = [
+      "MemberID",
+      "Before Amount",
+      "Cr/Dr Amount",
+      "After Amount",
+      "Date Time",
+      "Type",
+      "Description",
+      "Status",
+    ];
 
-  const rows = data.map((transaction) => [
-    transaction.userInfo.memberId,
-    transaction.beforeAmount,
-    transaction.transactionAmount,
-    transaction.afterAmount,
-    new Date(transaction.createdAt).toLocaleString(),
-    transaction.transactionType === "Cr." ? "Cr." : "Dr.",
-    transaction.description,
-    transaction.transactionStatus ? "Success" : "Failed",
-  ]);
+    const rows = data.map((transaction) => [
+      transaction.userInfo.memberId,
+      transaction.beforeAmount,
+      transaction.transactionAmount,
+      transaction.afterAmount,
+      new Date(transaction.createdAt).toLocaleString(),
+      transaction.transactionType === "Cr." ? "Cr." : "Dr.",
+      transaction.description,
+      transaction.transactionStatus ? "Success" : "Failed",
+    ]);
 
-  // Combine headers and rows
-  const csvContent = [headers, ...rows].map((row) => row.join(",")).join("\n");
+    // Combine headers and rows
+    const csvContent = [headers, ...rows]
+      .map((row) => row.join(","))
+      .join("\n");
 
-  return csvContent;
-};
+    return csvContent;
+  };
 
-// Function to handle export action
-const handleExport = () => {
-  const csvContent = convertToCSV(paginatedData);
+  // Function to handle export action
+  const handleExport = () => {
+    const csvContent = convertToCSV(paginatedData);
 
-  // Create a blob from the CSV data
-  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    // Create a blob from the CSV data
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
 
-  // Create a download link
-  const link = document.createElement("a");
-  const url = URL.createObjectURL(blob);
-  link.setAttribute("href", url);
-  link.setAttribute("download", "transactions.csv");
-  link.click();
-};
-
+    // Create a download link
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+    link.setAttribute("href", url);
+    link.setAttribute("download", "transactions.csv");
+    link.click();
+  };
 
   return (
     <Container
@@ -199,16 +200,12 @@ const handleExport = () => {
               </Select>
             </FormControl>
           </Grid>
-            <Grid item xs={12} md={2}>
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={handleExport}
-              >
-                Export
-              </Button>
-            </Grid>
+          <Grid item xs={12} md={2}>
+            <Button variant="contained" color="primary" onClick={handleExport}>
+              Export
+            </Button>
           </Grid>
+        </Grid>
 
         {/* Table Section */}
         <TableContainer component={Paper}>
@@ -332,7 +329,8 @@ const handleExport = () => {
                       <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
                       >
-                        {(transaction.transactionAmount ?? 0) + (transaction.chargeAmount ?? 0)}
+                        {(transaction.transactionAmount ?? 0) +
+                          (transaction.chargeAmount ?? 0)}
                       </TableCell>
                       {/* <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
