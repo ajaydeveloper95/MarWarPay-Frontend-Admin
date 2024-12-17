@@ -35,7 +35,7 @@ import { accessToken, domainBase } from "../../../helpingFile";
 import { apiGet } from "../../../utils/http";
 
 const API_ENDPOINT = `${domainBase}apiAdmin/v1/payin/allPaymentGenerated`;
-const USER_LIST_API = `${domainBase}/apiAdmin/v1/utility/getUserList`;
+const USER_LIST_API = `${domainBase}apiAdmin/v1/utility/getUserList`;
 const ACCESS_TOKEN = accessToken;
 
 const Qr = () => {
@@ -278,7 +278,7 @@ const Qr = () => {
                     <em>All Users</em>
                   </MenuItem>
                   {userList?.map((user) => (
-                    <MenuItem key={user._id} value={user.memberId}>
+                    <MenuItem key={user._id} value={user._id}>
                       {`${user.fullName} (${user.memberId})`}
                     </MenuItem>
                   ))}
@@ -466,27 +466,27 @@ const Qr = () => {
                       <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
                       >
-                        {member.userInfo.memberId}
+                        {member?.userInfo?.memberId}
                       </TableCell>
                       <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
                       >
-                        {member.trxId}
+                        {member?.trxId}
                       </TableCell>
                       <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
                       >
-                        {member.refId}
+                        {member?.refId}
                       </TableCell>
                       <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
                       >
-                        {member.amount}
+                        {member?.amount}
                       </TableCell>
                       <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
                       >
-                        {member.ip}
+                        {member?.ip}
                       </TableCell>
                       <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
@@ -494,37 +494,37 @@ const Qr = () => {
                         <Button
                           variant="contained"
                           color="info"
-                          onClick={() => handleQrClick(member.qrData)}
+                          onClick={() => handleQrClick(member?.qrData)}
                           sx={{ textTransform: "none" }}
                         >
                           View QR
                         </Button>
                       </TableCell>
-                      <TableCell>{formatDateTime(member.createdAt)}</TableCell>
+                      <TableCell>{formatDateTime(member?.createdAt)}</TableCell>
                       <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
                       >
                         <Button
                           sx={{
                             color:
-                              member.callBackStatus === "Success"
+                              member?.callBackStatus === "Success"
                                 ? "green"
-                                : member.callBackStatus === "Failed"
+                                : member?.callBackStatus === "Failed"
                                 ? "red"
                                 : "orange", // Color for Pending
                             backgroundColor:
-                              member.callBackStatus === "Success"
+                              member?.callBackStatus === "Success"
                                 ? "rgba(0, 128, 0, 0.1)"
-                                : member.callBackStatus === "Failed"
+                                : member?.callBackStatus === "Failed"
                                 ? "rgba(255, 0, 0, 0.1)"
                                 : "rgba(255, 165, 0, 0.1)", // Background for Pending
                             borderRadius: 2,
                             padding: "2px 10px",
                           }}
                         >
-                          {member.callBackStatus === "Success"
+                          {member?.callBackStatus === "Success"
                             ? "Success"
-                            : member.callBackStatus === "Failed"
+                            : member?.callBackStatus === "Failed"
                             ? "Failed"
                             : "Pending"}{" "}
                           {/* Display Pending when callBackStatus is not Success or Failed */}
@@ -536,7 +536,7 @@ const Qr = () => {
                       >
                         <IconButton
                           color="primary"
-                          onClick={() => handleViewClick(member.callBackStatus)}
+                          onClick={() => handleViewClick(member?.callBackStatus)}
                         >
                           <VisibilityIcon />
                         </IconButton>

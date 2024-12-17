@@ -342,7 +342,7 @@ const Payin = () => {
                     <em>All Users</em>
                   </MenuItem>
                   {userList?.map((user) => (
-                    <MenuItem key={user._id} value={user.memberId}>
+                    <MenuItem key={user._id} value={user._id}>
                       {`${user.fullName} (${user.memberId})`}
                     </MenuItem>
                   ))}
