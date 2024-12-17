@@ -28,8 +28,6 @@ import { saveAs } from "file-saver";
 import Papa from "papaparse";
 import { apiGet } from "../../../utils/http";
 
-
-
 const API_ENDPOINT = `${domainBase}apiAdmin/v1/payout/allPayOutPayment`;
 
 const PayoutGenerate = () => {
@@ -63,7 +61,7 @@ const PayoutGenerate = () => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const response =  await apiGet(API_ENDPOINT, { ...filterData })
+        const response = await apiGet(API_ENDPOINT, { ...filterData });
         setData(
           response.data.data.map((item, index) => ({
             id: index + 1,
@@ -77,7 +75,7 @@ const PayoutGenerate = () => {
             dateTime: formatDateTime(item.createdAt),
           }))
         );
-        setTotalCount(response.data.totalCount);
+        setTotalCount(response.data.totalDocs);
         setLoading(false);
       } catch (err) {
         setError(err);
@@ -86,9 +84,7 @@ const PayoutGenerate = () => {
     };
 
     fetchData();
-  }, []);
-
-
+  }, [filterData]);
 
   const handleStatusChange = (event) => {
     setStatus(event.target.value);
@@ -108,9 +104,11 @@ const PayoutGenerate = () => {
     setFilterData((prev) => ({ ...prev, [key]: value }));
   };
 
-  // console.log(filterData)
   const handlePageChange = (event, value) => {
-    handleFilterChange("page", value);
+    setFilterData((prev) => ({
+      ...prev,
+      page: value,
+    }));
   };
 
   const handleBackButtonClick = () => {
@@ -125,16 +123,13 @@ const PayoutGenerate = () => {
       AccountNumber: item.accountNumber,
       IFSC: item.ifsc,
       Amount: item.amount,
-      ChargeAmount: item.chargeAmount,
-      FinalAmount: item.finalAmount,
       TxnID: item.txnId,
-      RRN: item.rrn,
       Status: item.status,
       DateTime: item.dateTime,
     }));
 
-    const csv = Papa.unparse(csvData); // Convert to CSV format
-    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" }); // Create Blob
+    const csv = Papa.unparse(csvData);
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
     saveAs(
       blob,
       `Payout_History_${new Date().toISOString().split("T")[0]}.csv`
@@ -203,7 +198,6 @@ const PayoutGenerate = () => {
           transition: "margin-left 0.3s ease",
           minWidth: "600px",
           maxWidth: "80%",
-          // marginTop: "8%",
         }}
       >
         <Paper sx={{ p: 2, boxShadow: 3 }}>
@@ -230,7 +224,7 @@ const PayoutGenerate = () => {
             </Grid>
             <Grid item xs={12} md={3}>
               <TextField
-                label="Search by Member ID or txnID"
+                label="Search by txnID"
                 variant="outlined"
                 fullWidth
                 value={searchQuery}
@@ -265,38 +259,38 @@ const PayoutGenerate = () => {
               </Button>
             </Grid>
             <Grid item xs={12} sm={3}>
-          <FormControl fullWidth>
-            <InputLabel>Items per Page</InputLabel>
-            <Select
-              value={filterData.limit}
-              onChange={(e) => handleFilterChange("limit", e.target.value)}
-              label="Items per Page"
-            >
-              {[25, 50, 100, 500].map((value) => (
-                <MenuItem key={value} value={value}>
-                  {value}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        </Grid>
+              <FormControl fullWidth>
+                <InputLabel>Items per Page</InputLabel>
+                <Select
+                  value={filterData?.limit}
+                  onChange={(e) => handleFilterChange("limit", e.target.value)}
+                  label="Items per Page"
+                >
+                  {[25, 50, 100, 500]?.map((value) => (
+                    <MenuItem key={value} value={value}>
+                      {value}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
             <Grid item xs={12} md={2}>
-          <FormControl variant="outlined" fullWidth>
-            <InputLabel>Status</InputLabel>
-            <Select
-              value={status}
-              onChange={handleStatusChange}
-              label="Status"
-            >
-              <MenuItem value="">
-                <em>All</em>
-              </MenuItem>
-              <MenuItem value="Success">Success</MenuItem>
-              <MenuItem value="Pending">Pending</MenuItem>
-              <MenuItem value="Failed">Failed</MenuItem>
-            </Select>
-          </FormControl>
-        </Grid>
+              <FormControl variant="outlined" fullWidth>
+                <InputLabel>Status</InputLabel>
+                <Select
+                  value={status}
+                  onChange={handleStatusChange}
+                  label="Status"
+                >
+                  <MenuItem value="">
+                    <em>All</em>
+                  </MenuItem>
+                  <MenuItem value="Success">Success</MenuItem>
+                  <MenuItem value="Pending">Pending</MenuItem>
+                  <MenuItem value="Failed">Failed</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
           </Grid>
 
           {/* Table Section */}
@@ -406,33 +400,59 @@ const PayoutGenerate = () => {
                       No data available.
                     </TableCell>
                   </TableRow>
-               ) : (
-                data.map((item) => (
-                  <TableRow key={item.id}>
-                    <TableCell>{item.id}</TableCell>
-                    <TableCell>{item.memberId}</TableCell>
-                    <TableCell>{item.name}</TableCell>
-                    <TableCell>{item.accountNumber}</TableCell>
-                    <TableCell>{item.ifsc}</TableCell>
-                    <TableCell>{item.amount}</TableCell>
-                    <TableCell>{item.txnId}</TableCell>
-                    <TableCell>{item.status}</TableCell>
-                    <TableCell>{item.dateTime}</TableCell>
-                  </TableRow>
-                ))
-              )}
+                ) : (
+                  data?.map((item) => (
+                    <TableRow key={item.id}>
+                      <TableCell sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}>{item.id}</TableCell>
+                      <TableCell sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}>{item.memberId}</TableCell>
+                      <TableCell sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}>{item.name}</TableCell>
+                      <TableCell sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}>{item.accountNumber}</TableCell>
+                      <TableCell sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}>{item.ifsc}</TableCell>
+                      <TableCell sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}>{item.amount}</TableCell>
+                      <TableCell sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}>{item.txnId}</TableCell>
+                      <TableCell sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}><Button
+                          sx={{
+                            color:
+                              item.status === "Success"
+                                ? "green"
+                                : item.status === "Failed"
+                                ? "red"
+                                : "orange", // Color for Pending
+                            backgroundColor:
+                            item.status === "Success"
+                                ? "rgba(0, 128, 0, 0.1)"
+                                : item.status === "Failed"
+                                ? "rgba(255, 0, 0, 0.1)"
+                                : "rgba(255, 165, 0, 0.1)", // Background for Pending
+                            borderRadius: 2,
+                            padding: "2px 10px",
+                          }}
+                        >
+                          {item.status === "Success"
+                            ? "Success"
+                            : item.status === "Failed"
+                            ? "Failed"
+                            : "Pending"}{" "}
+                          {/* Display Pending when callBackStatus is not Success or Failed */}
+                        </Button></TableCell>
+                      <TableCell sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}>{item.dateTime}</TableCell>
+                    </TableRow>
+                  ))
+                )}
               </TableBody>
             </Table>
           </TableContainer>
-          
-                <Box sx={{ display: "flex", justifyContent: "center", marginTop: 2 }}>
-                  <Pagination
-                    count={Math.ceil(totalCount / filterData.limit)}
-                    page={filterData.page}
-                    onChange={handlePageChange}
-                    color="primary"
-                  />
-                </Box>
+
+          <Box sx={{ display: "flex", justifyContent: "center", marginTop: 2 }}>
+            <Pagination
+               count={parseInt(totalCount/filterData.limit)==0?parseInt(totalCount/filterData.limit):parseInt(totalCount/filterData.limit)+1}
+               page={filterData?.page}
+               onChange={handlePageChange}
+               variant="outlined"
+               shape="rounded"
+               color="primary"
+            />
+          </Box>
         </Paper>
       </Container>
     </>

@@ -48,8 +48,8 @@ const Qr = () => {
     keyword: "",
     startDate: "",
     endDate: "",
+    memberId: "",
   });
-  const [dropdownValue, setDropdownValue] = useState("");
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -77,7 +77,7 @@ const Qr = () => {
     try {
       const response = await apiGet(API_ENDPOINT, { ...filterData });
       setData(response?.data?.data);
-      setTotalCount(response.data.totalCount);
+      setTotalCount(response.data.totalDocs);
       setLoading(false);
     } catch (err) {
       setError(err);
@@ -111,10 +111,9 @@ const Qr = () => {
         keyword: searchQuery,
       });
     }, 500);
-   
+
     return () => clearTimeout(timeOutId);
   }, [searchQuery]);
-  
 
   const handleBackButtonClick = () => {
     navigate(-1);
@@ -148,9 +147,11 @@ const Qr = () => {
     setFilterData((prev) => ({ ...prev, [key]: value }));
   };
 
-  console.log(filterData)
   const handlePageChange = (event, value) => {
-    handleFilterChange("page", value);
+    setFilterData((prev) => ({
+      ...prev,
+      page: value,
+    }));
   };
 
   const handleQrDialogClose = () => {
@@ -244,10 +245,9 @@ const Qr = () => {
           </Grid>
           <Grid container alignItems="center" spacing={1} mb={2}>
             <Grid item xs={12} md={4}>
-              {console.log("sesesese", searchQuery)
-              }
+              {console.log("sesesese", searchQuery)}
               <TextField
-                label="Search by Member ID or txnID"
+                label="Search by txnID"
                 variant="outlined"
                 fullWidth
                 value={searchQuery}
@@ -259,8 +259,13 @@ const Qr = () => {
                 <InputLabel id="dropdown-label">All Users</InputLabel>
                 <Select
                   labelId="dropdown-label"
-                  value={dropdownValue}
-                  onChange={(e) => setDropdownValue(e.target.value)}
+                  value={filterData?.memberId}
+                  onChange={(e) =>
+                    setFilterData((prev) => ({
+                      ...prev,
+                      memberId: e.target.value,
+                    }))
+                  }
                   label="All Users"
                 >
                   <MenuItem value="">
@@ -311,22 +316,22 @@ const Qr = () => {
                 // onChange={(e) => setEndDate(e.target.value)}
               />
             </Grid>
-            <Grid item xs={12} sm={3}>
-          <FormControl fullWidth>
-            <InputLabel>Items per Page</InputLabel>
-            <Select
-              value={filterData.limit}
-              onChange={(e) => handleFilterChange("limit", e.target.value)}
-              label="Items per Page"
-            >
-              {[25, 50, 100, 500].map((value) => (
-                <MenuItem key={value} value={value}>
-                  {value}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        </Grid>
+            <Grid item xs={12} sm={2}>
+              <FormControl fullWidth>
+                <InputLabel>Items per Page</InputLabel>
+                <Select
+                  value={filterData.limit}
+                  onChange={(e) => handleFilterChange("limit", e.target.value)}
+                  label="Items per Page"
+                >
+                  {[25, 50, 100, 500].map((value) => (
+                    <MenuItem key={value} value={value}>
+                      {value}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
           </Grid>
           <TableContainer component={Paper}>
             <Table>
@@ -536,27 +541,19 @@ const Qr = () => {
               </TableBody>
             </Table>
           </TableContainer>
-          
-      <Box sx={{ display: "flex", justifyContent: "center", marginTop: 2 }}>
-        <Pagination
-          count={Math.ceil(totalCount / filterData.limit)}
-          page={filterData.page}
-          onChange={handlePageChange}
-          color="primary"
-        />
-      </Box>
+
+          <Box sx={{ display: "flex", justifyContent: "center", marginTop: 2 }}>
+            <Pagination
+               count={parseInt(totalCount/filterData.limit)==0?parseInt(totalCount/filterData.limit):parseInt(totalCount/filterData.limit)+1}
+               page={filterData?.page}
+               onChange={handlePageChange}
+               variant="outlined"
+               shape="rounded"
+               color="primary"
+            />
+          </Box>
         </Paper>
       </Container>
-
-      <Box sx={{ display: "flex", justifyContent: "center", marginTop: 2 }}>
-        <Pagination
-          count={Math.ceil(totalCount / filterData.limit)}
-          page={filterData.page}
-          onChange={handlePageChange}
-          color="primary"
-        />
-      </Box>
-
       <Dialog open={dialogOpen} onClose={handleDialogClose}>
         <DialogTitle>
           {dialogSeverity === "success" ? "Success" : "Error"}
