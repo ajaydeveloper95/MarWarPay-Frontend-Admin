@@ -23,6 +23,7 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
+  Pagination,
 } from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -45,14 +46,10 @@ const Qr = () => {
     page: 1,
     limit: 25,
     keyword: "",
-    startDate: ""
+    startDate: "",
+    endDate: "",
+    memberId: "",
   });
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
-  const [pageSize, setPageSize] = useState("25");
-  const [currentPage, setCurrentPage] = useState(0);
-  const [previousPage, setPreviousPage] = useState(0);
-  const [dropdownValue, setDropdownValue] = useState("");
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -62,25 +59,25 @@ const Qr = () => {
   const [userList, setUserList] = useState([]);
   const [qrDialogOpen, setQrDialogOpen] = useState(false);
   const [qrData, setQrData] = useState(null);
+  const [totalCount, setTotalCount] = useState(0); // Total records count
 
   const formatDateTime = (dateString) => {
     const date = new Date(dateString);
     const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
-    const day = String(date.getDate()).padStart(2, '0');
-    const hours = String(date.getHours()).padStart(2, '0');
-    const minutes = String(date.getMinutes()).padStart(2, '0');
-    const seconds = String(date.getSeconds()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are zero-based
+    const day = String(date.getDate()).padStart(2, "0");
+    const hours = String(date.getHours()).padStart(2, "0");
+    const minutes = String(date.getMinutes()).padStart(2, "0");
+    const seconds = String(date.getSeconds()).padStart(2, "0");
     return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
   };
-  
-  
 
   const fetchData = async () => {
     setLoading(true);
     try {
-      const response = await apiGet(API_ENDPOINT,{...filterData}); 
-      setData(response?.data?.data); 
+      const response = await apiGet(API_ENDPOINT, { ...filterData });
+      setData(response?.data?.data);
+      setTotalCount(response.data.totalDocs);
       setLoading(false);
     } catch (err) {
       setError(err);
@@ -97,64 +94,26 @@ const Qr = () => {
       });
       setUserList(response.data.data); // Store user data
     } catch (err) {
-      // setError(err);
+      setError(err);
     }
   };
   useEffect(() => {
     fetchData();
   }, [filterData]);
-  useEffect(()=>{
+  useEffect(() => {
     fetchUserList();
-  },[])
+  }, []);
 
-  useEffect(()=>{
+  useEffect(() => {
     const timeOutId = setTimeout(() => {
       setFilterData({
         ...filterData,
-        keyword: searchQuery
-      })
+        keyword: searchQuery,
+      });
     }, 500);
-    return clearTimeout(timeOutId)
-  },[searchQuery])
 
-  // useEffect(() => {
-  //   setCurrentPage(0);
-  //   setPreviousPage(0);
-  // }, [pageSize]);
-
-  // Filter members based on search query, date range, and selected user
-  // const filteredMembers = data.filter((member) => {
-  //   const matchesName = member.userInfo.memberId
-  //     .toLowerCase()
-  //     .includes(searchQuery.toLowerCase()) ||
-  //     member.trxId.toLowerCase().includes(searchQuery.toLowerCase());
-  //   const matchesDate =
-  //     (!startDate || new Date(member.createdAt) >= new Date(startDate)) &&
-  //     (!endDate || new Date(member.createdAt) <= new Date(endDate));
-  //   const matchesUser =
-  //     !dropdownValue || member.userInfo.memberId === dropdownValue;
-  //   return matchesName && matchesDate && matchesUser;
-  // });
-
-  // const itemsToDisplay =
-  //   pageSize === "all" ? filteredMembers.length : parseInt(pageSize, 10);
-  // const startIndex = currentPage * itemsToDisplay;
-  // const endIndex = startIndex + itemsToDisplay;
-  // const paginatedMembers = filteredMembers.slice(startIndex, endIndex);
-
-  // const handlePageSizeChange = (event) => {
-  //   setPageSize(event.target.value);
-  // };
-
-  // const handlePageChange = (direction) => {
-  //   if (direction === "next" && endIndex < filteredMembers.length) {
-  //     setPreviousPage(previousPage);
-  //     setCurrentPage(currentPage + 1);
-  //   } else if (direction === "prev" && currentPage > 0) {
-  //     setPreviousPage(currentPage);
-  //     setCurrentPage(currentPage - 1);
-  //   }
-  // };
+    return () => clearTimeout(timeOutId);
+  }, [searchQuery]);
 
   const handleBackButtonClick = () => {
     navigate(-1);
@@ -183,6 +142,16 @@ const Qr = () => {
       setDialogSeverity("info");
       setDialogOpen(true);
     }
+  };
+  const handleFilterChange = (key, value) => {
+    setFilterData((prev) => ({ ...prev, [key]: value }));
+  };
+
+  const handlePageChange = (event, value) => {
+    setFilterData((prev) => ({
+      ...prev,
+      page: value,
+    }));
   };
 
   const handleQrDialogClose = () => {
@@ -217,7 +186,7 @@ const Qr = () => {
               </Typography>
               <Typography>
                 ₹{" "}
-                {data.length > 0
+                {data?.length > 0
                   ? data
                       .reduce((total, user) => total + user.amount, 0)
                       .toLocaleString("en-IN", { minimumFractionDigits: 2 })
@@ -237,7 +206,7 @@ const Qr = () => {
               <Typography variant="h6" sx={{ color: "teal" }}>
                 Total QR generate Transaction
               </Typography>
-              <Typography>{data.length}</Typography>
+              <Typography>{data?.length}</Typography>
             </Box>
           </Grid>
         </Grid>
@@ -276,8 +245,9 @@ const Qr = () => {
           </Grid>
           <Grid container alignItems="center" spacing={1} mb={2}>
             <Grid item xs={12} md={4}>
+              {console.log("sesesese", searchQuery)}
               <TextField
-                label="Search by Member ID or txnID"
+                label="Search by txnID"
                 variant="outlined"
                 fullWidth
                 value={searchQuery}
@@ -289,14 +259,19 @@ const Qr = () => {
                 <InputLabel id="dropdown-label">All Users</InputLabel>
                 <Select
                   labelId="dropdown-label"
-                  value={dropdownValue}
-                  onChange={(e) => setDropdownValue(e.target.value)}
+                  value={filterData?.memberId}
+                  onChange={(e) =>
+                    setFilterData((prev) => ({
+                      ...prev,
+                      memberId: e.target.value,
+                    }))
+                  }
                   label="All Users"
                 >
                   <MenuItem value="">
                     <em>All Users</em>
                   </MenuItem>
-                  {userList.map((user) => (
+                  {userList?.map((user) => (
                     <MenuItem key={user._id} value={user.memberId}>
                       {`${user.fullName} (${user.memberId})`}
                     </MenuItem>
@@ -312,11 +287,13 @@ const Qr = () => {
                 InputLabelProps={{
                   shrink: true,
                 }}
-                value={startDate}
-                onChange={(e) => setFilterData({
-                  ...filterData,
-                  startDate: e.target.value
-                })}
+                value={filterData?.startDate}
+                onChange={(e) =>
+                  setFilterData({
+                    ...filterData,
+                    startDate: e.target.value,
+                  })
+                }
                 // onChange={(e) => setStartDate(e.target.value)}
               />
             </Grid>
@@ -328,26 +305,30 @@ const Qr = () => {
                 InputLabelProps={{
                   shrink: true,
                 }}
-                value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
+                value={filterData?.endDate}
+                onChange={(e) =>
+                  setFilterData({
+                    ...filterData,
+                    endDate: e.target.value,
+                  })
+                }
+                // value={endDate}
+                // onChange={(e) => setEndDate(e.target.value)}
               />
             </Grid>
-            <Grid item xs={12} md={2}>
+            <Grid item xs={12} sm={2}>
               <FormControl fullWidth>
-                <InputLabel>page</InputLabel>
+                <InputLabel>Items per Page</InputLabel>
                 <Select
-                  label="page"
-                  value={pageSize}
-                  onChange={(e)=>setFilterData({
-                    ...filterData,
-                    limit: e.target.value
-                  })}
+                  value={filterData.limit}
+                  onChange={(e) => handleFilterChange("limit", e.target.value)}
+                  label="Items per Page"
                 >
-                  <MenuItem value="25">25</MenuItem>
-                  <MenuItem value="50">50</MenuItem>
-                  <MenuItem value="100">100</MenuItem>
-                  {/* <MenuItem value="500">500</MenuItem> */}
-                  <MenuItem value="500">View All</MenuItem>
+                  {[25, 50, 100, 500].map((value) => (
+                    <MenuItem key={value} value={value}>
+                      {value}
+                    </MenuItem>
+                  ))}
                 </Select>
               </FormControl>
             </Grid>
@@ -448,33 +429,33 @@ const Qr = () => {
                   </TableCell>
                 </TableRow>
               </TableHead>
-              <TableBody>  
-              {loading ? (
-                <TableRow>
-                  <TableCell colSpan={8} align="center">
-                    Loading...
-                  </TableCell>
-                </TableRow>
-              ) : error ? (
-                <TableRow>
-                  <TableCell colSpan={8} align="center">
-                    No data available
-                  </TableCell>
-                </TableRow>
-              ) : data.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={8} align="center">
-                    No data available.
-                  </TableCell>
-                </TableRow>
-              ) : (
+              <TableBody>
+                {loading ? (
+                  <TableRow>
+                    <TableCell colSpan={8} align="center">
+                      Loading...
+                    </TableCell>
+                  </TableRow>
+                ) : error ? (
+                  <TableRow>
+                    <TableCell colSpan={8} align="center">
+                      No data available
+                    </TableCell>
+                  </TableRow>
+                ) : data?.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={8} align="center">
+                      No data available.
+                    </TableCell>
+                  </TableRow>
+                ) : (
                   data?.map((member, index) => (
                     <TableRow key={member._id}>
                       <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
                       >
                         {/* {startIndex + index + 1} */}
-                        {index+1}
+                        {index + 1}
                       </TableCell>
                       <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
@@ -513,9 +494,7 @@ const Qr = () => {
                           View QR
                         </Button>
                       </TableCell>
-                      <TableCell>
-                        {formatDateTime(member.createdAt)}
-                      </TableCell>
+                      <TableCell>{formatDateTime(member.createdAt)}</TableCell>
                       <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
                       >
@@ -562,31 +541,19 @@ const Qr = () => {
               </TableBody>
             </Table>
           </TableContainer>
-          <Grid container justifyContent="space-between" mt={2}>
-            <Grid item>
-              <Button
-                variant="contained"
-                color="primary"
-                disabled={currentPage === 0}
-                onClick={() => handlePageChange("prev")}
-              >
-                Previous
-              </Button>
-            </Grid>
-            <Grid item>
-              <Button
-                variant="contained"
-                color="primary"
-                // disabled={endIndex >= filteredMembers.length}
-                onClick={() => handlePageChange("next")}
-              >
-                Next
-              </Button>
-            </Grid>
-          </Grid>
+
+          <Box sx={{ display: "flex", justifyContent: "center", marginTop: 2 }}>
+            <Pagination
+               count={parseInt(totalCount/filterData.limit)==0?parseInt(totalCount/filterData.limit):parseInt(totalCount/filterData.limit)+1}
+               page={filterData?.page}
+               onChange={handlePageChange}
+               variant="outlined"
+               shape="rounded"
+               color="primary"
+            />
+          </Box>
         </Paper>
       </Container>
-
       <Dialog open={dialogOpen} onClose={handleDialogClose}>
         <DialogTitle>
           {dialogSeverity === "success" ? "Success" : "Error"}

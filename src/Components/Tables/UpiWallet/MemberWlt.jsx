@@ -19,23 +19,27 @@ import {
   InputLabel,
   FormControl,
   Box,
+  Pagination,
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useSidebar } from "../../../Context/SidebarContext";
-import axios from "axios";
-import { accessToken, domainBase } from "../../../helpingFile";
+import { domainBase } from "../../../helpingFile";
+import { apiGet } from "../../../utils/http";
 
 const API_ENDPOINT = `${domainBase}apiAdmin/v1/wallet/getAllTransactionUpi`;
-const ACCESS_TOKEN = accessToken;
 
 const MemberWlt = () => {
   const navigate = useNavigate();
   const { isSidebarOpen } = useSidebar();
   const [searchQuery, setSearchQuery] = useState("");
-  const [date, setDate] = useState("");
-  const [pageSize, setPageSize] = useState("25");
-  const [currentPage, setCurrentPage] = useState(0);
-  const [previousPage, setPreviousPage] = useState(0);
+  const [filterData, setFilterData] = useState({
+    page: 1,
+    limit: 25,
+    keyword: "",
+    startDate: "",
+    endDate: "",
+  });
+  const [totalCount, setTotalCount] = useState(0);
 
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -45,11 +49,8 @@ const MemberWlt = () => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const response = await axios.get(API_ENDPOINT, {
-          headers: {
-            Authorization: `Bearer ${ACCESS_TOKEN}`,
-          },
-        });
+        const response = await apiGet(API_ENDPOINT, { ...filterData });
+        setTotalCount(response.data.totalDocs);
         setData(response.data.data);
         setLoading(false);
       } catch (err) {
@@ -59,47 +60,27 @@ const MemberWlt = () => {
     };
 
     fetchData();
-  }, []);
+  }, [filterData]);
+
+  const handleFilterChange = (key, value) => {
+    setFilterData((prev) => ({ ...prev, [key]: value }));
+  };
+  const handlePageChange = (event, value) => {
+    setFilterData((prev) => ({
+      ...prev,
+      page: value,
+    }));
+  };
 
   useEffect(() => {
-    setCurrentPage(0);
-    setPreviousPage(0);
-  }, [pageSize]);
-
-  // Filter data based on search query and date
-  const filteredMembers = data.filter((member) => {
-    const matchesMemberId = member.userInfo.memberId
-      .toLowerCase()
-      .includes(searchQuery.toLowerCase());
-    const matchesDate = date
-      ? new Date(member.createdAt).toLocaleDateString() ===
-        new Date(date).toLocaleDateString()
-      : true;
-    return matchesMemberId && matchesDate;
-  });
-
-  // Determine the number of items to display
-  const itemsToDisplay =
-    pageSize === "all" ? filteredMembers.length : parseInt(pageSize, 10);
-
-  // Calculate start and end indices for pagination
-  const startIndex = currentPage * itemsToDisplay;
-  const endIndex = startIndex + itemsToDisplay;
-  const paginatedMembers = filteredMembers.slice(startIndex, endIndex);
-
-  const handlePageSizeChange = (event) => {
-    setPageSize(event.target.value);
-  };
-
-  const handlePageChange = (direction) => {
-    if (direction === "next" && endIndex < filteredMembers.length) {
-      setPreviousPage(currentPage);
-      setCurrentPage(currentPage + 1);
-    } else if (direction === "prev" && currentPage > 0) {
-      setPreviousPage(currentPage);
-      setCurrentPage(currentPage - 1);
-    }
-  };
+    const timeOutId = setTimeout(() => {
+      setFilterData({
+        ...filterData,
+        keyword: searchQuery,
+      });
+    }, 500);
+    return () => clearTimeout(timeOutId);
+  }, [searchQuery]);
 
   const handleBackButtonClick = () => {
     navigate(-1);
@@ -118,8 +99,7 @@ const MemberWlt = () => {
       "Status",
     ];
 
-    const rows = paginatedMembers.map((member, index) => [
-      startIndex + index + 1,
+    const rows = data.map((member) => [
       member.userInfo.memberId,
       member.beforeAmount,
       member.transactionAmount,
@@ -130,18 +110,12 @@ const MemberWlt = () => {
       member.transactionStatus === "Success" ? "Success" : "Failed",
     ]);
 
-    // Create CSV content
-    const csvContent = [
-      headers.join(","), // Add headers
-      ...rows.map((row) => row.join(",")), // Add data rows
-    ].join("\n");
+    // Combine headers and rows
+    const csvContent = [headers, ...rows]
+      .map((row) => row.join(","))
+      .join("\n");
 
-    // Create a Blob with CSV content and trigger download
-    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.download = "transactions.csv";
-    link.click();
+    return csvContent;
   };
 
   return (
@@ -177,6 +151,8 @@ const MemberWlt = () => {
                 </Grid>
               </Grid>
             </Grid>
+          </Grid>
+          <Grid container alignItems="center" spacing={1} mb={2}>
             <Grid item xs={12} md={3}>
               <TextField
                 label="Search by MemberID"
@@ -194,23 +170,46 @@ const MemberWlt = () => {
                 InputLabelProps={{
                   shrink: true,
                 }}
-                value={date}
-                onChange={(e) => setDate(e.target.value)}
+                value={filterData?.startDate}
+                onChange={(e) =>
+                  setFilterData({
+                    ...filterData,
+                    startDate: e.target.value,
+                  })
+                }
               />
             </Grid>
             <Grid item xs={12} md={2}>
+              <TextField
+                fullWidth
+                label="End Date & Time"
+                type="date"
+                value={filterData?.endDate}
+                onChange={(e) =>
+                  setFilterData({
+                    ...filterData,
+                    endDate: e.target.value,
+                  })
+                }
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                variant="outlined"
+              />
+            </Grid>
+            <Grid item xs={12} sm={3}>
               <FormControl fullWidth>
-                <InputLabel id="page-size-label">Items Per Page</InputLabel>
+                <InputLabel>Items per Page</InputLabel>
                 <Select
-                  labelId="page-size-label"
-                  value={pageSize}
-                  onChange={handlePageSizeChange}
-                  label="Items Per Page"
+                  value={filterData?.limit}
+                  onChange={(e) => handleFilterChange("limit", e.target.value)}
+                  label="Items per Page"
                 >
-                  <MenuItem value={25}>25</MenuItem>
-                  <MenuItem value={50}>50</MenuItem>
-                  <MenuItem value={100}>100</MenuItem>
-                  <MenuItem value="all">View All</MenuItem>
+                  {[25, 50, 100, 500]?.map((value) => (
+                    <MenuItem key={value} value={value}>
+                      {value}
+                    </MenuItem>
+                  ))}
                 </Select>
               </FormControl>
             </Grid>
@@ -328,19 +327,19 @@ const MemberWlt = () => {
                       No data available.
                     </TableCell>
                   </TableRow>
-                ) : paginatedMembers.length === 0 ? (
+                ) : !Array.isArray(data) || data.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={8} align="center">
                       No data available.
                     </TableCell>
                   </TableRow>
                 ) : (
-                  paginatedMembers.map((member, index) => (
+                  data.map((member, index) => (
                     <TableRow key={member._id}>
                       <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
                       >
-                        {startIndex + index + 1}
+                        {index + 1}
                       </TableCell>
                       <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
@@ -434,23 +433,15 @@ const MemberWlt = () => {
           </TableContainer>
 
           {/* Pagination Section */}
-          <Box display="flex" justifyContent="center" marginTop={2}>
-            <Button
+          <Box sx={{ display: "flex", justifyContent: "center", marginTop: 2 }}>
+            <Pagination
+              count={parseInt(totalCount/filterData.limit)==0?parseInt(totalCount/filterData.limit):parseInt(totalCount/filterData.limit)+1}
+              page={filterData?.page}
+              onChange={handlePageChange}
               variant="outlined"
+              shape="rounded"
               color="primary"
-              onClick={() => handlePageChange("prev")}
-              disabled={previousPage === 0}
-            >
-              Previous
-            </Button>
-            <Button
-              variant="outlined"
-              color="primary"
-              onClick={() => handlePageChange("next")}
-              disabled={endIndex >= filteredMembers.length}
-            >
-              Next
-            </Button>
+            />
           </Box>
         </Paper>
       </Container>

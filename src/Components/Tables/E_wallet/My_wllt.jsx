@@ -17,118 +17,116 @@ import {
   Select,
   InputLabel,
   FormControl,
+  Box,
+  Pagination,
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useSidebar } from "../../../Context/SidebarContext";
-import axios from "axios";
-import { accessToken, domainBase } from "../../../helpingFile";
+import { domainBase } from "../../../helpingFile";
+import { apiGet } from "../../../utils/http";
 
 const API_ENDPOINT = `${domainBase}apiAdmin/v1/wallet/getAllTransactionEwallet`;
-const ACCESS_TOKEN = accessToken;
 
 const My_Wllt = () => {
   const { isSidebarOpen } = useSidebar();
   const [searchQuery, setSearchQuery] = useState("");
-  const [date, setDate] = useState("");
-  const [pageSize, setPageSize] = useState("25");
-  const [currentPage, setCurrentPage] = useState(0);
+  const [filterData, setFilterData] = useState({
+    page: 1,
+    limit: 25,
+    keyword: "",
+    startDate: "",
+    endDate: "",
+    memberId: "",
+  });
+  const [totalCount, setTotalCount] = useState(0);
   const [transactions, setTransactions] = useState([]);
-  const [loading, setLoading] = useState(true);
+  // const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Fetch data from API
-    axios
-      .get(API_ENDPOINT, {
-        headers: {
-          Authorization: `Bearer ${ACCESS_TOKEN}`,
-        },
-      })
-      .then((response) => {
+    const fetchData = async () => {
+      try {
+        const response = await apiGet(API_ENDPOINT, { ...filterData });
+        console.log("res",response)
+        setTotalCount(response.data.totalDocs);
         setTransactions(response.data.data);
-        setLoading(false);
-      })
-      .catch((error) => {
+      } catch (error) {
         console.error("Error fetching data:", error);
-        setLoading(false);
+      } finally {
+        // setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [filterData]);
+
+  const handleFilterChange = (key, value) => {
+    setFilterData((prev) => ({ ...prev, [key]: value }));
+  };
+
+
+  const handlePageChange = (event, value) => {
+    setFilterData((prev) => ({
+      ...prev,
+      page: value,
+    }));
+  };
+
+  useEffect(() => {
+    const timeOutId = setTimeout(() => {
+      setFilterData({
+        ...filterData,
+        keyword: searchQuery,
       });
-  }, []);
-
-  const filteredData = transactions.filter((item) => {
-    const matchesMemberId = item.userInfo.memberId
-      .toLowerCase()
-      .includes(searchQuery.toLowerCase());
-    const matchesDate = date
-      ? new Date(item.createdAt).toLocaleDateString() ===
-        new Date(date).toLocaleDateString()
-      : true;
-    return matchesMemberId && matchesDate;
-  })
-
-  const itemsToDisplay =
-    pageSize === "all" ? filteredData.length : parseInt(pageSize, 10);
-
-  const startIndex = currentPage * itemsToDisplay;
-  const endIndex = startIndex + itemsToDisplay;
-  const paginatedData = filteredData.slice(startIndex, endIndex);
-
-  const handlePageSizeChange = (event) => {
-    setPageSize(event.target.value);
-    setCurrentPage(0); // Reset to first page when page size changes
-  };
-
-  const handlePageChange = (direction) => {
-    if (direction === "next" && endIndex < filteredData.length) {
-      setCurrentPage(currentPage + 1);
-    } else if (direction === "prev" && currentPage > 0) {
-      setCurrentPage(currentPage - 1);
-    }
-  };
+    }, 500);
+    return () => clearTimeout(timeOutId);
+  }, [searchQuery]);
 
   // Function to convert JSON to CSV
-const convertToCSV = (data) => {
-  const headers = [
-    "MemberID",
-    "Before Amount",
-    "Cr/Dr Amount",
-    "After Amount",
-    "Date Time",
-    "Type",
-    "Description",
-    "Status",
-  ];
+  const convertToCSV = (data) => {
+    const headers = [
+      "MemberID",
+      "Before Amount",
+      "Cr/Dr Amount",
+      "After Amount",
+      "Date Time",
+      "Type",
+      "Description",
+      "Status",
+    ];
 
-  const rows = data.map((transaction) => [
-    transaction.userInfo.memberId,
-    transaction.beforeAmount,
-    transaction.transactionAmount,
-    transaction.afterAmount,
-    new Date(transaction.createdAt).toLocaleString(),
-    transaction.transactionType === "Cr." ? "Cr." : "Dr.",
-    transaction.description,
-    transaction.transactionStatus ? "Success" : "Failed",
-  ]);
+    const rows = data.map((transaction) => [
+      transaction.userInfo.memberId,
+      transaction.beforeAmount,
+      transaction.transactionAmount,
+      transaction.afterAmount,
+      new Date(transaction.createdAt).toLocaleString(),
+      transaction.transactionType === "Cr." ? "Cr." : "Dr.",
+      transaction.description,
+      transaction.transactionStatus ? "Success" : "Failed",
+    ]);
 
-  // Combine headers and rows
-  const csvContent = [headers, ...rows].map((row) => row.join(",")).join("\n");
+    // Combine headers and rows
+    const csvContent = [headers, ...rows]
+      .map((row) => row.join(","))
+      .join("\n");
 
-  return csvContent;
-};
+    return csvContent;
+  };
 
-// Function to handle export action
-const handleExport = () => {
-  const csvContent = convertToCSV(paginatedData);
+  // Function to handle export action
+  const handleExport = () => {
+    const csvContent = convertToCSV(transactions);
 
-  // Create a blob from the CSV data
-  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    // Create a blob from the CSV data
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
 
-  // Create a download link
-  const link = document.createElement("a");
-  const url = URL.createObjectURL(blob);
-  link.setAttribute("href", url);
-  link.setAttribute("download", "transactions.csv");
-  link.click();
-};
-
+    // Create a download link
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+    link.setAttribute("href", url);
+    link.setAttribute("download", "transactions.csv");
+    link.click();
+  };
 
   return (
     <Container
@@ -162,7 +160,10 @@ const handleExport = () => {
               </Grid>
             </Grid>
           </Grid>
-          <Grid item xs={12} md={2}>
+        </Grid>
+
+        <Grid container alignItems="center" spacing={1} mb={2}>
+          <Grid item xs={12} md={3}>
             <TextField
               label="Search by Member ID"
               variant="outlined"
@@ -179,36 +180,55 @@ const handleExport = () => {
               InputLabelProps={{
                 shrink: true,
               }}
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
+              value={filterData?.startDate}
+              onChange={(e) =>
+                setFilterData({
+                  ...filterData,
+                  startDate: e.target.value,
+                })
+              }
             />
           </Grid>
           <Grid item xs={12} md={2}>
+            <TextField
+              fullWidth
+              label="End Date & Time"
+              type="date"
+              value={filterData?.endDate}
+              onChange={(e) =>
+                setFilterData({
+                  ...filterData,
+                  endDate: e.target.value,
+                })
+              }
+              InputLabelProps={{
+                shrink: true,
+              }}
+              variant="outlined"
+            />
+          </Grid>
+          <Grid item xs={12} sm={3}>
             <FormControl fullWidth>
-              <InputLabel id="page-size-label">Items Per Page</InputLabel>
+              <InputLabel>Items per Page</InputLabel>
               <Select
-                labelId="page-size-label"
-                value={pageSize}
-                onChange={handlePageSizeChange}
-                label="Items Per Page"
+                value={filterData?.limit}
+                onChange={(e) => handleFilterChange("limit", e.target.value)}
+                label="Items per Page"
               >
-                <MenuItem value={25}>25</MenuItem>
-                <MenuItem value={50}>50</MenuItem>
-                <MenuItem value={100}>100</MenuItem>
-                <MenuItem value="all">View All</MenuItem>
+                {[25, 50, 100, 500]?.map((value) => (
+                  <MenuItem key={value} value={value}>
+                    {value}
+                  </MenuItem>
+                ))}
               </Select>
             </FormControl>
           </Grid>
-            <Grid item xs={12} md={2}>
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={handleExport}
-              >
-                Export
-              </Button>
-            </Grid>
+          <Grid item xs={12} md={2}>
+            <Button variant="contained" color="primary" onClick={handleExport}>
+              Export
+            </Button>
           </Grid>
+        </Grid>
 
         {/* Table Section */}
         <TableContainer component={Paper}>
@@ -251,15 +271,6 @@ const handleExport = () => {
                 >
                   Cr/Dr Amount
                 </TableCell>
-                {/* <TableCell
-                  sx={{
-                    fontWeight: "bold",
-                    fontSize: "16px",
-                    border: "1px solid rgba(224, 224, 224, 1)",
-                  }}
-                >
-                  Crarge Amount
-                </TableCell> */}
                 <TableCell
                   sx={{
                     fontWeight: "bold",
@@ -308,101 +319,89 @@ const handleExport = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {paginatedData.length > 0 ? (
-                paginatedData.map((transaction, index) => {
-                  const rowNumber = startIndex + index + 1;
-
-                  return (
-                    <TableRow key={transaction._id}>
-                      <TableCell
-                        sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
-                      >
-                        {rowNumber}
-                      </TableCell>
-                      <TableCell
-                        sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
-                      >
-                        {transaction.userInfo.memberId}
-                      </TableCell>
-                      <TableCell
-                        sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
-                      >
-                        {transaction.beforeAmount}
-                      </TableCell>
-                      <TableCell
-                        sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
-                      >
-                        {(transaction.transactionAmount ?? 0) + (transaction.chargeAmount ?? 0)}
-                      </TableCell>
-                      {/* <TableCell
-                        sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
-                      >
-                        {transaction.chargeAmount}
-                      </TableCell> */}
-                      <TableCell
-                        sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
-                      >
-                        {transaction.afterAmount}
-                      </TableCell>
-                      <TableCell
-                        sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
-                      >
-                        {new Date(transaction.createdAt).toLocaleString()}
-                      </TableCell>
-                      <TableCell
-                        sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
-                      >
-                        {transaction.transactionType === "Cr." ? (
-                          <Button sx={{ color: "green", text: "bold" }}>
-                            Cr.
-                          </Button>
-                        ) : (
-                          <Button sx={{ color: "red", text: "bold" }}>
-                            Dr.
-                          </Button>
-                        )}
-                      </TableCell>
-                      <TableCell
-                        sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
-                      >
-                        {transaction.description}
-                      </TableCell>
-                      <TableCell
-                        sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
-                      >
-                        {transaction.transactionStatus ? (
-                          <Button
-                            sx={{
-                              color: "green",
-                              // fontWeight: "bold",
-                              textTransform: "lowercase",
-                              backgroundColor: "rgba(0, 128, 0, 0.1)",
-                              // border: "1px solid green",
-                              borderRadius: 2,
-                              padding: "2px 10px",
-                            }}
-                          >
-                            Success
-                          </Button>
-                        ) : (
-                          <Button
-                            sx={{
-                              color: "red",
-                              // fontWeight: "bold",
-                              textTransform: "lowercase",
-                              backgroundColor: "rgba(255, 0, 0, 0.1)",
-                              // border: "1px solid red",
-                              borderRadius: 2,
-                              padding: "2px 10px",
-                            }}
-                          >
-                            Failed
-                          </Button>
-                        )}
-                      </TableCell>
-                    </TableRow>
-                  );
-                })
+              {Array.isArray(transactions) && transactions.length > 0 ? (
+                transactions.map((transaction, index) => (
+                  <TableRow key={transaction._id}>
+                    <TableCell
+                      sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
+                    >
+                      {index + 1}
+                    </TableCell>
+                    <TableCell
+                      sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
+                    >
+                      {transaction.userInfo?.memberId || "N/A"}
+                    </TableCell>
+                    <TableCell
+                      sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
+                    >
+                      {transaction.beforeAmount}
+                    </TableCell>
+                    <TableCell
+                      sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
+                    >
+                      {(transaction.transactionAmount ?? 0) +
+                        (transaction.chargeAmount ?? 0)}
+                    </TableCell>
+                    <TableCell
+                      sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
+                    >
+                      {transaction.afterAmount}
+                    </TableCell>
+                    <TableCell
+                      sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
+                    >
+                      {new Date(transaction.createdAt).toLocaleString()}
+                    </TableCell>
+                    <TableCell
+                      sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
+                    >
+                      {transaction.transactionType === "Cr." ? (
+                        <Button sx={{ color: "green", fontWeight: "bold" }}>
+                          Cr.
+                        </Button>
+                      ) : (
+                        <Button sx={{ color: "red", fontWeight: "bold" }}>
+                          Dr.
+                        </Button>
+                      )}
+                    </TableCell>
+                    <TableCell
+                      sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
+                    >
+                      {transaction.description}
+                    </TableCell>
+                    <TableCell
+                      sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
+                    >
+                      {transaction.transactionStatus ? (
+                        <Button
+                          sx={{
+                            color: "green",
+                            textTransform: "lowercase",
+                            backgroundColor: "rgba(0, 128, 0, 0.1)",
+                            borderRadius: 2,
+                            padding: "2px 10px",
+                          }}
+                        >
+                          Success
+                        </Button>
+                      ) : (
+                        <Button
+                          sx={{
+                            color: "red",
+                            textTransform: "lowercase",
+                            backgroundColor: "rgba(255, 0, 0, 0.1)",
+                            borderRadius: 2,
+                            padding: "2px 10px",
+                          }}
+                        >
+                          Failed
+                        </Button>
+                      )}
+                    </TableCell>
+                  </TableRow>
+                ))
               ) : (
                 <TableRow>
                   <TableCell
@@ -416,31 +415,16 @@ const handleExport = () => {
             </TableBody>
           </Table>
         </TableContainer>
-
-        {/* Pagination Controls */}
-        {!loading && (
-          <Grid container justifyContent="space-between" mt={2}>
-            <Grid item>
-              <Button
-                variant="contained"
-                onClick={() => handlePageChange("prev")}
-                disabled={currentPage === 0}
-              >
-                Previous
-              </Button>
-            </Grid>
-            <Grid item>
-              <Button
-                variant="contained"
-                onClick={() => handlePageChange("next")}
-                disabled={endIndex >= filteredData.length}
-                sx={{ background: "teal" }}
-              >
-                Next
-              </Button>
-            </Grid>
-          </Grid>
-        )}
+        <Box sx={{ display: "flex", justifyContent: "center", marginTop: 2 }}>
+          <Pagination
+            count={parseInt(totalCount/filterData.limit)==0?parseInt(totalCount/filterData.limit):parseInt(totalCount/filterData.limit)+1}
+            page={filterData?.page}
+            onChange={handlePageChange}
+            variant="outlined"
+            shape="rounded"
+            color="primary"
+          />
+        </Box>
       </Paper>
     </Container>
   );

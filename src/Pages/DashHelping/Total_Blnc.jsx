@@ -126,7 +126,7 @@ function Total_Blnc() {
               E-Wallet Balance
             </Typography>
             <Typography variant="h4" sx={{ color: 'white', fontWeight: 'bold', mb: 2 }}>
-              ₹ {data.length > 0 ? data.reduce((total, user) => total + user.EwalletBalance, 0).toLocaleString('en-IN', { minimumFractionDigits: 2 }) : '0.00'}
+              ₹ {data?.length > 0 ? data.reduce((total, user) => total + user.EwalletBalance, 0).toLocaleString('en-IN', { minimumFractionDigits: 2 }) : '0.00'}
             </Typography>
             <ResponsiveContainer width="100%" height={100}>
               <LineChart data={chartData}>
@@ -165,7 +165,7 @@ function Total_Blnc() {
               UPI-Wallet Balance
             </Typography>
             <Typography variant="h4" sx={{ color: 'white', fontWeight: 'bold', mb: 2 }}>
-              ₹ {data.length > 0 ? data.reduce((total, user) => total + user.upiWalletBalance, 0).toLocaleString('en-IN', { minimumFractionDigits: 2 }) : '0.00'}
+              ₹ {data?.length > 0 ? data.reduce((total, user) => total + user.upiWalletBalance, 0).toLocaleString('en-IN', { minimumFractionDigits: 2 }) : '0.00'}
             </Typography>
             <ResponsiveContainer width="100%" height={100}>
               <LineChart data={chartData}>
