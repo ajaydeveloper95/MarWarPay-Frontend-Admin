@@ -39,6 +39,7 @@ const PayoutGenerate = () => {
     limit: 25,
     keyword: "",
     startDate: "",
+    status: "",
   });
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -78,8 +79,8 @@ const PayoutGenerate = () => {
         setTotalCount(response.data.totalDocs);
         setLoading(false);
       } catch (err) {
-        setError(err);
-        setLoading(false);
+        // setError(err);
+        // setLoading(false);
       }
     };
 
@@ -278,8 +279,9 @@ const PayoutGenerate = () => {
               <FormControl variant="outlined" fullWidth>
                 <InputLabel>Status</InputLabel>
                 <Select
-                  value={status}
-                  onChange={handleStatusChange}
+                  value={filterData.status}
+                  onChange={(e) => handleFilterChange("status", e.target.value)}
+                  // onChange={handleStatusChange}
                   label="Status"
                 >
                   <MenuItem value="">
