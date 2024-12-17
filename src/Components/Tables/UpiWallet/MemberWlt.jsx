@@ -38,6 +38,7 @@ const MemberWlt = () => {
     keyword: "",
     startDate: "",
     endDate: "",
+    memberId: ""
   });
   const [totalCount, setTotalCount] = useState(0);
 
@@ -54,8 +55,9 @@ const MemberWlt = () => {
         setData(response.data.data);
         setLoading(false);
       } catch (err) {
-        setError(err);
-        setLoading(false);
+        console.error("Error fetching data:", err);
+        // setError(err);
+        // setLoading(false);
       }
     };
 
@@ -76,7 +78,7 @@ const MemberWlt = () => {
     const timeOutId = setTimeout(() => {
       setFilterData({
         ...filterData,
-        keyword: searchQuery,
+        memberId: searchQuery,
       });
     }, 500);
     return () => clearTimeout(timeOutId);

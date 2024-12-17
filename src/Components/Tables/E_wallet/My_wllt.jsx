@@ -75,7 +75,7 @@ const My_Wllt = () => {
     const timeOutId = setTimeout(() => {
       setFilterData({
         ...filterData,
-        keyword: searchQuery,
+        memberId: searchQuery,
       });
     }, 500);
     return () => clearTimeout(timeOutId);

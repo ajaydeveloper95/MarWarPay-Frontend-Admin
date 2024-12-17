@@ -80,8 +80,8 @@ const Payout = () => {
         setTotalCount(response.data.totalDocs);
         setLoading(false);
       } catch (err) {
-        setError(err);
-        setLoading(false);
+        // setError(err);
+        // setLoading(false);
       }
     };
 
@@ -501,12 +501,12 @@ const Payout = () => {
           </TableContainer>
           <Box sx={{ display: "flex", justifyContent: "center", marginTop: 2 }}>
             <Pagination
-               count={parseInt(totalCount/filterData.limit)==0?parseInt(totalCount/filterData.limit):parseInt(totalCount/filterData.limit)+1}
-               page={filterData?.page}
-               onChange={handlePageChange}
-               variant="outlined"
-               shape="rounded"
-               color="primary"
+              count={parseInt(totalCount/filterData.limit)==0?parseInt(totalCount/filterData.limit):parseInt(totalCount/filterData.limit)+1}
+              page={filterData?.page}
+              onChange={handlePageChange}
+              variant="outlined"
+              shape="rounded"
+              color="primary"
             />
           </Box>
         </Paper>
