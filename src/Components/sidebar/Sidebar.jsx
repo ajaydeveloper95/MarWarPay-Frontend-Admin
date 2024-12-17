@@ -256,14 +256,14 @@ const Sidebar = () => {
               {isDropdownOpen["report"] && isSidebarOpen && (
                 <div className="m-5">
                   <ul className="pl-6  list-disc">
-                    <li>
+                    {/* <li>
                       <Link
                         to="/report/payout"
                         className="flex items-center px-4 py-2 "
                       >
                         Payout History
                       </Link>
-                    </li>
+                    </li> */}
                     <li>
                       <Link
                         to="/report/payoutGenerate"

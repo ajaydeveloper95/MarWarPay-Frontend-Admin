@@ -76,12 +76,18 @@ const Qr = () => {
     setLoading(true);
     try {
       const response = await apiGet(API_ENDPOINT, { ...filterData });
+      console.log("reponsessssssssss", response);
+      
       setData(response?.data?.data);
       setTotalCount(response.data.totalDocs);
-      setLoading(false);
+      // setLoading(false);
     } catch (err) {
-      setError(err);
+      // setError(err);
+      setData([])
+    }
+    finally{
       setLoading(false);
+
     }
   };
 
@@ -94,7 +100,7 @@ const Qr = () => {
       });
       setUserList(response.data.data); // Store user data
     } catch (err) {
-      setError(err);
+      // setError(err);
     }
   };
   useEffect(() => {
