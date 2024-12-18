@@ -76,18 +76,14 @@ const Qr = () => {
     setLoading(true);
     try {
       const response = await apiGet(API_ENDPOINT, { ...filterData });
-      console.log("reponsessssssssss", response);
-      
       setData(response?.data?.data);
       setTotalCount(response.data.totalDocs);
       // setLoading(false);
     } catch (err) {
       // setError(err);
-      setData([])
-    }
-    finally{
+      setData([]);
+    } finally {
       setLoading(false);
-
     }
   };
 
@@ -192,9 +188,9 @@ const Qr = () => {
               </Typography>
               <Typography>
                 ₹{" "}
-                {data?.length > 0
+                {Array.isArray(data) && data.length > 0
                   ? data
-                      .reduce((total, user) => total + user.amount, 0)
+                      .reduce((total, user) => total + (user.amount || 0), 0)
                       .toLocaleString("en-IN", { minimumFractionDigits: 2 })
                   : "0.00"}
               </Typography>
@@ -251,7 +247,6 @@ const Qr = () => {
           </Grid>
           <Grid container alignItems="center" spacing={1} mb={2}>
             <Grid item xs={12} md={4}>
-              {console.log("sesesese", searchQuery)}
               <TextField
                 label="Search by txnID"
                 variant="outlined"
@@ -438,55 +433,54 @@ const Qr = () => {
               <TableBody>
                 {loading ? (
                   <TableRow>
-                    <TableCell colSpan={8} align="center">
+                    <TableCell colSpan={10} align="center">
                       Loading...
                     </TableCell>
                   </TableRow>
                 ) : error ? (
                   <TableRow>
-                    <TableCell colSpan={8} align="center">
-                      No data available
+                    <TableCell colSpan={10} align="center">
+                      Error: {error.message || "Something went wrong"}
                     </TableCell>
                   </TableRow>
-                ) : data?.length === 0 ? (
+                ) : Array.isArray(data) && data.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={8} align="center">
+                    <TableCell colSpan={10} align="center">
                       No data available.
                     </TableCell>
                   </TableRow>
-                ) : (
-                  data?.map((member, index) => (
-                    <TableRow key={member._id}>
+                ) : Array.isArray(data) ? (
+                  data.map((member, index) => (
+                    <TableRow key={member._id || index}>
                       <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
                       >
-                        {/* {startIndex + index + 1} */}
-                        {index + 1}
+                        {filterData.limit * (filterData.page - 1) + index + 1}
                       </TableCell>
                       <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
                       >
-                        {member?.userInfo?.memberId}
+                        {member.userInfo?.memberId || "N/A"}
                       </TableCell>
                       <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
                       >
-                        {member?.trxId}
+                        {member.trxId || "N/A"}
                       </TableCell>
                       <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
                       >
-                        {member?.refId}
+                        {member.refId || "N/A"}
                       </TableCell>
                       <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
                       >
-                        {member?.amount}
+                        {member.amount || 0}
                       </TableCell>
                       <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
                       >
-                        {member?.ip}
+                        {member.ip || "N/A"}
                       </TableCell>
                       <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
@@ -511,26 +505,20 @@ const Qr = () => {
                                 ? "green"
                                 : member?.callBackStatus === "Failed"
                                 ? "red"
-                                : "orange", // Color for Pending
+                                : "orange",
                             backgroundColor:
                               member?.callBackStatus === "Success"
                                 ? "rgba(0, 128, 0, 0.1)"
                                 : member?.callBackStatus === "Failed"
                                 ? "rgba(255, 0, 0, 0.1)"
-                                : "rgba(255, 165, 0, 0.1)", // Background for Pending
+                                : "rgba(255, 165, 0, 0.1)",
                             borderRadius: 2,
                             padding: "2px 10px",
                           }}
                         >
-                          {member?.callBackStatus === "Success"
-                            ? "Success"
-                            : member?.callBackStatus === "Failed"
-                            ? "Failed"
-                            : "Pending"}{" "}
-                          {/* Display Pending when callBackStatus is not Success or Failed */}
+                          {member.callBackStatus || "Pending"}
                         </Button>
                       </TableCell>
-
                       <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
                       >
@@ -543,6 +531,12 @@ const Qr = () => {
                       </TableCell>
                     </TableRow>
                   ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={10} align="center">
+                      Invalid data format.
+                    </TableCell>
+                  </TableRow>
                 )}
               </TableBody>
             </Table>
@@ -550,12 +544,16 @@ const Qr = () => {
 
           <Box sx={{ display: "flex", justifyContent: "center", marginTop: 2 }}>
             <Pagination
-               count={parseInt(totalCount/filterData.limit)==0?parseInt(totalCount/filterData.limit):parseInt(totalCount/filterData.limit)+1}
-               page={filterData?.page}
-               onChange={handlePageChange}
-               variant="outlined"
-               shape="rounded"
-               color="primary"
+              count={
+                parseInt(totalCount / filterData.limit) == 0
+                  ? parseInt(totalCount / filterData.limit)
+                  : parseInt(totalCount / filterData.limit) + 1
+              }
+              page={filterData?.page}
+              onChange={handlePageChange}
+              variant="outlined"
+              shape="rounded"
+              color="primary"
             />
           </Box>
         </Paper>

@@ -39,6 +39,7 @@ const Payout = () => {
     limit: 25,
     keyword: "",
     startDate: "",
+    endDate: "",
   });
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -266,10 +267,9 @@ const Payout = () => {
             </Grid>
             <Grid item xs={12} md={2}>
               <TextField
-                label="Date"
-                type="date"
-                variant="outlined"
                 fullWidth
+                label="Start Date & Time"
+                type="date"
                 value={filterData?.startDate}
                 onChange={(e) =>
                   setFilterData({
@@ -280,6 +280,26 @@ const Payout = () => {
                 InputLabelProps={{
                   shrink: true,
                 }}
+                variant="outlined"
+              />
+            </Grid>
+
+            <Grid item xs={12} md={2}>
+              <TextField
+                fullWidth
+                label="End Date & Time"
+                type="date"
+                value={filterData?.endDate}
+                onChange={(e) =>
+                  setFilterData({
+                    ...filterData,
+                    endDate: e.target.value,
+                  })
+                }
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                variant="outlined"
               />
             </Grid>
             <Grid item xs={12} sm={2}>
@@ -422,7 +442,7 @@ const Payout = () => {
                       <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
                       >
-                        {item.id}
+                       {(filterData.limit*(filterData.page-1) + item+1)}
                       </TableCell>
                       <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
