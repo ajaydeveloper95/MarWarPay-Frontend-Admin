@@ -39,6 +39,7 @@ const PayoutGenerate = () => {
     limit: 25,
     keyword: "",
     startDate: "",
+    endDate: "",
     status: "",
   });
   const [data, setData] = useState([]);
@@ -232,34 +233,7 @@ const PayoutGenerate = () => {
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </Grid>
-            <Grid item xs={12} md={2}>
-              <TextField
-                label="Date"
-                type="date"
-                variant="outlined"
-                fullWidth
-                value={filterData?.startDate}
-                onChange={(e) =>
-                  setFilterData({
-                    ...filterData,
-                    startDate: e.target.value,
-                  })
-                }
-                InputLabelProps={{
-                  shrink: true,
-                }}
-              />
-            </Grid>
-            <Grid item xs={12} md={2} align="right" marginBottom={2}>
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={handleExport}
-              >
-                Export
-              </Button>
-            </Grid>
-            <Grid item xs={12} sm={3}>
+            <Grid item xs={12} sm={2}>
               <FormControl fullWidth>
                 <InputLabel>Items per Page</InputLabel>
                 <Select
@@ -274,6 +248,52 @@ const PayoutGenerate = () => {
                   ))}
                 </Select>
               </FormControl>
+            </Grid>
+            <Grid item xs={12} md={2} align="right" marginBottom={2}>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleExport}
+              >
+                Export
+              </Button>
+            </Grid>
+            <Grid item xs={12} md={2}>
+              <TextField
+                fullWidth
+                label="Start Date & Time"
+                type="date"
+                value={filterData?.startDate}
+                onChange={(e) =>
+                  setFilterData({
+                    ...filterData,
+                    startDate: e.target.value,
+                  })
+                }
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                variant="outlined"
+              />
+            </Grid>
+
+            <Grid item xs={12} md={2}>
+              <TextField
+                fullWidth
+                label="End Date & Time"
+                type="date"
+                value={filterData?.endDate}
+                onChange={(e) =>
+                  setFilterData({
+                    ...filterData,
+                    endDate: e.target.value,
+                  })
+                }
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                variant="outlined"
+              />
             </Grid>
             <Grid item xs={12} md={2}>
               <FormControl variant="outlined" fullWidth>
@@ -403,9 +423,9 @@ const PayoutGenerate = () => {
                     </TableCell>
                   </TableRow>
                 ) : (
-                  data?.map((item) => (
+                  data?.map((item,index) => (
                     <TableRow key={item.id}>
-                      <TableCell sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}>{item.id}</TableCell>
+                      <TableCell sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}>{(filterData.limit*(filterData.page-1) + index+1)}</TableCell>
                       <TableCell sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}>{item.memberId}</TableCell>
                       <TableCell sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}>{item.name}</TableCell>
                       <TableCell sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}>{item.accountNumber}</TableCell>

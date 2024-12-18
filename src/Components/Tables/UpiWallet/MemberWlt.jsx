@@ -341,7 +341,7 @@ const MemberWlt = () => {
                       <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
                       >
-                        {index + 1}
+                       {(filterData.limit*(filterData.page-1) + index+1)}
                       </TableCell>
                       <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
