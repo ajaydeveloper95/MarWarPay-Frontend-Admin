@@ -97,54 +97,68 @@ const Payin = () => {
     return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const response = await apiGet(API_ENDPOINT, { ...filterData });
-        setData(
-          response.data.data.map((item, index) => ({
-            id: index + 1,
-            memberId: item.userInfo.memberId,
-            fullName: item.userInfo.fullName,
-            txnID: item.trxId,
-            bankRRN: item.bankRRN,
-            amount: `${item.amount}`,
-            charge: `${item.chargeAmount}`,
-            credit: `${item.finalAmount}`,
-            vpaID: item.vpaId,
-            description: item.payerName, // Use payerName for description
-            dateTime: formatDateTime(item.createdAt),
-            status: item.isSuccess,
-          }))
-        );
-        setTotalCount(response.data.totalDocs);
-        setLoading(false);
-      } catch (err) {
-        // setError(err);
-        setLoading(false);
-      }
-    };
 
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      const response = await apiGet(API_ENDPOINT, { ...filterData });
+      setData(
+        response.data.data.map((item, index) => ({
+          id: index + 1,
+          memberId: item.userInfo.memberId,
+          fullName: item.userInfo.fullName,
+          txnID: item.trxId,
+          bankRRN: item.bankRRN,
+          amount: `${item.amount}`,
+          charge: `${item.chargeAmount}`,
+          credit: `${item.finalAmount}`,
+          vpaID: item.vpaId,
+          description: item.payerName, // Use payerName for description
+          dateTime: formatDateTime(item.createdAt),
+          status: item.isSuccess,
+        }))
+      );
+      setTotalCount(response.data.totalDocs);
+      setLoading(false);
+    } catch (err) {
+      setData([]);   
+      
+    } finally{
+      setLoading(false);
+    }
+  };
+
+  const fetchUserList = async () => {
+    try {
+      const response = await axios.get(USER_LIST_API, {
+        headers: {
+          Authorization: `Bearer ${ACCESS_TOKEN}`,
+        },
+      });
+      // console.log(response);
+      setUserList(response.data.data); // Store user data
+    } catch (err) {
+      // setError(err);
+    }
+  };
+
+  useEffect(() => {
     fetchData();
   }, [filterData]);
 
   useEffect(() => {
-    const fetchUserList = async () => {
-      try {
-        const response = await axios.get(USER_LIST_API, {
-          headers: {
-            Authorization: `Bearer ${ACCESS_TOKEN}`,
-          },
-        });
-        console.log(response);
-        setUserList(response.data.data); // Store user data
-      } catch (err) {
-        setError(err);
-      }
-    };
     fetchUserList();
   }, []);
+
+  useEffect(() => {
+    const timeOutId = setTimeout(() => {
+      setFilterData({
+        ...filterData,
+        keyword: searchQuery,
+      });
+    }, 500);
+    return () => clearTimeout(timeOutId);
+  }, [searchQuery]);
 
   const handleFilterChange = (key, value) => {
     setFilterData((prev) => ({ ...prev, [key]: value }));
@@ -160,15 +174,6 @@ const Payin = () => {
     navigate(-1);
   };
 
-  useEffect(() => {
-    const timeOutId = setTimeout(() => {
-      setFilterData({
-        ...filterData,
-        keyword: searchQuery,
-      });
-    }, 500);
-    return () => clearTimeout(timeOutId);
-  }, [searchQuery]);
 
   const handleViewClick = (status) => {
     setDialogMessage(
@@ -529,29 +534,29 @@ const Payin = () => {
               <TableBody>
                 {loading ? (
                   <TableRow>
-                    <TableCell colSpan={8} align="center">
+                    <TableCell colSpan={12} align="center">
                       Loading...
                     </TableCell>
                   </TableRow>
                 ) : error ? (
                   <TableRow>
-                    <TableCell colSpan={8} align="center">
-                      No data available
+                    <TableCell colSpan={12} align="center">
+                      Error: {error.message || "Something went wrong"}
                     </TableCell>
                   </TableRow>
-                ) : data?.length === 0 ? (
+                ) : Array.isArray(data) && data.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={8} align="center">
+                    <TableCell colSpan={12} align="center">
                       No data available.
                     </TableCell>
                   </TableRow>
-                ) : (
-                  data?.map((row, index) => (
-                    <TableRow key={row.id}>
+                ) : Array.isArray(data) ? (
+                  data.map((row, index) => (
+                    <TableRow key={row._id || index}>
                       <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
                       >
-                       {(filterData.limit*(filterData.page-1) + index+1)}
+                        {filterData.limit * (filterData.page - 1) + index + 1}
                       </TableCell>
                       <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
@@ -606,33 +611,20 @@ const Payin = () => {
                       <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
                       >
-                        {row.status === "Success" ? (
-                          <Button
-                            sx={{
-                              color: "green",
-                              backgroundColor: "rgba(0, 128, 0, 0.1)",
-                              // border: "1px solid green",
-                              borderRadius: 2,
-                              padding: "2px 10px",
-                            }}
-                          >
-                            Success
-                          </Button>
-                        ) : (
-                          <Button
-                            sx={{
-                              color: "red",
-                              backgroundColor: "rgba(255, 0, 0, 0.1)",
-                              // border: "1px solid red",
-                              borderRadius: 2,
-                              padding: "2px 10px",
-                            }}
-                          >
-                            Failed
-                          </Button>
-                        )}
+                        <Button
+                          sx={{
+                            color: row.status === "Success" ? "green" : "red",
+                            backgroundColor:
+                              row.status === "Success"
+                                ? "rgba(0, 128, 0, 0.1)"
+                                : "rgba(255, 0, 0, 0.1)",
+                            borderRadius: 2,
+                            padding: "2px 10px",
+                          }}
+                        >
+                          {row.status}
+                        </Button>
                       </TableCell>
-
                       <TableCell>
                         <IconButton
                           color="primary"
@@ -643,18 +635,28 @@ const Payin = () => {
                       </TableCell>
                     </TableRow>
                   ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={12} align="center">
+                      No data available.
+                    </TableCell>
+                  </TableRow>
                 )}
               </TableBody>
             </Table>
           </TableContainer>
           <Box sx={{ display: "flex", justifyContent: "center", marginTop: 2 }}>
             <Pagination
-               count={parseInt(totalCount/filterData.limit)==0?parseInt(totalCount/filterData.limit):parseInt(totalCount/filterData.limit)+1}
-               page={filterData?.page}
-               onChange={handlePageChange}
-               variant="outlined"
-               shape="rounded"
-               color="primary"
+              count={
+                parseInt(totalCount / filterData.limit) == 0
+                  ? parseInt(totalCount / filterData.limit)
+                  : parseInt(totalCount / filterData.limit) + 1
+              }
+              page={filterData?.page}
+              onChange={handlePageChange}
+              variant="outlined"
+              shape="rounded"
+              color="primary"
             />
           </Box>
         </Paper>

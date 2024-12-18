@@ -20,7 +20,7 @@ import axios from "axios";
 // };
 
 const axiosInstance = axios.create({
-  baseURL: "https://api.udtaxratangarh.org",
+  baseURL: "https://api.zanithpay.com/",
   headers: {
     "Content-Type": "application/json",
   },
@@ -43,7 +43,10 @@ axiosInstance.interceptors.request.use(function (config) {
 axiosInstance.interceptors.response.use(
   (res) => res,
   (err) => {
-    // AxiosError(err);
+    if (err.response && err.response.status === 401) {
+      localStorage.removeItem("accessToken");
+      window.location.href = "/login";
+    }
     return Promise.reject(err);
   }
 );

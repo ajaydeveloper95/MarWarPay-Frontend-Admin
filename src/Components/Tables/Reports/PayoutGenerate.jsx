@@ -23,12 +23,15 @@ import {
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useSidebar } from "../../../Context/SidebarContext";
-import { domainBase } from "../../../helpingFile";
+import { accessToken, domainBase } from "../../../helpingFile";
 import { saveAs } from "file-saver";
 import Papa from "papaparse";
 import { apiGet } from "../../../utils/http";
+import axios from "axios";
 
 const API_ENDPOINT = `${domainBase}apiAdmin/v1/payout/allPayOutPayment`;
+const USER_LIST_API = `${domainBase}apiAdmin/v1/utility/getUserList`;
+const ACCESS_TOKEN = accessToken;
 
 const PayoutGenerate = () => {
   const navigate = useNavigate();
@@ -41,11 +44,13 @@ const PayoutGenerate = () => {
     startDate: "",
     endDate: "",
     status: "",
+    memberId: ""
   });
   const [data, setData] = useState([]);
+  const [userList, setUserList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [status, setStatus] = useState("");
+  // const [status, setStatus] = useState("");
   const [totalCount, setTotalCount] = useState(0); // Total records count
 
   const formatDateTime = (dateString) => {
@@ -59,38 +64,58 @@ const PayoutGenerate = () => {
     return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const response = await apiGet(API_ENDPOINT, { ...filterData });
-        setData(
-          response.data.data.map((item, index) => ({
-            id: index + 1,
-            memberId: item.userInfo.memberId,
-            name: item.userInfo.fullName,
-            accountNumber: item.accountNumber,
-            ifsc: item.ifscCode,
-            amount: `${item.amount}`,
-            txnId: item.trxId,
-            status: item.isSuccess,
-            dateTime: formatDateTime(item.createdAt),
-          }))
-        );
-        setTotalCount(response.data.totalDocs);
-        setLoading(false);
-      } catch (err) {
-        // setError(err);
-        // setLoading(false);
-      }
-    };
 
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      const response = await apiGet(API_ENDPOINT, { ...filterData });
+      setData(
+        response.data.data.map((item, index) => ({
+          id: index + 1,
+          memberId: item.userInfo.memberId,
+          name: item.userInfo.fullName,
+          accountNumber: item.accountNumber,
+          ifsc: item.ifscCode,
+          amount: `${item.amount}`,
+          txnId: item.trxId,
+          status: item.isSuccess,
+          dateTime: formatDateTime(item.createdAt),
+        }))
+      );
+      setTotalCount(response.data.totalDocs);
+      // setLoading(false);
+    } catch (err) {
+      setData([]);      
+    }
+    finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchUserList = async () => {
+    try {
+      const response = await axios.get(USER_LIST_API, {
+        headers: {
+          Authorization: `Bearer ${ACCESS_TOKEN}`,
+        },
+      });
+      setUserList(response.data.data); // Store user data
+    } catch (err) {
+      // setError(err);
+    }
+  };
+
+  useEffect(() => {
     fetchData();
   }, [filterData]);
 
-  const handleStatusChange = (event) => {
-    setStatus(event.target.value);
-  };
+  useEffect(() => {
+    fetchUserList();
+  },[])
+
+  // const handleStatusChange = (event) => {
+  //   setStatus(event.target.value);
+  // };
 
   useEffect(() => {
     const timeOutId = setTimeout(() => {
@@ -296,6 +321,31 @@ const PayoutGenerate = () => {
               />
             </Grid>
             <Grid item xs={12} md={2}>
+              <FormControl fullWidth>
+                <InputLabel id="dropdown-label">All Users</InputLabel>
+                <Select
+                  labelId="dropdown-label"
+                  value={filterData?.memberId}
+                  onChange={(e) =>
+                    setFilterData((prev) => ({
+                      ...prev,
+                      memberId: e.target.value,
+                    }))
+                  }
+                  label="All Users"
+                >
+                  <MenuItem value="">
+                    <em>All Users</em>
+                  </MenuItem>
+                  {userList?.map((user) => (
+                    <MenuItem key={user._id} value={user._id}>
+                      {`${user.fullName} (${user.memberId})`}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12} md={2}>
               <FormControl variant="outlined" fullWidth>
                 <InputLabel>Status</InputLabel>
                 <Select
@@ -423,16 +473,47 @@ const PayoutGenerate = () => {
                     </TableCell>
                   </TableRow>
                 ) : (
-                  data?.map((item,index) => (
+                  data?.map((item, index) => (
                     <TableRow key={item.id}>
-                      <TableCell sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}>{(filterData.limit*(filterData.page-1) + index+1)}</TableCell>
-                      <TableCell sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}>{item.memberId}</TableCell>
-                      <TableCell sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}>{item.name}</TableCell>
-                      <TableCell sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}>{item.accountNumber}</TableCell>
-                      <TableCell sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}>{item.ifsc}</TableCell>
-                      <TableCell sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}>{item.amount}</TableCell>
-                      <TableCell sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}>{item.txnId}</TableCell>
-                      <TableCell sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}><Button
+                      <TableCell
+                        sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
+                      >
+                        {filterData.limit * (filterData.page - 1) + index + 1}
+                      </TableCell>
+                      <TableCell
+                        sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
+                      >
+                        {item.memberId}
+                      </TableCell>
+                      <TableCell
+                        sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
+                      >
+                        {item.name}
+                      </TableCell>
+                      <TableCell
+                        sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
+                      >
+                        {item.accountNumber}
+                      </TableCell>
+                      <TableCell
+                        sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
+                      >
+                        {item.ifsc}
+                      </TableCell>
+                      <TableCell
+                        sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
+                      >
+                        {item.amount}
+                      </TableCell>
+                      <TableCell
+                        sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
+                      >
+                        {item.txnId}
+                      </TableCell>
+                      <TableCell
+                        sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
+                      >
+                        <Button
                           sx={{
                             color:
                               item.status === "Success"
@@ -441,7 +522,7 @@ const PayoutGenerate = () => {
                                 ? "red"
                                 : "orange", // Color for Pending
                             backgroundColor:
-                            item.status === "Success"
+                              item.status === "Success"
                                 ? "rgba(0, 128, 0, 0.1)"
                                 : item.status === "Failed"
                                 ? "rgba(255, 0, 0, 0.1)"
@@ -456,8 +537,13 @@ const PayoutGenerate = () => {
                             ? "Failed"
                             : "Pending"}{" "}
                           {/* Display Pending when callBackStatus is not Success or Failed */}
-                        </Button></TableCell>
-                      <TableCell sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}>{item.dateTime}</TableCell>
+                        </Button>
+                      </TableCell>
+                      <TableCell
+                        sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
+                      >
+                        {item.dateTime}
+                      </TableCell>
                     </TableRow>
                   ))
                 )}
@@ -467,12 +553,16 @@ const PayoutGenerate = () => {
 
           <Box sx={{ display: "flex", justifyContent: "center", marginTop: 2 }}>
             <Pagination
-               count={parseInt(totalCount/filterData.limit)==0?parseInt(totalCount/filterData.limit):parseInt(totalCount/filterData.limit)+1}
-               page={filterData?.page}
-               onChange={handlePageChange}
-               variant="outlined"
-               shape="rounded"
-               color="primary"
+              count={
+                parseInt(totalCount / filterData.limit) == 0
+                  ? parseInt(totalCount / filterData.limit)
+                  : parseInt(totalCount / filterData.limit) + 1
+              }
+              page={filterData?.page}
+              onChange={handlePageChange}
+              variant="outlined"
+              shape="rounded"
+              color="primary"
             />
           </Box>
         </Paper>

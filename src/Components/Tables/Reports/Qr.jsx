@@ -524,7 +524,9 @@ const Qr = () => {
                       >
                         <IconButton
                           color="primary"
-                          onClick={() => handleViewClick(member?.callBackStatus)}
+                          onClick={() =>
+                            handleViewClick(member?.callBackStatus)
+                          }
                         >
                           <VisibilityIcon />
                         </IconButton>
@@ -534,7 +536,7 @@ const Qr = () => {
                 ) : (
                   <TableRow>
                     <TableCell colSpan={10} align="center">
-                      Invalid data format.
+                      No data available.
                     </TableCell>
                   </TableRow>
                 )}
