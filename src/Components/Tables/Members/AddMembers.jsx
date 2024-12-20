@@ -246,6 +246,7 @@ const AddMembers = () => {
                 >
                   <MenuItem value="Users">User</MenuItem>
                   <MenuItem value="Manages">Manager</MenuItem>
+                  <MenuItem value="Retailer">Retailer</MenuItem>
                 </Select>
               </FormControl>
             </Grid>
