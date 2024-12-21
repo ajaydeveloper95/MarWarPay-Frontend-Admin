@@ -22,10 +22,9 @@ import {
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useSidebar } from "../../../Context/SidebarContext";
-import { domainBase } from "../../../helpingFile";
 import { apiGet } from "../../../utils/http";
 
-const API_ENDPOINT = `${domainBase}apiAdmin/v1/wallet/getAllTransactionEwallet`;
+const API_ENDPOINT = `apiAdmin/v1/wallet/getAllTransactionEwallet`;
 
 const My_Wllt = () => {
   const { isSidebarOpen } = useSidebar();

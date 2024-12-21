@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import {
   Container,
   Typography,
@@ -24,10 +23,11 @@ import {
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useSidebar } from "../../../Context/SidebarContext";
-import { accessToken, domainBase } from "../../../helpingFile";
+import { accessToken } from "../../../helpingFile";
+import { apiGet, apiPost } from "../../../utils/http";
 
-const API_ENDPOINT = `${domainBase}apiAdmin/v1/package/getPayInPackage`;
-const ADD_PACKAGE_ENDPOINT = `${domainBase}apiAdmin/v1/package/addPayInPackage`;
+const API_ENDPOINT = `apiAdmin/v1/package/getPayInPackage`;
+const ADD_PACKAGE_ENDPOINT = `apiAdmin/v1/package/addPayInPackage`;
 const ACCESS_TOKEN = accessToken;
 
 const AllPayin = () => {
@@ -44,7 +44,7 @@ const AllPayin = () => {
   const formatDateTime = (dateString) => {
     const date = new Date(dateString);
     const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+    const month = String(date.getMonth() + 1).padStart(2, '0'); 
     const day = String(date.getDate()).padStart(2, '0');
     const hours = String(date.getHours()).padStart(2, '0');
     const minutes = String(date.getMinutes()).padStart(2, '0');
@@ -56,7 +56,7 @@ const AllPayin = () => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const response = await axios.get(API_ENDPOINT, {
+        const response = await apiGet(API_ENDPOINT, {
           headers: {
             Authorization: `Bearer ${ACCESS_TOKEN}`,
           },
@@ -119,14 +119,14 @@ const AllPayin = () => {
 
   const handleAddPackageSubmit = async () => {
     try {
-      await axios.post(ADD_PACKAGE_ENDPOINT, newPackage, {
+      await apiPost(ADD_PACKAGE_ENDPOINT, newPackage, {
         headers: {
           Authorization: `Bearer ${ACCESS_TOKEN}`,
         },
       });
       handleAddPackageClose();
       // Optionally refresh the data after adding a package
-      const response = await axios.get(API_ENDPOINT, {
+      const response = await apiGet(API_ENDPOINT, {
         headers: {
           Authorization: `Bearer ${ACCESS_TOKEN}`,
         },

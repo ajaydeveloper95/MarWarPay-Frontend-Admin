@@ -14,8 +14,8 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts';
-import axios from 'axios';
-import { accessToken, domainBase } from '../../helpingFile';
+import { accessToken } from '../../helpingFile';
+import { apiGet } from '../../utils/http';
 
 const COLORS = ['#8884d8', '#82ca9d', '#FF8042'];
 
@@ -24,13 +24,13 @@ const MnyTransfer = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const API_ENDPOINT = `${domainBase}apiAdmin/v1/support/allGenTicket`;
+  const API_ENDPOINT = `apiAdmin/v1/support/allGenTicket`;
   const ACCESS_TOKEN = accessToken;
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(API_ENDPOINT, {
+        const response = await apiGet(API_ENDPOINT, {
           headers: {
             Authorization: `Bearer ${ACCESS_TOKEN}`,
           },

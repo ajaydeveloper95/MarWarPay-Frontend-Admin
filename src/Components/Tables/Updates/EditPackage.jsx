@@ -20,15 +20,15 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useSidebar } from '../../../Context/SidebarContext';
 import { useState, useEffect } from 'react';
-import axios from 'axios';
-import { accessToken, domainBase } from '../../../helpingFile';
+import { accessToken } from '../../../helpingFile';
+import { apiDelete, apiGet, apiPost } from '../../../utils/http';
 
 const ACCESS_TOKEN = accessToken;
-const API_GET_PACKAGE = `${domainBase}apiAdmin/v1/package/getSinglePackage/`;
-const API_UPDATE_PACKAGE = `${domainBase}apiAdmin/v1/package/updatePackage/`;
-const API_DELETE_PACKAGE = `${domainBase}apiAdmin/v1/package/deletePackage/`;
-const API_PayoutCharge = `${domainBase}apiAdmin/v1/utility/getPayOutPackageList`;
-const API_PayinCharge = `${domainBase}apiAdmin/v1/utility/getPayInPackageList`;
+const API_GET_PACKAGE = `apiAdmin/v1/package/getSinglePackage/`;
+const API_UPDATE_PACKAGE = `apiAdmin/v1/package/updatePackage/`;
+const API_DELETE_PACKAGE = `apiAdmin/v1/package/deletePackage/`;
+const API_PayoutCharge = `apiAdmin/v1/utility/getPayOutPackageList`;
+const API_PayinCharge = `apiAdmin/v1/utility/getPayInPackageList`;
 
 const EditPackage = () => {
   const navigate = useNavigate();
@@ -50,7 +50,7 @@ const EditPackage = () => {
   useEffect(() => {
     const fetchPackageData = async () => {
       try {
-        const response = await axios.get(`${API_GET_PACKAGE}${id}`, {
+        const response = await apiGet(`${API_GET_PACKAGE}${id}`, {
           headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
         });
         if (response.data.statusCode === 200) {
@@ -72,7 +72,7 @@ const EditPackage = () => {
 
     const fetchPayOutPackages = async () => {
       try {
-        const response = await axios.get(API_PayoutCharge, {
+        const response = await apiGet(API_PayoutCharge, {
           headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
         });
         if (response.data.statusCode === 200) {
@@ -88,7 +88,7 @@ const EditPackage = () => {
 
     const fetchPayInPackages = async () => {
       try {
-        const response = await axios.get(API_PayinCharge, {
+        const response = await apiGet(API_PayinCharge, {
           headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
         });
         if (response.data.statusCode === 200) {
@@ -131,7 +131,7 @@ const EditPackage = () => {
     }
 
     try {
-      const response = await axios.post(
+      const response = await apiPost(
         `${API_UPDATE_PACKAGE}${id}`,
         {
           packageName: packageData.packageName,
@@ -161,13 +161,13 @@ const EditPackage = () => {
 
   const handleDelete = async () => {
     try {
-      const response = await axios.delete(`${API_DELETE_PACKAGE}${id}`, {
+      const response = await apiDelete(`${API_DELETE_PACKAGE}${id}`, {
         headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
       });
 
       if (response.data.statusCode === 200) {
         alert('Package deleted successfully.');
-        navigate('/package/view'); // Redirect to the packages view page
+        navigate('/package/view'); 
       } else {
         setError(new Error(response.data.message || 'Failed to delete package.'));
       }
@@ -179,11 +179,11 @@ const EditPackage = () => {
 
   const handleCloseDialog = () => {
     setIsDialogOpen(false);
-    navigate('/package/view'); // Redirect to the '/package/view' page
+    navigate('/package/view'); 
   };
 
   const handleCancel = () => {
-    navigate('/package/view'); // Navigate back to the all_packages page
+    navigate('/package/view'); 
   };
 
   if (loading) {

@@ -4,10 +4,9 @@ import { useSidebar } from "../../Context/SidebarContext";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import SettingsIcon from "@mui/icons-material/Settings";
 import NotificationsIcon from "@mui/icons-material/Notifications";
-import axios from "axios";
-import { domainBase } from "../../helpingFile";
+import { apiGet } from "../../utils/http";
 
-const API_ENDPOINT_LOGOUT = `${domainBase}apiAdmin/v1/user/logout`;
+const API_ENDPOINT_LOGOUT = `apiAdmin/v1/user/logout`;
 
 const Sidebar = () => {
   const { isSidebarOpen, toggleSidebar } = useSidebar();
@@ -47,7 +46,7 @@ const Sidebar = () => {
         throw new Error("No access token found.");
       }
 
-      await axios.get(API_ENDPOINT_LOGOUT, {
+      await apiGet(API_ENDPOINT_LOGOUT, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

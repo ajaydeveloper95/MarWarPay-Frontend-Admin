@@ -19,11 +19,11 @@ import {
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useNavigate } from 'react-router-dom';
 import { useSidebar } from '../../../Context/SidebarContext';
-import axios from 'axios';
-import { accessToken, domainBase } from '../../../helpingFile';
+import { accessToken } from '../../../helpingFile';
+import { apiGet } from '../../../utils/http';
 
-const API_GET_USERS_ENDPOINT = `${domainBase}apiAdmin/v1/utility/getUserWithWallet`;
-const API_TRANSFER_ENDPOINT = `${domainBase}apiAdmin/v1/wallet/eWalletFundCredit`;
+const API_GET_USERS_ENDPOINT = `apiAdmin/v1/utility/getUserWithWallet`;
+const API_TRANSFER_ENDPOINT = `apiAdmin/v1/wallet/eWalletFundCredit`;
 const ACCESS_TOKEN = accessToken;
 
 const Cr = () => {
@@ -42,7 +42,7 @@ const Cr = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(API_GET_USERS_ENDPOINT, {
+        const response = await apiGet(API_GET_USERS_ENDPOINT, {
           headers: {
             Authorization: `Bearer ${ACCESS_TOKEN}`,
           },
@@ -80,7 +80,7 @@ const Cr = () => {
 
     // API Call to transfer the amount
     try {
-      const response = await axios.post(
+      const response = await apiGet(
         `${API_TRANSFER_ENDPOINT}/${member}`, // Use member ID in the endpoint
         requestBody, // Pass the request body
         {
@@ -93,10 +93,7 @@ const Cr = () => {
       setfileUpdate("done")
 
       if (response.status === 200) {
-        // Display the success dialog with transaction details
         const { data } = response.data;
-
-        // Update the available balance based on response data
         setAvailableBalance(data.afterAmount.toString());
 
         setIsDialogOpen(true);
@@ -106,7 +103,6 @@ const Cr = () => {
       console.log(err);
     }
 
-    // Reset form fields
     setMember('');
     setAvailableBalance('');
     setTransferAmount('');

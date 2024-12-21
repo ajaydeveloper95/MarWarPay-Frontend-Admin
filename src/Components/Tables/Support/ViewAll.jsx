@@ -22,10 +22,10 @@ import {
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useSidebar } from "../../../Context/SidebarContext";
-import axios from "axios";
-import { accessToken, domainBase } from "../../../helpingFile";
+import { accessToken } from "../../../helpingFile";
+import { apiGet } from "../../../utils/http";
 
-const API_ENDPOINT = `${domainBase}apiAdmin/v1/support/allGenTicket`;
+const API_ENDPOINT = `apiAdmin/v1/support/allGenTicket`;
 const ACCESS_TOKEN = accessToken;
 
 const ViewAll = () => {
@@ -41,7 +41,7 @@ const ViewAll = () => {
   const formatDateTime = (dateString) => {
     const date = new Date(dateString);
     const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+    const month = String(date.getMonth() + 1).padStart(2, '0'); 
     const day = String(date.getDate()).padStart(2, '0');
     const hours = String(date.getHours()).padStart(2, '0');
     const minutes = String(date.getMinutes()).padStart(2, '0');
@@ -53,7 +53,7 @@ const ViewAll = () => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const response = await axios.get(API_ENDPOINT, {
+        const response = await apiGet(API_ENDPOINT, {
           headers: {
             Authorization: `Bearer ${ACCESS_TOKEN}`,
           },
@@ -82,7 +82,7 @@ const ViewAll = () => {
 
   const handlePageSizeChange = (event) => {
     setPageSize(event.target.value);
-    setCurrentPage(0); // Reset to first page when page size changes
+    setCurrentPage(0); 
   };
 
   const handlePageChange = (direction) => {

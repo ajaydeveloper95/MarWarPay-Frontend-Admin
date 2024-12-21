@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Grid, Box, Typography, Snackbar, Alert, Tooltip } from '@mui/material';
 import { AccountBalanceWallet, AccountBalance, Money } from '@mui/icons-material';
-import axios from 'axios';
-import { domainBase, accessToken } from '../../helpingFile';
+import {  accessToken } from '../../helpingFile';
 import {
   LineChart,
   Line,
@@ -12,9 +11,10 @@ import {
   Tooltip as RechartsTooltip,
   ResponsiveContainer,
 } from 'recharts';
+import { apiGet } from '../../utils/http';
 
-const API_GET_USERS_ENDPOINT = `${domainBase}apiAdmin/v1/utility/getUserWithWallet`;
-const API_GET_BANK_BALANCE = `${domainBase}apiAdmin/v1/utility/getBalanceFetch`;
+const API_GET_USERS_ENDPOINT = `apiAdmin/v1/utility/getUserWithWallet`;
+const API_GET_BANK_BALANCE = `apiAdmin/v1/utility/getBalanceFetch`;
 const ACCESS_TOKEN = accessToken;
 
 function Total_Blnc() {
@@ -27,7 +27,7 @@ function Total_Blnc() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(API_GET_USERS_ENDPOINT, {
+        const response = await apiGet(API_GET_USERS_ENDPOINT, {
           headers: {
             Authorization: `Bearer ${ACCESS_TOKEN}`,
           },
@@ -43,7 +43,7 @@ function Total_Blnc() {
   useEffect(() => {
     const fetchBankData = async () => {
       try {
-        const response = await axios.get(API_GET_BANK_BALANCE, {
+        const response = await apiGet(API_GET_BANK_BALANCE, {
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },

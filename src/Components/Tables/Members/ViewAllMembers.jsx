@@ -24,10 +24,10 @@ import {
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useSidebar } from "../../../Context/SidebarContext";
-import { accessToken, domainBase } from "../../../helpingFile";
-import axios from "axios";
+import { accessToken } from "../../../helpingFile";
+import { apiGet } from "../../../utils/http";
 
-const API_ENDPOINT = `${domainBase}apiAdmin/v1/user/getUsers`;
+const API_ENDPOINT = `apiAdmin/v1/user/getUsers`;
 const ACCESS_TOKEN = accessToken;
 
 const ViewAllMembers = () => {
@@ -55,8 +55,7 @@ const ViewAllMembers = () => {
 
   const fetchData = () => {
     setLoading(true);
-    axios
-      .get(API_ENDPOINT, {
+    apiGet(API_ENDPOINT, {
         headers: {
           Authorization: `Bearer ${ACCESS_TOKEN}`,
         },

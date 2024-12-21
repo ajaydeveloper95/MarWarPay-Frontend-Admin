@@ -12,18 +12,18 @@ import {
   DialogActions,
 } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
-import axios from "axios";
-import { accessToken, domainBase } from "../../../helpingFile";
+import { accessToken } from "../../../helpingFile";
 import { useSidebar } from "../../../Context/SidebarContext";
+import { apiDelete, apiGet, apiPost } from "../../../utils/http";
 
-const FETCH_API = `${domainBase}apiAdmin/v1/ipWhitelist/getSingleUserIp`;
-const UPDATE_API = `${domainBase}apiAdmin/v1/ipWhitelist/updateUserIp/`;
-const DELETE_API = `${domainBase}apiAdmin/v1/ipWhitelist/deleteUserIp/`;
+const FETCH_API = `apiAdmin/v1/ipWhitelist/getSingleUserIp`;
+const UPDATE_API = `apiAdmin/v1/ipWhitelist/updateUserIp/`;
+const DELETE_API = `apiAdmin/v1/ipWhitelist/deleteUserIp/`;
 const ACCESS_TOKEN = accessToken;
 
 const UpdateIP = () => {
   const { isSidebarOpen } = useSidebar();
-  const { id } = useParams(); // Assume `id` is passed as a route parameter
+  const { id } = useParams();
   const [ipDetails, setIpDetails] = useState({
     memberId: "",
     ipUser: "",
@@ -36,11 +36,10 @@ const UpdateIP = () => {
 
   const navigate = useNavigate();
 
-  // Fetch IP details on component mount
   useEffect(() => {
     const fetchIpDetails = async () => {
       try {
-        const response = await axios.get(`${FETCH_API}/${id}`,{
+        const response = await apiGet(`${FETCH_API}/${id}`,{
             headers: {
                 Authorization: `Bearer ${ACCESS_TOKEN}`,
               },
@@ -55,7 +54,6 @@ const UpdateIP = () => {
     fetchIpDetails();
   }, [id]);
 
-  // Handle form change
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setIpDetails((prev) => ({
@@ -64,7 +62,6 @@ const UpdateIP = () => {
     }));
   };
 
-  // Handle update action
   const handleUpdate = async () => {
     setLoading(true);
     setError("");
@@ -73,11 +70,10 @@ const UpdateIP = () => {
     try {
       const payload = {
         memberId: ipDetails.userInfo._id,
-        // fullName: ipDetails.userInfo.fullName,
         ipUser: ipDetails.ipUser,
         ipUserDev: ipDetails.ipUserDev,
       };
-      const response = await axios.post(`${UPDATE_API}${id}`, payload,{
+      const response = await apiPost(`${UPDATE_API}${id}`, payload,{
         headers: {
             Authorization: `Bearer ${ACCESS_TOKEN}`,
           },
@@ -101,7 +97,7 @@ const UpdateIP = () => {
     setSuccessMessage("");
 
     try {
-      const response = await axios.delete(`${DELETE_API}${id}`,{
+      const response = await apiDelete(`${DELETE_API}${id}`,{
         headers: {
             Authorization: `Bearer ${ACCESS_TOKEN}`,
           },
@@ -117,14 +113,13 @@ const UpdateIP = () => {
     }
   };
 
-  // Close dialog and navigate
   const handleCloseDialog = () => {
     setIsDialogOpen(false);
-    navigate("/ipManagement/allUsersIP"); // Adjust the navigation route as needed
+    navigate("/ipManagement/allUsersIP"); 
   };
 
   const handleCancel = () => {
-    navigate(-1); // Go back to the previous page
+    navigate(-1); 
   };
 
   return (

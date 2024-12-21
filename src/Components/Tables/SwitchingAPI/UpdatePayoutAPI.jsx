@@ -23,13 +23,13 @@ import {
 } from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import axios from "axios";
-import { domainBase, accessToken } from "../../../helpingFile";
+import { accessToken } from "../../../helpingFile";
 import { useSidebar } from "../../../Context/SidebarContext";
 import { useNavigate } from "react-router-dom";
+import { apiGet, apiPost } from "../../../utils/http";
 
 const ACCESS_TOKEN = accessToken;
-const PAYOUT_API_LIST = `${domainBase}apiAdmin/v1/apiswitch/allPayOutSwitch`;
+const PAYOUT_API_LIST = `apiAdmin/v1/apiswitch/allPayOutSwitch`;
 
 const UpdatePayoutAPI = () => {
   const { isSidebarOpen } = useSidebar();
@@ -44,7 +44,7 @@ const UpdatePayoutAPI = () => {
   useEffect(() => {
     const fetchPayInApiList = async () => {
       try {
-        const response = await axios.get(PAYOUT_API_LIST, {
+        const response = await apiGet(PAYOUT_API_LIST, {
           headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
         });
         setPayInApiList(response.data.data);
@@ -67,15 +67,15 @@ const UpdatePayoutAPI = () => {
 
   const handleSave = () => {
     setEditDialogOpen(false);
-    setConfirmDialogOpen(true);  // Open the confirmation dialog
+    setConfirmDialogOpen(true);  
   };
 
   const handleConfirmUpdate = async () => {
-    setConfirmDialogOpen(false);  // Close the confirmation dialog
+    setConfirmDialogOpen(false); 
     if (selectedApi) {
       try {
-        const response = await axios.post(
-          `${domainBase}apiAdmin/v1/apiswitch/updatePayOutSwitch/${selectedApi._id}`,
+        const response = await apiPost(
+          `apiAdmin/v1/apiswitch/updatePayOutSwitch/${selectedApi._id}`,
           {
             apiName: selectedApi.apiName,
             apiURL: selectedApi.apiURL,
@@ -86,7 +86,7 @@ const UpdatePayoutAPI = () => {
         );
 
         if (response.data.statusCode === 200) {
-          const updatedResponse = await axios.get(PAYOUT_API_LIST, {
+          const updatedResponse = await apiGet(PAYOUT_API_LIST, {
             headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
           });
           setPayInApiList(updatedResponse.data.data); 

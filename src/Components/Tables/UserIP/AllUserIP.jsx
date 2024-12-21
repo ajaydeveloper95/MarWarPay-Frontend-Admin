@@ -24,10 +24,10 @@ import {
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useSidebar } from "../../../Context/SidebarContext";
-import axios from "axios";
-import { accessToken, domainBase } from "../../../helpingFile";
+import { accessToken } from "../../../helpingFile";
+import { apiGet } from "../../../utils/http";
 
-const API_ENDPOINT = `${domainBase}apiAdmin/v1/ipWhitelist/getUserIp`;
+const API_ENDPOINT = `apiAdmin/v1/ipWhitelist/getUserIp`;
 const ACCESS_TOKEN = accessToken;
 
 const AllUserIP = () => {
@@ -44,7 +44,7 @@ const AllUserIP = () => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const response = await axios.get(API_ENDPOINT, {
+        const response = await apiGet(API_ENDPOINT, {
           headers: {
             Authorization: `Bearer ${ACCESS_TOKEN}`,
           },
@@ -162,14 +162,78 @@ const AllUserIP = () => {
           <Table sx={{ borderCollapse: "collapse" }}>
             <TableHead>
               <TableRow>
-                <TableCell>#</TableCell>
-                <TableCell>Member ID</TableCell>
-                <TableCell>User Name</TableCell>
-                <TableCell>IP User</TableCell>
-                <TableCell>IP User Dev</TableCell>
-                <TableCell>Status</TableCell>
-                <TableCell>Last Update</TableCell>
-                <TableCell>Action</TableCell>
+                <TableCell
+                  sx={{
+                    fontWeight: "bold",
+                    fontSize: "16px",
+                    border: "1px solid rgba(224, 224, 224, 1)",
+                  }}
+                >
+                  #
+                </TableCell>
+                <TableCell
+                  sx={{
+                    fontWeight: "bold",
+                    fontSize: "16px",
+                    border: "1px solid rgba(224, 224, 224, 1)",
+                  }}
+                >
+                  Member ID
+                </TableCell>
+                <TableCell
+                  sx={{
+                    fontWeight: "bold",
+                    fontSize: "16px",
+                    border: "1px solid rgba(224, 224, 224, 1)",
+                  }}
+                >
+                  User Name
+                </TableCell>
+                <TableCell
+                  sx={{
+                    fontWeight: "bold",
+                    fontSize: "16px",
+                    border: "1px solid rgba(224, 224, 224, 1)",
+                  }}
+                >
+                  IP User
+                </TableCell>
+                <TableCell
+                  sx={{
+                    fontWeight: "bold",
+                    fontSize: "16px",
+                    border: "1px solid rgba(224, 224, 224, 1)",
+                  }}
+                >
+                  IP User Dev
+                </TableCell>
+                <TableCell
+                  sx={{
+                    fontWeight: "bold",
+                    fontSize: "16px",
+                    border: "1px solid rgba(224, 224, 224, 1)",
+                  }}
+                >
+                  Status
+                </TableCell>
+                <TableCell
+                  sx={{
+                    fontWeight: "bold",
+                    fontSize: "16px",
+                    border: "1px solid rgba(224, 224, 224, 1)",
+                  }}
+                >
+                  Last Update
+                </TableCell>
+                <TableCell
+                  sx={{
+                    fontWeight: "bold",
+                    fontSize: "16px",
+                    border: "1px solid rgba(224, 224, 224, 1)",
+                  }}
+                >
+                  Action
+                </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -194,16 +258,44 @@ const AllUserIP = () => {
               ) : (
                 paginatedData.map((entry, index) => (
                   <TableRow key={entry._id}>
-                    <TableCell>{startIndex + index + 1}</TableCell>
-                    <TableCell>{entry.userInfo.memberId}</TableCell>
-                    <TableCell>{entry.userInfo.fullName}</TableCell>
-                    <TableCell>{entry.ipUser}</TableCell>
-                    <TableCell>{entry.ipUserDev}</TableCell>
-                    <TableCell>{entry.isStatus ? "Active" : "Inactive"}</TableCell>
-                    <TableCell>
+                    <TableCell
+                      sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
+                    >
+                      {startIndex + index + 1}
+                    </TableCell>
+                    <TableCell
+                      sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
+                    >
+                      {entry.userInfo.memberId}
+                    </TableCell>
+                    <TableCell
+                      sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
+                    >
+                      {entry.userInfo.fullName}
+                    </TableCell>
+                    <TableCell
+                      sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
+                    >
+                      {entry.ipUser}
+                    </TableCell>
+                    <TableCell
+                      sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
+                    >
+                      {entry.ipUserDev}
+                    </TableCell>
+                    <TableCell
+                      sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
+                    >
+                      {entry.isStatus ? "Active" : "Inactive"}
+                    </TableCell>
+                    <TableCell
+                      sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
+                    >
                       {new Date(entry.updatedAt).toLocaleString()}
                     </TableCell>
-                    <TableCell>
+                    <TableCell
+                      sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
+                    >
                       <IconButton onClick={() => handleViewMember(entry._id)}>
                         <VisibilityIcon />
                       </IconButton>
