@@ -19,11 +19,11 @@ import {
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useNavigate } from 'react-router-dom';
 import { useSidebar } from '../../../Context/SidebarContext';
-import axios from 'axios';
-import { accessToken, domainBase } from '../../../helpingFile';
+import { accessToken } from '../../../helpingFile';
+import { apiGet, apiPost } from '../../../utils/http';
 
-const API_GET_USERS_ENDPOINT = `${domainBase}apiAdmin/v1/utility/getUserWithWallet`;
-const API_TRANSFER_ENDPOINT = `${domainBase}apiAdmin/v1/wallet/eWalletFundDebit`;
+const API_GET_USERS_ENDPOINT = `apiAdmin/v1/utility/getUserWithWallet`;
+const API_TRANSFER_ENDPOINT = `apiAdmin/v1/wallet/eWalletFundDebit`;
 const ACCESS_TOKEN = accessToken;
 
 const Dr = () => {
@@ -43,7 +43,7 @@ const Dr = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(API_GET_USERS_ENDPOINT, {
+        const response = await apiGet(API_GET_USERS_ENDPOINT, {
           headers: {
             Authorization: `Bearer ${ACCESS_TOKEN}`,
           },
@@ -81,7 +81,7 @@ const Dr = () => {
 
     // API Call to transfer the amount
     try {
-      const response = await axios.post(
+      const response = await apiPost(
         `${API_TRANSFER_ENDPOINT}/${member}`, // Use member ID in the endpoint
         requestBody, // Pass the request body
         {

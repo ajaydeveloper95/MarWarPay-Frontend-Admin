@@ -27,15 +27,15 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate } from "react-router-dom";
 import { useSidebar } from "../../../Context/SidebarContext";
 import { useEffect, useState } from "react";
-import axios from "axios";
-import { accessToken, domainBase } from "../../../helpingFile";
+import { accessToken } from "../../../helpingFile";
 import AddPayinAPI from "./AddPayinAPI";
+import { apiGet, apiPost } from "../../../utils/http";
 
 const ACCESS_TOKEN = accessToken;
-const USER_LIST_API = `${domainBase}apiAdmin/v1/utility/getUserListSwitchApi`;
-const PAYIN_API_LIST = `${domainBase}apiAdmin/v1/utility/getPayInApiList`;
-const SWITCH_API = `${domainBase}apiAdmin/v1/apiswitch/AllUserSwitchPayIn`;
-const SWITCH_API_SINGLE_USER = `${domainBase}apiAdmin/v1/apiswitch/OneUserSwitchPayIn`;
+const USER_LIST_API = `apiAdmin/v1/utility/getUserListSwitchApi`;
+const PAYIN_API_LIST = `apiAdmin/v1/utility/getPayInApiList`;
+const SWITCH_API = `apiAdmin/v1/apiswitch/AllUserSwitchPayIn`;
+const SWITCH_API_SINGLE_USER = `apiAdmin/v1/apiswitch/OneUserSwitchPayIn`;
 
 const PayinSW = () => {
   const { isSidebarOpen } = useSidebar();
@@ -52,7 +52,7 @@ const PayinSW = () => {
 
   const fetchUserList = async () => {
     try {
-      const response = await axios.get(USER_LIST_API, {
+      const response = await apiGet(USER_LIST_API, {
         headers: {
           Authorization: `Bearer ${ACCESS_TOKEN}`,
         },
@@ -65,7 +65,7 @@ const PayinSW = () => {
 
   const fetchPayInApiList = async () => {
     try {
-      const response = await axios.get(PAYIN_API_LIST, {
+      const response = await apiGet(PAYIN_API_LIST, {
         headers: {
           Authorization: `Bearer ${ACCESS_TOKEN}`,
         },
@@ -111,7 +111,7 @@ const PayinSW = () => {
     try {
       let response;
       if (dropdownValue === "allusers") {
-        response = await axios.post(
+        response = await apiPost(
           SWITCH_API,
           { apiId: selectedApiId },
           {
@@ -121,7 +121,7 @@ const PayinSW = () => {
           }
         );
       } else {
-        response = await axios.post(
+        response = await apiPost(
           SWITCH_API_SINGLE_USER,
           { userId: dropdownValue, apiId: selectedApiId },
           {

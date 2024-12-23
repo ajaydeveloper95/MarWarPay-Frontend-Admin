@@ -1,9 +1,9 @@
 import { Box, Typography, TableContainer, Paper, Table, TableHead, TableRow, TableCell, TableBody } from '@mui/material';
-import { domainBase, accessToken } from '../../helpingFile';
-import axios from 'axios';
+import { accessToken } from '../../helpingFile';
 import { useEffect, useState } from 'react';
+import { apiGet } from '../../utils/http';
 
-const API_GET_USERS_ENDPOINT = `${domainBase}apiAdmin/v1/utility/getUserWithWallet`;
+const API_GET_USERS_ENDPOINT = `apiAdmin/v1/utility/getUserWithWallet`;
 const ACCESS_TOKEN = accessToken;
 
 function WlltSummary() {
@@ -14,7 +14,7 @@ function WlltSummary() {
     // Fetch total balances from API
     const fetchTotalBalances = async () => {
       try {
-        const response = await axios.get(API_GET_USERS_ENDPOINT, {
+        const response = await apiGet(API_GET_USERS_ENDPOINT, {
           headers: {
             Authorization: `Bearer ${ACCESS_TOKEN}`,
           },

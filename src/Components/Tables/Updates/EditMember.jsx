@@ -15,13 +15,13 @@ import {
 import { useNavigate, useParams } from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useSidebar } from "../../../Context/SidebarContext";
-import axios from "axios";
-import { accessToken, domainBase } from "../../../helpingFile";
+import { accessToken } from "../../../helpingFile";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { apiGet, apiPost } from "../../../utils/http";
 
 const ACCESS_TOKEN = accessToken;
-const PACKAGE_API_ENDPOINT = `${domainBase}apiAdmin/v1/utility/getPackageList`;
+const PACKAGE_API_ENDPOINT = `apiAdmin/v1/utility/getPackageList`;
 
 const EditMember = () => {
   const navigate = useNavigate();
@@ -35,8 +35,8 @@ const EditMember = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await axios.get(
-          `${domainBase}/apiAdmin/v1/user/userProfile/${id}`,
+        const response = await apiGet(
+          `apiAdmin/v1/user/userProfile/${id}`,
           {
             headers: {
               Authorization: `Bearer ${ACCESS_TOKEN}`,
@@ -55,12 +55,12 @@ const EditMember = () => {
 
     const fetchPackages = async () => {
       try {
-        const response = await axios.get(PACKAGE_API_ENDPOINT, {
+        const response = await apiGet(PACKAGE_API_ENDPOINT, {
           headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
         });
 
         if (response.status === 200) {
-          setPackages(response.data.data); // Set package data
+          setPackages(response.data.data);
         }
       } catch (err) {
         console.error("Error fetching package data:", err);
@@ -74,8 +74,8 @@ const EditMember = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(
-        `${domainBase}/apiAdmin/v1/user/updateUser/${userData._id}`,
+      const response = await apiPost(
+        `apiAdmin/v1/user/updateUser/${userData._id}`,
         userData1,
         {
           headers: {

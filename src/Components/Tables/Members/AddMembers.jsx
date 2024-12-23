@@ -19,11 +19,12 @@ import {
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate } from "react-router-dom";
 import { useSidebar } from "../../../Context/SidebarContext";
+import { accessToken } from "../../../helpingFile";
+import { apiGet, apiPost } from "../../../utils/http";
 import axios from "axios";
-import { accessToken, domainBase } from "../../../helpingFile";
 
-const API_ENDPOINT = `${domainBase}apiAdmin/v1/user/addUser`;
-const PACKAGE_API_ENDPOINT = `${domainBase}apiAdmin/v1/utility/getPackageList`;
+const API_ENDPOINT = `apiAdmin/v1/user/addUser`;
+const PACKAGE_API_ENDPOINT = `apiAdmin/v1/utility/getPackageList`;
 const COUNTRY_API_ENDPOINT = `https://restcountries.com/v3.1/all`;
 const STATE_API_ENDPOINT = `https://countriesnow.space/api/v0.1/countries/states`;
 const ACCESS_TOKEN = accessToken;
@@ -55,7 +56,7 @@ const AddMembers = () => {
   useEffect(() => {
     const fetchPackages = async () => {
       try {
-        const response = await axios.get(PACKAGE_API_ENDPOINT, {
+        const response = await apiGet(PACKAGE_API_ENDPOINT, {
           headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
         });
 
@@ -74,11 +75,10 @@ const AddMembers = () => {
         const response = await axios.get(COUNTRY_API_ENDPOINT);
 
         if (response.status === 200) {
-          // Sort countries by name
           const sortedCountries = response.data
             .map((country) => country.name.common)
             .sort();
-          setCountries(sortedCountries); // Set country data
+          setCountries(sortedCountries);
         }
       } catch (err) {
         console.error("Error fetching countries data:", err);
@@ -137,7 +137,7 @@ const AddMembers = () => {
 
     try {
       // Make the POST request to the API endpoint
-      await axios.post(
+      await apiPost(
         API_ENDPOINT,
         {
           memberType,

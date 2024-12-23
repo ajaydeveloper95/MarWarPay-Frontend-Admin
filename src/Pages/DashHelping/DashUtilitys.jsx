@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, LabelList } from 'recharts';
 import { Box } from '@mui/material';
-import axios from 'axios';
-import { domainBase, accessToken } from '../../helpingFile';
+import { accessToken } from '../../helpingFile';
+import { apiGet } from '../../utils/http';
 
-const API_GET_USERS_ENDPOINT = `${domainBase}apiAdmin/v1/utility/getUserList`;
-const API_GET_PACKAGES_ENDPOINT = `${domainBase}apiAdmin/v1/utility/getPackageList`;
-const API_GET_PENDING_TICKETS_ENDPOINT = `${domainBase}apiAdmin/v1/utility/getPendingTicketList`;
-const API_GET_ALL_MEMBERS_ENDPOINT = `${domainBase}/apiAdmin/v1/utility/getAllMemberList`;
+const API_GET_USERS_ENDPOINT = `apiAdmin/v1/utility/getUserList`;
+const API_GET_PACKAGES_ENDPOINT = `apiAdmin/v1/utility/getPackageList`;
+const API_GET_PENDING_TICKETS_ENDPOINT = `apiAdmin/v1/utility/getPendingTicketList`;
+const API_GET_ALL_MEMBERS_ENDPOINT = `apiAdmin/v1/utility/getAllMemberList`;
 const ACCESS_TOKEN = accessToken;
 
 function DashUtilities() {
@@ -19,12 +19,10 @@ function DashUtilities() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const usersPromise = axios.get(API_GET_USERS_ENDPOINT, { headers: { Authorization: `Bearer ${ACCESS_TOKEN}` } });
-        const packagesPromise = axios.get(API_GET_PACKAGES_ENDPOINT, { headers: { Authorization: `Bearer ${ACCESS_TOKEN}` } });
-        const ticketsPromise = axios.get(API_GET_PENDING_TICKETS_ENDPOINT, { headers: { Authorization: `Bearer ${ACCESS_TOKEN}` } });
-        const membersPromise = axios.get(API_GET_ALL_MEMBERS_ENDPOINT, { headers: { Authorization: `Bearer ${ACCESS_TOKEN}` } });
-
-        // Await all promises and handle each response individually
+        const usersPromise = apiGet(API_GET_USERS_ENDPOINT, { headers: { Authorization: `Bearer ${ACCESS_TOKEN}` } });
+        const packagesPromise = apiGet(API_GET_PACKAGES_ENDPOINT, { headers: { Authorization: `Bearer ${ACCESS_TOKEN}` } });
+        const ticketsPromise = apiGet(API_GET_PENDING_TICKETS_ENDPOINT, { headers: { Authorization: `Bearer ${ACCESS_TOKEN}` } });
+        const membersPromise = apiGet(API_GET_ALL_MEMBERS_ENDPOINT, { headers: { Authorization: `Bearer ${ACCESS_TOKEN}` } });
         const [usersResponse, packagesResponse, ticketsResponse, membersResponse] = await Promise.allSettled([
           usersPromise,
           packagesPromise,
@@ -32,7 +30,6 @@ function DashUtilities() {
           membersPromise,
         ]);
 
-        // Safely update the state using the responses
         setTotalUsers(usersResponse.status === 'fulfilled' ? usersResponse.value.data.data?.length || 0 : 0);
         setTotalPackages(packagesResponse.status === 'fulfilled' ? packagesResponse.value.data.data?.length || 0 : 0);
         setPendingTickets(ticketsResponse.status === 'fulfilled' ? ticketsResponse.value.data.data?.length || 0 : 0);

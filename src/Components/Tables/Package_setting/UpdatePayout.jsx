@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation, useParams } from "react-router-dom";
-import axios from "axios";
 import {
   Container,
   Typography,
@@ -25,7 +24,8 @@ import {
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 import { useSidebar } from "../../../Context/SidebarContext";
-import { accessToken, domainBase } from '../../../helpingFile';
+import { accessToken } from '../../../helpingFile';
+import { apiGet, apiPost } from "../../../utils/http";
 
 const ACCESS_TOKEN = accessToken;
 
@@ -47,7 +47,7 @@ const UpdatePayout = () => {
     if (!packageData._id) {
       const fetchPackageData = async () => {
         try {
-          const response = await axios.get(`${domainBase}apiAdmin/v1/package/getSinglePayOutPackage/${id}`, {
+          const response = await apiGet(`apiAdmin/v1/package/getSinglePayOutPackage/${id}`, {
             headers: {
               Authorization: `Bearer ${ACCESS_TOKEN}`,
             },
@@ -85,8 +85,8 @@ const UpdatePayout = () => {
     setError(null);
     try {
       const updatedChargeRange = payOutChargeRange.map(({ _id, ...rest }) => rest);
-      await axios.post(
-        `${domainBase}apiAdmin/v1/package/updatePayOutPackage/${id}`,
+      await apiPost(
+        `apiAdmin/v1/package/updatePayOutPackage/${id}`,
         {
           payOutPackageName,
           payOutChargeRange: updatedChargeRange,

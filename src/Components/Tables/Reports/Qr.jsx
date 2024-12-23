@@ -30,12 +30,12 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle"; // Icon for success
 import CancelIcon from "@mui/icons-material/Cancel"; // Icon for failure
 import { useSidebar } from "../../../Context/SidebarContext";
-import axios from "axios";
-import { accessToken, domainBase } from "../../../helpingFile";
+// import axios from "axios";
+import { accessToken } from "../../../helpingFile";
 import { apiGet } from "../../../utils/http";
 
-const API_ENDPOINT = `${domainBase}apiAdmin/v1/payin/allPaymentGenerated`;
-const USER_LIST_API = `${domainBase}apiAdmin/v1/utility/getUserList`;
+const API_ENDPOINT = `apiAdmin/v1/payin/allPaymentGenerated`;
+const USER_LIST_API = `apiAdmin/v1/utility/getUserList`;
 const ACCESS_TOKEN = accessToken;
 
 const Qr = () => {
@@ -59,12 +59,12 @@ const Qr = () => {
   const [userList, setUserList] = useState([]);
   const [qrDialogOpen, setQrDialogOpen] = useState(false);
   const [qrData, setQrData] = useState(null);
-  const [totalCount, setTotalCount] = useState(0); // Total records count
+  const [totalCount, setTotalCount] = useState(0);  
 
   const formatDateTime = (dateString) => {
     const date = new Date(dateString);
     const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are zero-based
+    const month = String(date.getMonth() + 1).padStart(2, "0");  
     const day = String(date.getDate()).padStart(2, "0");
     const hours = String(date.getHours()).padStart(2, "0");
     const minutes = String(date.getMinutes()).padStart(2, "0");
@@ -89,7 +89,7 @@ const Qr = () => {
 
   const fetchUserList = async () => {
     try {
-      const response = await axios.get(USER_LIST_API, {
+      const response = await apiGet(USER_LIST_API, {
         headers: {
           Authorization: `Bearer ${ACCESS_TOKEN}`,
         },

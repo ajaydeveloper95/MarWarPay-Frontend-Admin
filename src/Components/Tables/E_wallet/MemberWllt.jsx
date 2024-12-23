@@ -21,11 +21,11 @@ import {
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useSidebar } from "../../../Context/SidebarContext";
-import axios from "axios";
-import { accessToken, domainBase } from "../../../helpingFile";
+import { accessToken } from "../../../helpingFile";
+import { apiGet } from "../../../utils/http";
 
-const API_ENDPOINT = `${domainBase}apiAdmin/v1/wallet/eWalletMember/66c86b75986120a64a2946fa`;
-const USER_LIST_API = `${domainBase}apiAdmin/v1/utility/getUserList`;
+const API_ENDPOINT = `apiAdmin/v1/wallet/eWalletMember/66c86b75986120a64a2946fa`;
+const USER_LIST_API = `apiAdmin/v1/utility/getUserList`;
 const ACCESS_TOKEN = accessToken;
 
 const MemberWllt = () => {
@@ -42,8 +42,7 @@ const MemberWllt = () => {
 
   useEffect(() => {
     // Fetch data from API
-    axios
-      .get(API_ENDPOINT, {
+    apiGet(API_ENDPOINT, {
         headers: {
           Authorization: `Bearer ${ACCESS_TOKEN}`,
         },
@@ -60,7 +59,7 @@ const MemberWllt = () => {
     // Fetch user list
     const fetchUserList = async () => {
       try {
-        const response = await axios.get(USER_LIST_API, {
+        const response = await apiGet(USER_LIST_API, {
           headers: {
             Authorization: `Bearer ${ACCESS_TOKEN}`,
           },

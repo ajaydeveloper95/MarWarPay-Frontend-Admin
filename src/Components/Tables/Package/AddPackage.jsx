@@ -19,19 +19,19 @@ import {
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useNavigate } from 'react-router-dom';
 import { useSidebar } from '../../../Context/SidebarContext';
-import axios from "axios";
-import { accessToken, domainBase } from '../../../helpingFile';
+import { accessToken } from '../../../helpingFile';
+import { apiGet, apiPost } from '../../../utils/http';
 
-const API_ENDPOINT = `${domainBase}apiAdmin/v1/package/addPackage`;
-const API_PayoutCharge = `${domainBase}apiAdmin/v1/utility/getPayOutPackageList`;
-const API_PayinCharge = `${domainBase}apiAdmin/v1/utility/getPayInPackageList`;
+const API_ENDPOINT = `apiAdmin/v1/package/addPackage`;
+const API_PayoutCharge = `apiAdmin/v1/utility/getPayOutPackageList`;
+const API_PayinCharge = `apiAdmin/v1/utility/getPayInPackageList`;
 const ACCESS_TOKEN = accessToken;
 
 const AddPackage = () => {
   const [packageName, setPackageName] = useState('');
   const [packageInfo, setPackageInfo] = useState('');
-  const [packagePayOutCharge, setPackagePayOutCharge] = useState('');  // For PayOut
-  const [packagePayInCharge, setPackagePayInCharge] = useState('');    // For PayIn
+  const [packagePayOutCharge, setPackagePayOutCharge] = useState('');  
+  const [packagePayInCharge, setPackagePayInCharge] = useState('');   
   const [status, setStatus] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [payOutPackages, setPayOutPackages] = useState([]);
@@ -46,7 +46,7 @@ const AddPackage = () => {
   useEffect(() => {
     const fetchPayOutPackages = async () => {
       try {
-        const response = await axios.get(API_PayoutCharge, {
+        const response = await apiGet(API_PayoutCharge, {
           headers: {
             Authorization: `Bearer ${ACCESS_TOKEN}`,
           },
@@ -60,7 +60,7 @@ const AddPackage = () => {
 
     const fetchPayInPackages = async () => {
       try {
-        const response = await axios.get(API_PayinCharge, {
+        const response = await apiGet(API_PayinCharge, {
           headers: {
             Authorization: `Bearer ${ACCESS_TOKEN}`,
           },
@@ -80,7 +80,7 @@ const AddPackage = () => {
     event.preventDefault();
 
     try {
-      await axios.post(API_ENDPOINT, {
+      await apiPost(API_ENDPOINT, {
         packageName,
         packageInfo,
         packagePayOutCharge,
@@ -94,8 +94,6 @@ const AddPackage = () => {
 
       setSuccessMessage('The package has been successfully added!');
       setIsDialogOpen(true);
-
-      // Reset form fields after a successful POST request
       setPackageName('');
       setPackageInfo('');
       setPackagePayOutCharge('');
@@ -113,7 +111,7 @@ const AddPackage = () => {
   };
 
   const handleCancel = () => {
-    navigate(-1); // Navigate to the previous page
+    navigate(-1); 
   };
 
   return (

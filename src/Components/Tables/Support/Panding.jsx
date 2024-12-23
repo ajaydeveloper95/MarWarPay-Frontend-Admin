@@ -24,10 +24,10 @@ import {
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useSidebar } from "../../../Context/SidebarContext";
-import axios from "axios";
-import { accessToken, domainBase } from '../../../helpingFile';
+import { accessToken } from '../../../helpingFile';
+import { apiGet } from "../../../utils/http";
 
-const API_ENDPOINT = `${domainBase}apiAdmin/v1/support/allPendingTicket`;
+const API_ENDPOINT = `apiAdmin/v1/support/allPendingTicket`;
 const ACCESS_TOKEN = accessToken;
 
 const Panding = () => {
@@ -45,7 +45,7 @@ const Panding = () => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const response = await axios.get(API_ENDPOINT, {
+        const response = await apiGet(API_ENDPOINT, {
           headers: {
             Authorization: `Bearer ${ACCESS_TOKEN}`,
           },

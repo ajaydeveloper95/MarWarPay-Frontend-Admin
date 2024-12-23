@@ -16,18 +16,18 @@ import {
   DialogTitle,
 } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
-import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { accessToken, domainBase } from "../../../helpingFile";
+import { accessToken } from "../../../helpingFile";
 import { useSidebar } from "../../../Context/SidebarContext";
+import { apiGet, apiPost } from "../../../utils/http";
 
-const API_GET_TICKET = `${domainBase}apiAdmin/v1/support/getSingleTicket/`;
-const API_UPDATE_TICKET = `${domainBase}apiAdmin/v1/support/updateTicketStatus/`;
+const API_GET_TICKET = `apiAdmin/v1/support/getSingleTicket/`;
+const API_UPDATE_TICKET = `apiAdmin/v1/support/updateTicketStatus/`;
 
 const EditTicket = () => {
-  const { id } = useParams(); // Get ticket ID from URL params
+  const { id } = useParams();
   const navigate = useNavigate();
   const { isSidebarOpen } = useSidebar();
   const [ticketData, setTicketData] = useState({
@@ -40,7 +40,7 @@ const EditTicket = () => {
   useEffect(() => {
     const fetchTicket = async () => {
       try {
-        const response = await axios.get(`${API_GET_TICKET}${id}`, {
+        const response = await apiGet(`${API_GET_TICKET}${id}`, {
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
@@ -65,24 +65,22 @@ const EditTicket = () => {
       ...prevData,
       [name]: value,
     }));
-    setNewStatus(value); // Set new status for dialog
+    setNewStatus(value); 
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setOpenDialog(true); // Open dialog to confirm update
+    setOpenDialog(true); 
   };
 
   const handleConfirmUpdate = async () => {
     setOpenDialog(false);
-
-    // Adjust the request body according to API requirements
     const updatedData = {
       isStatus: newStatus,
     };
 
     try {
-      const response = await axios.post(`${API_UPDATE_TICKET}${id}`, updatedData, {
+      const response = await apiPost(`${API_UPDATE_TICKET}${id}`, updatedData, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
           "Content-Type": "application/json",
@@ -105,7 +103,7 @@ const EditTicket = () => {
   };
 
   const handleBackButtonClick = () => {
-    navigate(-1); // Go back to previous page
+    navigate(-1); 
   };
 
   if (loading) {

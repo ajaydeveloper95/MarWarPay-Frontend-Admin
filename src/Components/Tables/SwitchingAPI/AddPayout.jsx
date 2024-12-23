@@ -7,10 +7,10 @@ import {
     Alert,
   } from "@mui/material";
   import { useState } from "react";
-  import axios from "axios";
-  import { accessToken, domainBase } from "../../../helpingFile";
+  import { accessToken } from "../../../helpingFile";
+import { apiPost } from "../../../utils/http";
   
-  const ADD_PAYOUT_API = `${domainBase}apiAdmin/v1/apiswitch/addPayOutSwitch`;
+  const ADD_PAYOUT_API = `apiAdmin/v1/apiswitch/addPayOutSwitch`;
   const ACCESS_TOKEN = accessToken;
   
   const AddPayout = ({ onClose }) => {
@@ -32,7 +32,7 @@ import {
       }
   
       try {
-        const response = await axios.post(
+        const response = await apiPost(
           ADD_PAYOUT_API,
           {
             apiName: newApiName,

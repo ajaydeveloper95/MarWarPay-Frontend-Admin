@@ -16,11 +16,11 @@ import {
   DialogActions,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
-import { accessToken, domainBase } from "../../../helpingFile";
+import { accessToken } from "../../../helpingFile";
+import { apiGet, apiPost } from "../../../utils/http";
 
-const API_ENDPOINT = `${domainBase}apiAdmin/v1/ipWhitelist/addUserIp`;
-const USER_LIST_API = `${domainBase}apiAdmin/v1/utility/getUserList`;
+const API_ENDPOINT = `apiAdmin/v1/ipWhitelist/addUserIp`;
+const USER_LIST_API = `apiAdmin/v1/utility/getUserList`;
 const ACCESS_TOKEN = accessToken;
 
 const AddIP = () => {
@@ -35,12 +35,10 @@ const AddIP = () => {
   const [userList, setUserList] = useState([]);
 
   const navigate = useNavigate();
-
-  // Fetch user list on component mount
   useEffect(() => {
     const fetchUserList = async () => {
       try {
-        const response = await axios.get(USER_LIST_API, {
+        const response = await apiGet(USER_LIST_API, {
           headers: {
             Authorization: `Bearer ${ACCESS_TOKEN}`,
           },
@@ -70,7 +68,7 @@ const AddIP = () => {
     };
 
     try {
-      const response = await axios.post(API_ENDPOINT, data, {
+      const response = await apiPost(API_ENDPOINT, data, {
         headers: {
           Authorization: `Bearer ${ACCESS_TOKEN}`,
         },
@@ -81,9 +79,6 @@ const AddIP = () => {
         setIsDialogOpen(true);
       }
     } catch (err) {
-      console.error("Error adding IP:", err);
-
-      // Check if the error is due to a duplicate key
       if (err.response?.data?.message === "Duplicate key error!") {
         setError("This IP address is already whitelisted for the selected member.");
       } else {
@@ -96,18 +91,18 @@ const AddIP = () => {
 
   const handleCloseDialog = () => {
     setIsDialogOpen(false);
-    navigate("/ipManagement/allUsersIP"); // Adjust navigation route as needed
+    navigate("/ipManagement/allUsersIP"); 
   };
 
   const handleCancel = () => {
-    navigate(-1); // Navigate to the previous page
+    navigate(-1); 
   };
 
   return (
     <Container
       maxWidth="lg"
       style={{
-        marginLeft: "16rem", // Adjust this as per your sidebar configuration
+        marginLeft: "16rem", 
         transition: "margin-left 0.3s ease",
         minWidth: "600px",
         maxWidth: "80%",
@@ -131,7 +126,6 @@ const AddIP = () => {
         {error && (
           <Typography variant="body1" color="error" sx={{ marginBottom: 2 }}>
             This IP address is already whitelisted for the selected member.
-            {/* {error} */}
           </Typography>
         )}
 

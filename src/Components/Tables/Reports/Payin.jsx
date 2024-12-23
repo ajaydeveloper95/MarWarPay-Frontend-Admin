@@ -28,16 +28,13 @@ import {
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useSidebar } from "../../../Context/SidebarContext";
-import axios from "axios";
-import { accessToken, domainBase } from "../../../helpingFile";
+import { accessToken } from "../../../helpingFile";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
-import { saveAs } from "file-saver";
-import Papa from "papaparse";
 import { apiGet } from "../../../utils/http";
 
-const API_ENDPOINT = `${domainBase}apiAdmin/v1/payin/allSuccessPayIn`;
-const USER_LIST_API = `${domainBase}apiAdmin/v1/utility/getUserList`;
+const API_ENDPOINT = `apiAdmin/v1/payin/allSuccessPayIn`;
+const USER_LIST_API = `apiAdmin/v1/utility/getUserList`;
 const ACCESS_TOKEN = accessToken;
 
 const Payin = () => {
@@ -62,29 +59,6 @@ const Payin = () => {
   const [dialogSeverity, setDialogSeverity] = useState("info");
   const [userList, setUserList] = useState([]);
 
-  const handleExport = () => {
-    const csvData = data.map((member) => ({
-      ID: member.id,
-      MemberID: member.memberId,
-      Name: member.fullName,
-      TxnID: member.txnID,
-      RRN: member.bankRRN || "N/A",
-      Amount: member.amount,
-      Charge: member.charge,
-      Credit: member.credit,
-      VPA_ID: member.vpaID || "N/A",
-      Description: member.description,
-      DateTime: member.dateTime,
-      Status: member.status,
-    }));
-
-    const csv = Papa.unparse(csvData); // Convert to CSV format
-    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" }); // Create Blob
-    saveAs(
-      blob,
-      `Payout_History_${new Date().toISOString().split("T")[0]}.csv`
-    ); // Save file
-  };
 
   const formatDateTime = (dateString) => {
     const date = new Date(dateString);
@@ -97,40 +71,54 @@ const Payin = () => {
     return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
   };
 
-
-  const fetchData = async () => {
+  const fetchData = async (exportCSV = false) => {
     setLoading(true);
     try {
-      const response = await apiGet(API_ENDPOINT, { ...filterData });
-      setData(
-        response.data.data.map((item, index) => ({
-          id: index + 1,
-          memberId: item.userInfo.memberId,
-          fullName: item.userInfo.fullName,
-          txnID: item.trxId,
-          bankRRN: item.bankRRN,
-          amount: `${item.amount}`,
-          charge: `${item.chargeAmount}`,
-          credit: `${item.finalAmount}`,
-          vpaID: item.vpaId,
-          description: item.payerName, // Use payerName for description
-          dateTime: formatDateTime(item.createdAt),
-          status: item.isSuccess,
-        }))
-      );
-      setTotalCount(response.data.totalDocs);
+      const response = await apiGet(API_ENDPOINT, {
+        ...filterData,
+        export: exportCSV,
+      });
+      console.log("response export", response.data);
+      if(exportCSV == "true") {
+        const blob = new Blob([response.data], { type: 'text/csv' }); 
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `payments${filterData.startDate}-${filterData.endDate}.csv`;  
+ 
+            link.click();
+            link.remove();
+      } else{
+        setData(
+          response.data.data.map((item, index) => ({
+            id: index + 1,
+            memberId: item.userInfo.memberId,
+            fullName: item.userInfo.fullName,
+            txnID: item.trxId,
+            bankRRN: item.bankRRN,
+            amount: `${item.amount}`,
+            charge: `${item.chargeAmount}`,
+            credit: `${item.finalAmount}`,
+            vpaID: item.vpaId,
+            description: item.payerName, // Use payerName for description
+            dateTime: formatDateTime(item.createdAt),
+            status: item.isSuccess,
+          }))
+        );
+        
+        setTotalCount(response.data.totalDocs);
+      }
+      
       setLoading(false);
     } catch (err) {
-      setData([]);   
-      
-    } finally{
+      setData([]);
+    } finally {
       setLoading(false);
     }
   };
 
   const fetchUserList = async () => {
     try {
-      const response = await axios.get(USER_LIST_API, {
+      const response = await apiGet(USER_LIST_API, {
         headers: {
           Authorization: `Bearer ${ACCESS_TOKEN}`,
         },
@@ -173,7 +161,6 @@ const Payin = () => {
   const handleBackButtonClick = () => {
     navigate(-1);
   };
-
 
   const handleViewClick = (status) => {
     setDialogMessage(
@@ -311,7 +298,7 @@ const Payin = () => {
               <Button
                 variant="contained"
                 color="success"
-                onClick={handleExport}
+                onClick={() => fetchData("true")}
                 sx={{ marginBottom: 2 }}
               >
                 Export

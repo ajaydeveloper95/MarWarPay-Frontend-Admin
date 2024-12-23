@@ -23,14 +23,13 @@ import {
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useSidebar } from "../../../Context/SidebarContext";
-import { accessToken, domainBase } from "../../../helpingFile";
+import { accessToken } from "../../../helpingFile";
 import { saveAs } from "file-saver";
 import Papa from "papaparse";
 import { apiGet } from "../../../utils/http";
-import axios from "axios";
 
-const API_ENDPOINT = `${domainBase}apiAdmin/v1/payout/allPayOutPayment`;
-const USER_LIST_API = `${domainBase}apiAdmin/v1/utility/getUserList`;
+const API_ENDPOINT = `apiAdmin/v1/payout/allPayOutPayment`;
+const USER_LIST_API = `apiAdmin/v1/utility/getUserList`;
 const ACCESS_TOKEN = accessToken;
 
 const PayoutGenerate = () => {
@@ -94,7 +93,7 @@ const PayoutGenerate = () => {
 
   const fetchUserList = async () => {
     try {
-      const response = await axios.get(USER_LIST_API, {
+      const response = await apiGet(USER_LIST_API, {
         headers: {
           Authorization: `Bearer ${ACCESS_TOKEN}`,
         },

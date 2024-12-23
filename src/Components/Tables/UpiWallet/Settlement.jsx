@@ -22,13 +22,13 @@ import {
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate } from "react-router-dom";
 import { useSidebar } from "../../../Context/SidebarContext";
-import axios from "axios";
-import { accessToken, domainBase } from "../../../helpingFile";
+import { accessToken } from "../../../helpingFile";
+import { apiGet, apiPost } from "../../../utils/http";
 
 const ACCESS_TOKEN = accessToken;
-const USER_LIST_API = `${domainBase}apiAdmin/v1/utility/getUserList`;
-const SETTLEMENT_API = `${domainBase}apiAdmin/v1/wallet/getSettlementAmountAll`;
-const SETTLEMENT_ONE_API = `${domainBase}apiAdmin/v1/wallet/getSettlementAmountOne/`; // Adjusted API endpoint
+const USER_LIST_API = `apiAdmin/v1/utility/getUserList`;
+const SETTLEMENT_API = `apiAdmin/v1/wallet/getSettlementAmountAll`;
+const SETTLEMENT_ONE_API = `apiAdmin/v1/wallet/getSettlementAmountOne/`;
 
 const Settlement = () => {
   const [startDateTime, setStartDateTime] = useState("");
@@ -44,7 +44,7 @@ const Settlement = () => {
   useEffect(() => {
     const fetchUserList = async () => {
       try {
-        const response = await axios.get(USER_LIST_API, {
+        const response = await apiGet(USER_LIST_API, {
           headers: {
             Authorization: `Bearer ${ACCESS_TOKEN}`,
           },
@@ -92,7 +92,7 @@ const Settlement = () => {
 
       // API request for settlements based on user selection
       if (dropdownValue) {
-        const responseOne = await axios.post(
+        const responseOne = await apiPost(
           `${SETTLEMENT_ONE_API}${dropdownValue}`, // Using the user ID (_id)
           {
             startTimeAndDate: formattedStartDate,
@@ -109,7 +109,7 @@ const Settlement = () => {
         setFilteredTransactions(userSettlement);
       } else {
         // If no user selected, fetch all settlements
-        const responseAll = await axios.post(
+        const responseAll = await apiPost(
           SETTLEMENT_API,
           {
             startTimeAndDate: formattedStartDate,

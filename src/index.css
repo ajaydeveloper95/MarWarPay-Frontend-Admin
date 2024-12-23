@@ -5,10 +5,10 @@
 body {
     background: linear-gradient(
         to right, 
-        #d6f5f5,  /* Light aqua */
-        #b3e6ff,  /* Light blue */
-        #ffffff,  /* White */
-        #e6ffe6   /* Light green */
+        #d6f5f5, 
+        #b3e6ff, 
+        #ffffff,  
+        #e6ffe6  
     ); 
     background-size: cover; 
     background-repeat: no-repeat; 

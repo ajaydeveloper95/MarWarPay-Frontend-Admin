@@ -23,12 +23,11 @@ import {
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useSidebar } from "../../../Context/SidebarContext";
-import { domainBase } from "../../../helpingFile";
 import { saveAs } from "file-saver";
 import Papa from "papaparse";
 import { apiGet } from "../../../utils/http";
 
-const API_ENDPOINT = `${domainBase}apiAdmin/v1/payout/allPayOutOnSuccess`;
+const API_ENDPOINT = `apiAdmin/v1/payout/allPayOutOnSuccess`;
 
 const Payout = () => {
   const navigate = useNavigate();

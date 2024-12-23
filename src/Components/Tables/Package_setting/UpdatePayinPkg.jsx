@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation, useParams } from "react-router-dom";
-import axios from "axios";
 import {
   Container,
   Typography,
@@ -25,7 +24,8 @@ import {
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 import { useSidebar } from "../../../Context/SidebarContext";
-import { accessToken, domainBase } from '../../../helpingFile';
+import { accessToken } from '../../../helpingFile';
+import { apiGet, apiPost } from "../../../utils/http";
 
 const ACCESS_TOKEN = accessToken;
 
@@ -41,13 +41,13 @@ const UpdatePayinPkg = () => {
   const { isSidebarOpen } = useSidebar();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [openSuccessDialog, setOpenSuccessDialog] = useState(false); // State for the dialog
+  const [openSuccessDialog, setOpenSuccessDialog] = useState(false);
 
   useEffect(() => {
     if (!packageData._id) {
       const fetchPackageData = async () => {
         try {
-          const response = await axios.get(`${domainBase}apiAdmin/v1/package/getSinglePayInPackage/${id}`, {
+          const response = await apiGet(`apiAdmin/v1/package/getSinglePayInPackage/${id}`, {
             headers: {
               Authorization: `Bearer ${ACCESS_TOKEN}`,
             },
@@ -85,8 +85,8 @@ const UpdatePayinPkg = () => {
     setError(null);
     try {
       const updatedChargeRange = payInChargeRange.map(({ _id, ...rest }) => rest);
-      await axios.post(
-        `${domainBase}apiAdmin/v1/package/updatePayInPackage/${id}`,
+      await apiPost(
+        `apiAdmin/v1/package/updatePayInPackage/${id}`,
         {
           payInPackageName,
           payInChargeRange: updatedChargeRange,
@@ -98,7 +98,7 @@ const UpdatePayinPkg = () => {
           },
         }
       );
-      setOpenSuccessDialog(true); // Open success dialog
+      setOpenSuccessDialog(true); 
       setLoading(false);
     } catch (err) {
       setError(err.response ? err.response.data.message : "An error occurred");
@@ -108,7 +108,7 @@ const UpdatePayinPkg = () => {
 
   const handleCloseSuccessDialog = () => {
     setOpenSuccessDialog(false);
-    navigate("/package/settings/payin"); // Navigate after closing the dialog
+    navigate("/package/settings/payin"); 
   };
 
   return (
