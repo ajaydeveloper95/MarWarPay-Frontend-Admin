@@ -277,6 +277,14 @@ const Sidebar = () => {
                         Payin Report
                       </Link>
                     </li>
+                     <li>
+                      <Link
+                        to="/report/charge_back"
+                        className="flex items-center px-4 py-2 "
+                      >
+                        ChargeBack Report
+                      </Link>
+                    </li>
                   </ul>
                 </div>
               )}

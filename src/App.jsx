@@ -42,6 +42,7 @@ import UpdatePayinPkg from './Components/Tables/Package_setting/UpdatePayinPkg';
 import AllUserIP from './Components/Tables/UserIP/AllUserIP';
 import AddIP from './Components/Tables/UserIP/AddIP';
 import UpdateIP from './Components/Tables/UserIP/UpdareIP';
+import ChargeBack from './Components/Tables/Reports/ChargeBack';
 
 function App() {
   return (
@@ -77,6 +78,7 @@ function App() {
                     <Route path="report/balance" element={<BalanceRpt />} />
                     <Route path="report/Qr" element={<Qr />} />
                     <Route path="report/payin" element={<Payin />} />
+                    <Route path="report/charge_back" element={<ChargeBack />} />
 
                     {/* UPI wallet routes */}
                     <Route path="upi-wallet/configure" element={<MemberWlt />} />
