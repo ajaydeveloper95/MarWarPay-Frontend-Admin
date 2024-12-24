@@ -7,10 +7,8 @@ import {
   Alert,
 } from "@mui/material";
 import { useState } from "react";
-import { accessToken } from "../../../helpingFile";
 import { apiPost } from "../../../utils/http";
 const ADD_PAYIN_API = `apiAdmin/v1/apiswitch/addPayInSwitch`;
-const ACCESS_TOKEN = accessToken;
 
 const AddPayinAPI = ({ onClose }) => {
   const [newApiName, setNewApiName] = useState("");
@@ -37,11 +35,6 @@ const AddPayinAPI = ({ onClose }) => {
           apiName: newApiName,
           apiURL: newApiURL,
           apiInfo: newApiInfo,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${ACCESS_TOKEN}`,
-          },
         }
       );
 

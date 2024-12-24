@@ -19,7 +19,6 @@ import { useNavigate, useParams } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { accessToken } from "../../../helpingFile";
 import { useSidebar } from "../../../Context/SidebarContext";
 import { apiGet, apiPost } from "../../../utils/http";
 
@@ -40,11 +39,7 @@ const EditTicket = () => {
   useEffect(() => {
     const fetchTicket = async () => {
       try {
-        const response = await apiGet(`${API_GET_TICKET}${id}`, {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        });
+        const response = await apiGet(`${API_GET_TICKET}${id}`);
         if (response.status === 200) {
           setTicketData(response.data.data);
         }
@@ -80,12 +75,7 @@ const EditTicket = () => {
     };
 
     try {
-      const response = await apiPost(`${API_UPDATE_TICKET}${id}`, updatedData, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          "Content-Type": "application/json",
-        },
-      });
+      const response = await apiPost(`${API_UPDATE_TICKET}${id}`, updatedData);
       if (response.status === 200) {
         toast.success("Ticket updated successfully!");
         navigate("/support/allTicket");

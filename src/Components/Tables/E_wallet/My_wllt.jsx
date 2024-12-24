@@ -39,13 +39,11 @@ const My_Wllt = () => {
   });
   const [totalCount, setTotalCount] = useState(0);
   const [transactions, setTransactions] = useState([]);
-  // const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await apiGet(API_ENDPOINT, { ...filterData });
-        console.log("res",response)
         setTotalCount(response.data.totalDocs);
         setTransactions(response.data.data);
       } catch (error) {
@@ -104,7 +102,6 @@ const My_Wllt = () => {
       transaction.transactionStatus ? "Success" : "Failed",
     ]);
 
-    // Combine headers and rows
     const csvContent = [headers, ...rows]
       .map((row) => row.join(","))
       .join("\n");
@@ -112,14 +109,11 @@ const My_Wllt = () => {
     return csvContent;
   };
 
-  // Function to handle export action
   const handleExport = () => {
     const csvContent = convertToCSV(transactions);
 
-    // Create a blob from the CSV data
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
 
-    // Create a download link
     const link = document.createElement("a");
     const url = URL.createObjectURL(blob);
     link.setAttribute("href", url);

@@ -28,14 +28,12 @@ import {
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useSidebar } from "../../../Context/SidebarContext";
-import { accessToken } from "../../../helpingFile";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
 import { apiGet } from "../../../utils/http";
 
 const API_ENDPOINT = `apiAdmin/v1/payin/allSuccessPayIn`;
 const USER_LIST_API = `apiAdmin/v1/utility/getUserList`;
-const ACCESS_TOKEN = accessToken;
 
 const Payin = () => {
   const navigate = useNavigate();
@@ -63,7 +61,7 @@ const Payin = () => {
   const formatDateTime = (dateString) => {
     const date = new Date(dateString);
     const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are zero-based
+    const month = String(date.getMonth() + 1).padStart(2, "0"); 
     const day = String(date.getDate()).padStart(2, "0");
     const hours = String(date.getHours()).padStart(2, "0");
     const minutes = String(date.getMinutes()).padStart(2, "0");
@@ -99,7 +97,7 @@ const Payin = () => {
             charge: `${item.chargeAmount}`,
             credit: `${item.finalAmount}`,
             vpaID: item.vpaId,
-            description: item.payerName, // Use payerName for description
+            description: item.payerName, 
             dateTime: formatDateTime(item.createdAt),
             status: item.isSuccess,
           }))
@@ -118,13 +116,8 @@ const Payin = () => {
 
   const fetchUserList = async () => {
     try {
-      const response = await apiGet(USER_LIST_API, {
-        headers: {
-          Authorization: `Bearer ${ACCESS_TOKEN}`,
-        },
-      });
-      // console.log(response);
-      setUserList(response.data.data); // Store user data
+      const response = await apiGet(USER_LIST_API);
+      setUserList(response.data.data);
     } catch (err) {
       // setError(err);
     }

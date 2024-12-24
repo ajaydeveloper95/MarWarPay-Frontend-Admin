@@ -19,13 +19,11 @@ import {
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useNavigate } from 'react-router-dom';
 import { useSidebar } from '../../../Context/SidebarContext';
-import { accessToken } from '../../../helpingFile';
 import { apiGet, apiPost } from '../../../utils/http';
 
 const API_ENDPOINT = `apiAdmin/v1/package/addPackage`;
 const API_PayoutCharge = `apiAdmin/v1/utility/getPayOutPackageList`;
 const API_PayinCharge = `apiAdmin/v1/utility/getPayInPackageList`;
-const ACCESS_TOKEN = accessToken;
 
 const AddPackage = () => {
   const [packageName, setPackageName] = useState('');
@@ -42,15 +40,10 @@ const AddPackage = () => {
   const navigate = useNavigate();
   const { isSidebarOpen } = useSidebar();
 
-  // Fetch the payout and payin package list
   useEffect(() => {
     const fetchPayOutPackages = async () => {
       try {
-        const response = await apiGet(API_PayoutCharge, {
-          headers: {
-            Authorization: `Bearer ${ACCESS_TOKEN}`,
-          },
-        });
+        const response = await apiGet(API_PayoutCharge);
         setPayOutPackages(response.data.data);
       } catch (err) {
         console.error('Error fetching payout packages:', err);
@@ -60,11 +53,7 @@ const AddPackage = () => {
 
     const fetchPayInPackages = async () => {
       try {
-        const response = await apiGet(API_PayinCharge, {
-          headers: {
-            Authorization: `Bearer ${ACCESS_TOKEN}`,
-          },
-        });
+        const response = await apiGet(API_PayinCharge);
         setPayInPackages(response.data.data);
       } catch (err) {
         console.error('Error fetching payin packages:', err);
@@ -86,10 +75,6 @@ const AddPackage = () => {
         packagePayOutCharge,
         packagePayInCharge,
         isActive: status,
-      }, {
-        headers: {
-          Authorization: `Bearer ${ACCESS_TOKEN}`,
-        },
       });
 
       setSuccessMessage('The package has been successfully added!');

@@ -7,11 +7,9 @@ import {
     Alert,
   } from "@mui/material";
   import { useState } from "react";
-  import { accessToken } from "../../../helpingFile";
 import { apiPost } from "../../../utils/http";
   
   const ADD_PAYOUT_API = `apiAdmin/v1/apiswitch/addPayOutSwitch`;
-  const ACCESS_TOKEN = accessToken;
   
   const AddPayout = ({ onClose }) => {
     const [newApiName, setNewApiName] = useState("");
@@ -38,11 +36,6 @@ import { apiPost } from "../../../utils/http";
             apiName: newApiName,
             apiURL: newApiURL,
             apiInfo: newApiInfo
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${ACCESS_TOKEN}`,
-            },
           }
         );
   
@@ -52,7 +45,7 @@ import { apiPost } from "../../../utils/http";
           setNewApiName("");
           setNewApiURL("");
           setNewApiInfo("");
-          onClose(); // Close form after successful addition
+          onClose(); 
         }
       } catch (err) {
         setError("Please Wait....", err);

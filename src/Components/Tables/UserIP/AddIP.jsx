@@ -16,12 +16,10 @@ import {
   DialogActions,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { accessToken } from "../../../helpingFile";
 import { apiGet, apiPost } from "../../../utils/http";
 
 const API_ENDPOINT = `apiAdmin/v1/ipWhitelist/addUserIp`;
 const USER_LIST_API = `apiAdmin/v1/utility/getUserList`;
-const ACCESS_TOKEN = accessToken;
 
 const AddIP = () => {
   const [memberId, setMemberId] = useState("");
@@ -38,11 +36,7 @@ const AddIP = () => {
   useEffect(() => {
     const fetchUserList = async () => {
       try {
-        const response = await apiGet(USER_LIST_API, {
-          headers: {
-            Authorization: `Bearer ${ACCESS_TOKEN}`,
-          },
-        });
+        const response = await apiGet(USER_LIST_API);
         if (response.data.statusCode === 200) {
           setUserList(response.data.data);
         }
@@ -68,11 +62,7 @@ const AddIP = () => {
     };
 
     try {
-      const response = await apiPost(API_ENDPOINT, data, {
-        headers: {
-          Authorization: `Bearer ${ACCESS_TOKEN}`,
-        },
-      });
+      const response = await apiPost(API_ENDPOINT, data);
 
       if (response.status === 200) {
         setSuccessMessage("IP added successfully!");

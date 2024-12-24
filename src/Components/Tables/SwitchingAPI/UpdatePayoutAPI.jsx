@@ -23,12 +23,10 @@ import {
 } from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { accessToken } from "../../../helpingFile";
 import { useSidebar } from "../../../Context/SidebarContext";
 import { useNavigate } from "react-router-dom";
 import { apiGet, apiPost } from "../../../utils/http";
 
-const ACCESS_TOKEN = accessToken;
 const PAYOUT_API_LIST = `apiAdmin/v1/apiswitch/allPayOutSwitch`;
 
 const UpdatePayoutAPI = () => {
@@ -44,9 +42,7 @@ const UpdatePayoutAPI = () => {
   useEffect(() => {
     const fetchPayInApiList = async () => {
       try {
-        const response = await apiGet(PAYOUT_API_LIST, {
-          headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
-        });
+        const response = await apiGet(PAYOUT_API_LIST);
         setPayInApiList(response.data.data);
       } catch {
         showSnackbar("Failed to fetch PayOut API list.");
@@ -81,14 +77,11 @@ const UpdatePayoutAPI = () => {
             apiURL: selectedApi.apiURL,
             apiInfo: selectedApi.apiInfo,
             isActive: selectedApi.isActive, 
-          },
-          { headers: { Authorization: `Bearer ${ACCESS_TOKEN}` } }
+          }
         );
 
         if (response.data.statusCode === 200) {
-          const updatedResponse = await apiGet(PAYOUT_API_LIST, {
-            headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
-          });
+          const updatedResponse = await apiGet(PAYOUT_API_LIST);
           setPayInApiList(updatedResponse.data.data); 
           showSnackbar("API details updated successfully!");
         } else {

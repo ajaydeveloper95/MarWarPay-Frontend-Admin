@@ -23,12 +23,10 @@ import {
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useSidebar } from "../../../Context/SidebarContext";
-import { accessToken } from "../../../helpingFile";
 import { apiGet, apiPost } from "../../../utils/http";
 
 const API_ENDPOINT = `apiAdmin/v1/package/getPayOutPackage`;
 const ADD_PACKAGE_ENDPOINT = `apiAdmin/v1/package/addPayOutPackage`;
-const ACCESS_TOKEN = accessToken;
 
 const AllPayout = () => {
   const navigate = useNavigate();
@@ -56,11 +54,7 @@ const AllPayout = () => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const response = await apiGet(API_ENDPOINT, {
-          headers: {
-            Authorization: `Bearer ${ACCESS_TOKEN}`,
-          },
-        });
+        const response = await apiGet(API_ENDPOINT);
         setData(response.data.data);
         setLoading(false);
       } catch (err) {
@@ -119,18 +113,9 @@ const AllPayout = () => {
 
   const handleAddPackageSubmit = async () => {
     try {
-      await apiPost(ADD_PACKAGE_ENDPOINT, newPackage, {
-        headers: {
-          Authorization: `Bearer ${ACCESS_TOKEN}`,
-        },
-      });
+      await apiPost(ADD_PACKAGE_ENDPOINT, newPackage);
       handleAddPackageClose();
-      // Optionally refresh the data after adding a package
-      const response = await apiGet(API_ENDPOINT, {
-        headers: {
-          Authorization: `Bearer ${ACCESS_TOKEN}`,
-        },
-      });
+      const response = await apiGet(API_ENDPOINT);
       setData(response.data.data);
     } catch (err) {
       console.error("Error adding package:", err);

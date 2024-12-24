@@ -24,10 +24,8 @@ import {
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 import { useSidebar } from "../../../Context/SidebarContext";
-import { accessToken } from '../../../helpingFile';
 import { apiGet, apiPost } from "../../../utils/http";
 
-const ACCESS_TOKEN = accessToken;
 
 const UpdatePayinPkg = () => {
   const navigate = useNavigate();
@@ -47,11 +45,7 @@ const UpdatePayinPkg = () => {
     if (!packageData._id) {
       const fetchPackageData = async () => {
         try {
-          const response = await apiGet(`apiAdmin/v1/package/getSinglePayInPackage/${id}`, {
-            headers: {
-              Authorization: `Bearer ${ACCESS_TOKEN}`,
-            },
-          });
+          const response = await apiGet(`apiAdmin/v1/package/getSinglePayInPackage/${id}`);
           const data = response.data.data;
           setpayInPackageName(data.payInPackageName);
           setpayInChargeRange(data.payInChargeRange);
@@ -91,11 +85,6 @@ const UpdatePayinPkg = () => {
           payInPackageName,
           payInChargeRange: updatedChargeRange,
           isActive,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${ACCESS_TOKEN}`,
-          },
         }
       );
       setOpenSuccessDialog(true); 

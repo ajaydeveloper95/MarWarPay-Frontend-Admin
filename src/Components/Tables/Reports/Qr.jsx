@@ -27,16 +27,13 @@ import {
 } from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle"; // Icon for success
-import CancelIcon from "@mui/icons-material/Cancel"; // Icon for failure
+import CheckCircleIcon from "@mui/icons-material/CheckCircle"; 
+import CancelIcon from "@mui/icons-material/Cancel"; 
 import { useSidebar } from "../../../Context/SidebarContext";
-// import axios from "axios";
-import { accessToken } from "../../../helpingFile";
 import { apiGet } from "../../../utils/http";
 
 const API_ENDPOINT = `apiAdmin/v1/payin/allPaymentGenerated`;
 const USER_LIST_API = `apiAdmin/v1/utility/getUserList`;
-const ACCESS_TOKEN = accessToken;
 
 const Qr = () => {
   const navigate = useNavigate();
@@ -89,12 +86,8 @@ const Qr = () => {
 
   const fetchUserList = async () => {
     try {
-      const response = await apiGet(USER_LIST_API, {
-        headers: {
-          Authorization: `Bearer ${ACCESS_TOKEN}`,
-        },
-      });
-      setUserList(response.data.data); // Store user data
+      const response = await apiGet(USER_LIST_API);
+      setUserList(response.data.data);
     } catch (err) {
       // setError(err);
     }
