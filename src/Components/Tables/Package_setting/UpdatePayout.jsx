@@ -24,10 +24,8 @@ import {
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 import { useSidebar } from "../../../Context/SidebarContext";
-import { accessToken } from '../../../helpingFile';
 import { apiGet, apiPost } from "../../../utils/http";
 
-const ACCESS_TOKEN = accessToken;
 
 const UpdatePayout = () => {
   const navigate = useNavigate();
@@ -47,11 +45,7 @@ const UpdatePayout = () => {
     if (!packageData._id) {
       const fetchPackageData = async () => {
         try {
-          const response = await apiGet(`apiAdmin/v1/package/getSinglePayOutPackage/${id}`, {
-            headers: {
-              Authorization: `Bearer ${ACCESS_TOKEN}`,
-            },
-          });
+          const response = await apiGet(`apiAdmin/v1/package/getSinglePayOutPackage/${id}`);
           const data = response.data.data;
           setPayOutPackageName(data.payOutPackageName);
           setPayOutChargeRange(data.payOutChargeRange);
@@ -91,14 +85,9 @@ const UpdatePayout = () => {
           payOutPackageName,
           payOutChargeRange: updatedChargeRange,
           isActive,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${ACCESS_TOKEN}`,
-          },
         }
       );
-      setOpenSuccessDialog(true); // Open success dialog
+      setOpenSuccessDialog(true); 
       setLoading(false);
     } catch (err) {
       setError(err.response ? err.response.data.message : "An error occurred");
@@ -108,7 +97,7 @@ const UpdatePayout = () => {
 
   const handleCloseSuccessDialog = () => {
     setOpenSuccessDialog(false);
-    navigate("/package/settings/payout"); // Navigate after closing the dialog
+    navigate("/package/settings/payout"); 
   };
 
   return (

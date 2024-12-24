@@ -19,14 +19,12 @@ import {
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useNavigate } from 'react-router-dom';
 import { useSidebar } from '../../../Context/SidebarContext';
-import { accessToken } from '../../../helpingFile';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { apiGet, apiPost } from '../../../utils/http';
 
 const API_GET_USERS_ENDPOINT = `apiAdmin/v1/utility/getUserWithWallet`;
 const API_TRANSFER_ENDPOINT = `apiAdmin/v1/wallet/upiToEwallet`;
-const ACCESS_TOKEN = accessToken;
 
 const Transfer = () => {
   const [member, setMember] = useState('');
@@ -43,11 +41,7 @@ const Transfer = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await apiGet(API_GET_USERS_ENDPOINT, {
-          headers: {
-            Authorization: `Bearer ${ACCESS_TOKEN}`,
-          },
-        });
+        const response = await apiGet(API_GET_USERS_ENDPOINT);
         setData(response.data.data);
       } catch (err) {
         console.log(err);
@@ -60,8 +54,6 @@ const Transfer = () => {
   const handleMemberChange = (e) => {
     const selectedMemberId = e.target.value;
     setMember(selectedMemberId);
-
-    // Find the selected member from the data and set the available balance
     const selectedMember = data.find((item) => item._id === selectedMemberId);
     if (selectedMember) {
       setAvailableBalance(selectedMember.upiWalletBalance);
@@ -72,38 +64,27 @@ const Transfer = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-
-    // Validate transfer amount
     if (parseFloat(transferAmount) > parseFloat(availableBalance)) {
-      toast.error('Transfer amount cannot exceed the available balance.'); // Replace alert with toast
+      toast.error('Transfer amount cannot exceed the available balance.'); 
       return;
     }
 
-    // API Call to transfer the amount
     try {
       const response = await apiPost(
-        `${API_TRANSFER_ENDPOINT}/${member}`, // Use member ID in the endpoint
-        { transactionAmount: parseFloat(transferAmount) }, // Request body
-        {
-          headers: {
-            Authorization: `Bearer ${ACCESS_TOKEN}`,
-          },
-        }
+        `${API_TRANSFER_ENDPOINT}/${member}`,
+        { transactionAmount: parseFloat(transferAmount) }
       );
 
       setUpdateAmt('done');
 
       if (response.status === 200) {
-        // Display the success dialog
         setIsDialogOpen(true);
-        toast.success('The amount has been successfully transferred!'); // Add success toast notification
+        toast.success('The amount has been successfully transferred!');
       }
     } catch (err) {
-      toast.error('An error occurred while processing the transaction.'); // Replace alert with toast
+      toast.error('An error occurred while processing the transaction.');
       console.log(err);
     }
-
-    // Reset form fields
     setMember('');
     setAvailableBalance('');
     setTransferAmount('');
@@ -115,7 +96,7 @@ const Transfer = () => {
   };
 
   const handleCancel = () => {
-    navigate(-1); // Navigate to the previous page
+    navigate(-1); 
   };
 
   return (

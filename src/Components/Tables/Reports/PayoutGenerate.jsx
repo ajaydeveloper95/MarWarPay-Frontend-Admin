@@ -23,14 +23,12 @@ import {
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useSidebar } from "../../../Context/SidebarContext";
-import { accessToken } from "../../../helpingFile";
 import { saveAs } from "file-saver";
 import Papa from "papaparse";
 import { apiGet } from "../../../utils/http";
 
 const API_ENDPOINT = `apiAdmin/v1/payout/allPayOutPayment`;
 const USER_LIST_API = `apiAdmin/v1/utility/getUserList`;
-const ACCESS_TOKEN = accessToken;
 
 const PayoutGenerate = () => {
   const navigate = useNavigate();
@@ -49,8 +47,7 @@ const PayoutGenerate = () => {
   const [userList, setUserList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  // const [status, setStatus] = useState("");
-  const [totalCount, setTotalCount] = useState(0); // Total records count
+  const [totalCount, setTotalCount] = useState(0); 
 
   const formatDateTime = (dateString) => {
     const date = new Date(dateString);
@@ -82,7 +79,6 @@ const PayoutGenerate = () => {
         }))
       );
       setTotalCount(response.data.totalDocs);
-      // setLoading(false);
     } catch (err) {
       setData([]);      
     }
@@ -93,12 +89,8 @@ const PayoutGenerate = () => {
 
   const fetchUserList = async () => {
     try {
-      const response = await apiGet(USER_LIST_API, {
-        headers: {
-          Authorization: `Bearer ${ACCESS_TOKEN}`,
-        },
-      });
-      setUserList(response.data.data); // Store user data
+      const response = await apiGet(USER_LIST_API);
+      setUserList(response.data.data); 
     } catch (err) {
       // setError(err);
     }
@@ -112,9 +104,6 @@ const PayoutGenerate = () => {
     fetchUserList();
   },[])
 
-  // const handleStatusChange = (event) => {
-  //   setStatus(event.target.value);
-  // };
 
   useEffect(() => {
     const timeOutId = setTimeout(() => {
@@ -159,7 +148,7 @@ const PayoutGenerate = () => {
     saveAs(
       blob,
       `Payout_History_${new Date().toISOString().split("T")[0]}.csv`
-    ); // Save file
+    ); 
   };
 
   return (

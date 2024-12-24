@@ -12,14 +12,12 @@ import {
   DialogActions,
 } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
-import { accessToken } from "../../../helpingFile";
 import { useSidebar } from "../../../Context/SidebarContext";
 import { apiDelete, apiGet, apiPost } from "../../../utils/http";
 
 const FETCH_API = `apiAdmin/v1/ipWhitelist/getSingleUserIp`;
 const UPDATE_API = `apiAdmin/v1/ipWhitelist/updateUserIp/`;
 const DELETE_API = `apiAdmin/v1/ipWhitelist/deleteUserIp/`;
-const ACCESS_TOKEN = accessToken;
 
 const UpdateIP = () => {
   const { isSidebarOpen } = useSidebar();
@@ -39,12 +37,7 @@ const UpdateIP = () => {
   useEffect(() => {
     const fetchIpDetails = async () => {
       try {
-        const response = await apiGet(`${FETCH_API}/${id}`,{
-            headers: {
-                Authorization: `Bearer ${ACCESS_TOKEN}`,
-              },
-        });
-        // console.log(response?.data?.data[0])
+        const response = await apiGet(`${FETCH_API}/${id}`);
         setIpDetails(response?.data?.data[0]);
       } catch (err) {
         setError("Failed to fetch IP details. Please try again.",err);
@@ -73,11 +66,7 @@ const UpdateIP = () => {
         ipUser: ipDetails.ipUser,
         ipUserDev: ipDetails.ipUserDev,
       };
-      const response = await apiPost(`${UPDATE_API}${id}`, payload,{
-        headers: {
-            Authorization: `Bearer ${ACCESS_TOKEN}`,
-          },
-      });
+      const response = await apiPost(`${UPDATE_API}${id}`, payload);
 
       if (response.status === 200) {
         setSuccessMessage("IP updated successfully!");
@@ -90,18 +79,13 @@ const UpdateIP = () => {
     }
   };
 
-  // Handle delete action
   const handleDelete = async () => {
     setLoading(true);
     setError("");
     setSuccessMessage("");
 
     try {
-      const response = await apiDelete(`${DELETE_API}${id}`,{
-        headers: {
-            Authorization: `Bearer ${ACCESS_TOKEN}`,
-          },
-      });
+      const response = await apiDelete(`${DELETE_API}${id}`);
       if (response.status === 200) {
         setSuccessMessage("IP deleted successfully!");
         setIsDialogOpen(true);

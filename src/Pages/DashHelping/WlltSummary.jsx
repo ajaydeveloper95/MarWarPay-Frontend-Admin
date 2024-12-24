@@ -1,24 +1,17 @@
 import { Box, Typography, TableContainer, Paper, Table, TableHead, TableRow, TableCell, TableBody } from '@mui/material';
-import { accessToken } from '../../helpingFile';
 import { useEffect, useState } from 'react';
 import { apiGet } from '../../utils/http';
 
 const API_GET_USERS_ENDPOINT = `apiAdmin/v1/utility/getUserWithWallet`;
-const ACCESS_TOKEN = accessToken;
 
 function WlltSummary() {
   const [eWalletBalance, setEWalletBalance] = useState(0);
   const [upiWalletBalance, setUpiWalletBalance] = useState(0);
 
   useEffect(() => {
-    // Fetch total balances from API
     const fetchTotalBalances = async () => {
       try {
-        const response = await apiGet(API_GET_USERS_ENDPOINT, {
-          headers: {
-            Authorization: `Bearer ${ACCESS_TOKEN}`,
-          },
-        });
+        const response = await apiGet(API_GET_USERS_ENDPOINT);
         if (response.status === 200) {
           const totalEwalletBalance = response.data.data.reduce(
             (total, user) => total + user.EwalletBalance,

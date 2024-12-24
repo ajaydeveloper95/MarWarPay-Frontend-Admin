@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Grid, Box, Typography, Snackbar, Alert, Tooltip } from '@mui/material';
 import { AccountBalanceWallet, AccountBalance, Money } from '@mui/icons-material';
-import {  accessToken } from '../../helpingFile';
 import {
   LineChart,
   Line,
@@ -15,7 +14,6 @@ import { apiGet } from '../../utils/http';
 
 const API_GET_USERS_ENDPOINT = `apiAdmin/v1/utility/getUserWithWallet`;
 const API_GET_BANK_BALANCE = `apiAdmin/v1/utility/getBalanceFetch`;
-const ACCESS_TOKEN = accessToken;
 
 function Total_Blnc() {
   const [data, setData] = useState([]);
@@ -27,11 +25,7 @@ function Total_Blnc() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await apiGet(API_GET_USERS_ENDPOINT, {
-          headers: {
-            Authorization: `Bearer ${ACCESS_TOKEN}`,
-          },
-        });
+        const response = await apiGet(API_GET_USERS_ENDPOINT);
         setData(response.data.data);
       } catch (error) {
         console.error('Error fetching data', error);
@@ -43,11 +37,7 @@ function Total_Blnc() {
   useEffect(() => {
     const fetchBankData = async () => {
       try {
-        const response = await apiGet(API_GET_BANK_BALANCE, {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        });
+        const response = await apiGet(API_GET_BANK_BALANCE);
         if (response.data && response.data.data !== undefined) {
           setOpenMoneyBalance(response.data.data);
         } else {
@@ -87,7 +77,6 @@ function Total_Blnc() {
     setOpenSnackbar(false);
   };
 
-  // Sample data for charts (Replace with actual data as needed)
   const chartData = [
     { name: 'Jan', EwalletBalance: 40000, upiWalletBalance: 24000, openMoneyBalance: 24000 },
     { name: 'Feb', EwalletBalance: 30000, upiWalletBalance: 13980, openMoneyBalance: 22100 },
@@ -101,7 +90,6 @@ function Total_Blnc() {
   return (
     <>
       <Grid container spacing={2}>
-        {/* E-Wallet Balance */}
         <Grid item xs={12} sm={6} md={4}>
           <Box
             sx={{
@@ -110,7 +98,7 @@ function Total_Blnc() {
               background: 'linear-gradient(135deg, #ff6b6b, #f7c6c7)',
               boxShadow: 3,
               textAlign: 'center',
-              minHeight: '250px', // Increased height for chart
+              minHeight: '250px', 
               position: 'relative',
               transition: 'transform 0.4s, box-shadow 0.4s',
               '&:hover': {

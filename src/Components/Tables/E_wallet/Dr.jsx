@@ -19,12 +19,10 @@ import {
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useNavigate } from 'react-router-dom';
 import { useSidebar } from '../../../Context/SidebarContext';
-import { accessToken } from '../../../helpingFile';
 import { apiGet, apiPost } from '../../../utils/http';
 
 const API_GET_USERS_ENDPOINT = `apiAdmin/v1/utility/getUserWithWallet`;
 const API_TRANSFER_ENDPOINT = `apiAdmin/v1/wallet/eWalletFundDebit`;
-const ACCESS_TOKEN = accessToken;
 
 const Dr = () => {
   const [member, setMember] = useState('');
@@ -43,11 +41,7 @@ const Dr = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await apiGet(API_GET_USERS_ENDPOINT, {
-          headers: {
-            Authorization: `Bearer ${ACCESS_TOKEN}`,
-          },
-        });
+        const response = await apiGet(API_GET_USERS_ENDPOINT);
         setData(response.data.data);
       } catch (err) {
         console.log(err)
@@ -61,7 +55,6 @@ const Dr = () => {
     const selectedMemberId = e.target.value;
     setMember(selectedMemberId);
 
-    // Find the selected member from the data and set the available balance
     const selectedMember = data.find((item) => item._id === selectedMemberId);
     if (selectedMember) {
       setAvailableBalance(selectedMember.EwalletBalance);
@@ -72,32 +65,20 @@ const Dr = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-
-    // Construct the request body
     const requestBody = {
       transactionAmount: parseFloat(transferAmount),
       transactionType: transactionType === 'CR' ? 'Cr.' : 'Dr.',
     };
-
-    // API Call to transfer the amount
     try {
       const response = await apiPost(
-        `${API_TRANSFER_ENDPOINT}/${member}`, // Use member ID in the endpoint
-        requestBody, // Pass the request body
-        {
-          headers: {
-            Authorization: `Bearer ${ACCESS_TOKEN}`,
-          },
-        }
+        `${API_TRANSFER_ENDPOINT}/${member}`,
+        requestBody
       );
 
       setfileUpdate("done")
 
       if (response.status === 200) {
-        // Display the success dialog with transaction details
         const { data } = response.data;
-
-        // Update the available balance based on response data
         setAvailableBalance(data.afterAmount.toString());
 
         setIsDialogOpen(true);

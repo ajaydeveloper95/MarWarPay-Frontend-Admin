@@ -29,11 +29,9 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate } from "react-router-dom";
 import { useSidebar } from "../../../Context/SidebarContext";
 import { useEffect, useState } from "react";
-import { accessToken } from "../../../helpingFile";
 import AddPayout from "./AddPayout";
 import { apiGet, apiPost } from "../../../utils/http";
 
-const ACCESS_TOKEN = accessToken;
 const USER_LIST_API = `apiAdmin/v1/utility/getUserListSwitchApi`;
 const PAYOUT_API_LIST = `apiAdmin/v1/utility/getPayOutApiList`;
 const SWITCH_API = `apiAdmin/v1/apiswitch/AllUserSwitchPayOut`;
@@ -55,11 +53,7 @@ const PayoutSW = () => {
   useEffect(() => {
     const fetchUserList = async () => {
       try {
-        const response = await apiGet(USER_LIST_API, {
-          headers: {
-            Authorization: `Bearer ${ACCESS_TOKEN}`,
-          },
-        });
+        const response = await apiGet(USER_LIST_API);
         setUserList(response.data.data);
       } catch (err) {
         setError("Please Wait...", err);
@@ -68,11 +62,7 @@ const PayoutSW = () => {
 
     const fetchPayInApiList = async () => {
       try {
-        const response = await apiGet(PAYOUT_API_LIST, {
-          headers: {
-            Authorization: `Bearer ${ACCESS_TOKEN}`,
-          },
-        });
+        const response = await apiGet(PAYOUT_API_LIST);
         setPayInApiList(response.data.data);
       } catch (err) {
         setError("Please Wait...", err);
@@ -111,22 +101,12 @@ const PayoutSW = () => {
       if (dropdownValue === "allusers") {
         response = await apiPost(
           SWITCH_API,
-          { apiId: selectedApiId },
-          {
-            headers: {
-              Authorization: `Bearer ${ACCESS_TOKEN}`,
-            },
-          }
+          { apiId: selectedApiId }
         );
       } else {
         response = await apiPost(
           SWITCH_API_SINGLE_USER,
-          { userId: dropdownValue, apiId: selectedApiId },
-          {
-            headers: {
-              Authorization: `Bearer ${ACCESS_TOKEN}`,
-            },
-          }
+          { userId: dropdownValue, apiId: selectedApiId }
         );
       }
 

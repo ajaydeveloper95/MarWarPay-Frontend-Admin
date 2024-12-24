@@ -24,11 +24,9 @@ import {
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useSidebar } from "../../../Context/SidebarContext";
-import { accessToken } from "../../../helpingFile";
 import { apiGet } from "../../../utils/http";
 
 const API_ENDPOINT = `apiAdmin/v1/package/allPackage`;
-const ACCESS_TOKEN = accessToken;
 
 const ViewPackage = () => {
   const navigate = useNavigate();
@@ -44,7 +42,7 @@ const ViewPackage = () => {
   const formatDateTime = (dateString) => {
     const date = new Date(dateString);
     const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+    const month = String(date.getMonth() + 1).padStart(2, '0'); 
     const day = String(date.getDate()).padStart(2, '0');
     const hours = String(date.getHours()).padStart(2, '0');
     const minutes = String(date.getMinutes()).padStart(2, '0');
@@ -56,11 +54,7 @@ const ViewPackage = () => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const response = await apiGet(API_ENDPOINT, {
-          headers: {
-            Authorization: `Bearer ${ACCESS_TOKEN}`,
-          },
-        });
+        const response = await apiGet(API_ENDPOINT);
         setData(response.data.data);
         setLoading(false);
       } catch (err) {

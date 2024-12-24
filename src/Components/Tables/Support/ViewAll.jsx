@@ -22,11 +22,9 @@ import {
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useSidebar } from "../../../Context/SidebarContext";
-import { accessToken } from "../../../helpingFile";
 import { apiGet } from "../../../utils/http";
 
 const API_ENDPOINT = `apiAdmin/v1/support/allGenTicket`;
-const ACCESS_TOKEN = accessToken;
 
 const ViewAll = () => {
   const navigate = useNavigate();
@@ -53,11 +51,7 @@ const ViewAll = () => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const response = await apiGet(API_ENDPOINT, {
-          headers: {
-            Authorization: `Bearer ${ACCESS_TOKEN}`,
-          },
-        });
+        const response = await apiGet(API_ENDPOINT);
         setData(response.data.data || []);
       } catch (err) {
         setError(err);

@@ -63,7 +63,7 @@ const Payout = () => {
         const response = await apiGet(API_ENDPOINT, { ...filterData });
         setData(
           response.data.data.map((item, index) => ({
-            id: index + 1, // Sequential ID starting from 1
+            id: index + 1,
             memberId: item.userInfo.memberId,
             name: item.userInfo.fullName,
             accountNumber: item.accountNumber,
@@ -129,12 +129,12 @@ const Payout = () => {
       DateTime: item.dateTime,
     }));
 
-    const csv = Papa.unparse(csvData); // Convert to CSV format
-    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" }); // Create Blob
+    const csv = Papa.unparse(csvData); 
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" }); 
     saveAs(
       blob,
       `Payout_History_${new Date().toISOString().split("T")[0]}.csv`
-    ); // Save file
+    ); 
   };
 
   return (

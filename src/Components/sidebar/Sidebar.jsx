@@ -15,15 +15,13 @@ const Sidebar = () => {
   const [isDarkMode] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
-  const location = useLocation(); // Get the current location
-  const profileMenuRef = useRef(null); // Ref for the profile menu
+  const location = useLocation(); 
+  const profileMenuRef = useRef(null); 
 
-  // Function to toggle the profile menu
   const handleProfileClick = () => {
     setProfileMenuVisible((prev) => !prev);
   };
 
-  // Function to toggle dropdown menus
   const toggleDropdown = (item) => {
     setIsDropdownOpen((prev) => ({
       ...prev,
@@ -35,24 +33,16 @@ const Sidebar = () => {
     setIsModalOpen(true);
   };
 
-  // Function to confirm logout
   const handleConfirmLogout = async () => {
     setIsModalOpen(false);
     try {
       const token = localStorage.getItem("accessToken");
-
-      // Ensure token is present before making the request
       if (!token) {
         throw new Error("No access token found.");
       }
 
-      await apiGet(API_ENDPOINT_LOGOUT, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      await apiGet(API_ENDPOINT_LOGOUT);
 
-      // Clear tokens from localStorage
       localStorage.removeItem("accessToken");
       localStorage.removeItem("refreshToken");
       localStorage.removeItem("expirationTime");
@@ -89,7 +79,7 @@ const Sidebar = () => {
 
   useEffect(() => {
     setProfileMenuVisible(false);
-  }, [location]); // Runs whenever the location changes
+  }, [location]); 
 
   return (
     <div>
@@ -102,7 +92,7 @@ const Sidebar = () => {
           width: isSidebarOpen ? "calc(100% - 15.5rem)" : "100%",
           background: isDarkMode
             ? "bg-gray-600"
-            : "linear-gradient(to right, #d6f5f5, #b3e6ff, #ffffff, #e6ffe6)", // Apply gradient background
+            : "linear-gradient(to right, #d6f5f5, #b3e6ff, #ffffff, #e6ffe6)",
         }}
       >
         <button

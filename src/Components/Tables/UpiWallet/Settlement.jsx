@@ -22,10 +22,8 @@ import {
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate } from "react-router-dom";
 import { useSidebar } from "../../../Context/SidebarContext";
-import { accessToken } from "../../../helpingFile";
 import { apiGet, apiPost } from "../../../utils/http";
 
-const ACCESS_TOKEN = accessToken;
 const USER_LIST_API = `apiAdmin/v1/utility/getUserList`;
 const SETTLEMENT_API = `apiAdmin/v1/wallet/getSettlementAmountAll`;
 const SETTLEMENT_ONE_API = `apiAdmin/v1/wallet/getSettlementAmountOne/`;
@@ -44,11 +42,7 @@ const Settlement = () => {
   useEffect(() => {
     const fetchUserList = async () => {
       try {
-        const response = await apiGet(USER_LIST_API, {
-          headers: {
-            Authorization: `Bearer ${ACCESS_TOKEN}`,
-          },
-        });
+        const response = await apiGet(USER_LIST_API);
         setUserList(response.data.data);
       } catch (err) {
         setError(err);
@@ -78,47 +72,30 @@ const Settlement = () => {
 
       const startDate = new Date(startDateTime);
       const endDate = new Date(endDateTime);
-
-      // Check if start date is greater than end date
       if (startDate >= endDate) {
         alert("Start date cannot be greater than end date.");
         return;
       }
-
-      setLoading(true); // Set loading to true before the API call
-
+      setLoading(true); 
       const formattedStartDate = startDate.toISOString();
       const formattedEndDate = endDate.toISOString();
-
-      // API request for settlements based on user selection
       if (dropdownValue) {
         const responseOne = await apiPost(
-          `${SETTLEMENT_ONE_API}${dropdownValue}`, // Using the user ID (_id)
+          `${SETTLEMENT_ONE_API}${dropdownValue}`, 
           {
             startTimeAndDate: formattedStartDate,
             endTimeAndDate: formattedEndDate,
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${ACCESS_TOKEN}`,
-            },
           }
         );
 
         const userSettlement = responseOne.data?.data || [];
         setFilteredTransactions(userSettlement);
       } else {
-        // If no user selected, fetch all settlements
         const responseAll = await apiPost(
           SETTLEMENT_API,
           {
             startTimeAndDate: formattedStartDate,
             endTimeAndDate: formattedEndDate,
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${ACCESS_TOKEN}`,
-            },
           }
         );
 
@@ -128,7 +105,7 @@ const Settlement = () => {
     } catch (err) {
       console.error("Error fetching settlement data:", err);
     } finally {
-      setLoading(false); // Set loading to false after the API call
+      setLoading(false); 
     }
   };
 
@@ -150,11 +127,10 @@ const Settlement = () => {
     ]);
 
     const csvContent = [
-      headers.join(","), // Add headers
-      ...rows.map((row) => row.join(",")), // Add data rows
+      headers.join(","), 
+      ...rows.map((row) => row.join(",")), 
     ].join("\n");
 
-    // Create a Blob with CSV content and trigger download
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
     const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);

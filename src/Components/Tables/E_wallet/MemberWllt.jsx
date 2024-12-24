@@ -21,12 +21,10 @@ import {
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useSidebar } from "../../../Context/SidebarContext";
-import { accessToken } from "../../../helpingFile";
 import { apiGet } from "../../../utils/http";
 
 const API_ENDPOINT = `apiAdmin/v1/wallet/eWalletMember/66c86b75986120a64a2946fa`;
 const USER_LIST_API = `apiAdmin/v1/utility/getUserList`;
-const ACCESS_TOKEN = accessToken;
 
 const MemberWllt = () => {
   const { isSidebarOpen } = useSidebar();
@@ -41,12 +39,7 @@ const MemberWllt = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Fetch data from API
-    apiGet(API_ENDPOINT, {
-        headers: {
-          Authorization: `Bearer ${ACCESS_TOKEN}`,
-        },
-      })
+    apiGet(API_ENDPOINT)
       .then((response) => {
         setTransactions(response.data.data);
         setLoading(false);
@@ -54,17 +47,12 @@ const MemberWllt = () => {
       .catch((error) => {
         setError(error); 
         setLoading(false); 
-        // console.error("Error fetching data:", error);
       });
-    // Fetch user list
+    
     const fetchUserList = async () => {
       try {
-        const response = await apiGet(USER_LIST_API, {
-          headers: {
-            Authorization: `Bearer ${ACCESS_TOKEN}`,
-          },
-        });
-        setUserList(response.data.data); // Store user data
+        const response = await apiGet(USER_LIST_API);
+        setUserList(response.data.data); 
       } catch (err) {
         console.log(err);
       }
@@ -73,7 +61,6 @@ const MemberWllt = () => {
     fetchUserList();
   }, []);
 
-  // Filter data based on search query and selected user
   const filteredData = transactions.filter((item) => {
     const matchesMemberId = item.userInfo.memberId
       .toLowerCase()
@@ -93,7 +80,7 @@ const MemberWllt = () => {
 
   const handlePageSizeChange = (event) => {
     setPageSize(event.target.value);
-    setCurrentPage(0); // Reset to first page when page size changes
+    setCurrentPage(0); 
   };
 
   const handlePageChange = (direction) => {

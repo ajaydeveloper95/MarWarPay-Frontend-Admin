@@ -14,7 +14,6 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts';
-import { accessToken } from '../../helpingFile';
 import { apiGet } from '../../utils/http';
 
 const COLORS = ['#8884d8', '#82ca9d', '#FF8042'];
@@ -25,16 +24,11 @@ const MnyTransfer = () => {
   const [error, setError] = useState(null);
 
   const API_ENDPOINT = `apiAdmin/v1/support/allGenTicket`;
-  const ACCESS_TOKEN = accessToken;
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await apiGet(API_ENDPOINT, {
-          headers: {
-            Authorization: `Bearer ${ACCESS_TOKEN}`,
-          },
-        });
+        const response = await apiGet(API_ENDPOINT);
 
         if (response.data && Array.isArray(response.data.data)) {
           setTicketData(response.data.data);
@@ -48,15 +42,9 @@ const MnyTransfer = () => {
       }
     };
 
-    if (ACCESS_TOKEN) {
       fetchData();
-    } else {
-      setError(new Error('Authentication token not found. Please log in.'));
-      setLoading(false);
-    }
   }, []);
 
-  // Ensure pieData always includes all entities with default value 0
   const pieData = [
     {
       name: 'Pending',

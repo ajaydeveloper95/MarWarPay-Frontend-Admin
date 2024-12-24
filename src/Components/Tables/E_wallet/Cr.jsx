@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 import {
   TextField,
   MenuItem,
@@ -15,26 +15,24 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-} from '@mui/material';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { useNavigate } from 'react-router-dom';
-import { useSidebar } from '../../../Context/SidebarContext';
-import { accessToken } from '../../../helpingFile';
-import { apiGet } from '../../../utils/http';
+} from "@mui/material";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { useNavigate } from "react-router-dom";
+import { useSidebar } from "../../../Context/SidebarContext";
+import { apiGet, apiPost } from "../../../utils/http";
 
 const API_GET_USERS_ENDPOINT = `apiAdmin/v1/utility/getUserWithWallet`;
 const API_TRANSFER_ENDPOINT = `apiAdmin/v1/wallet/eWalletFundCredit`;
-const ACCESS_TOKEN = accessToken;
 
 const Cr = () => {
-  const [member, setMember] = useState('');
-  const [availableBalance, setAvailableBalance] = useState('');
-  const [transferAmount, setTransferAmount] = useState('');
-  const [description, setDescription] = useState('');
-  const [transactionType, setTransactionType] = useState('CR');
+  const [member, setMember] = useState("");
+  const [availableBalance, setAvailableBalance] = useState("");
+  const [transferAmount, setTransferAmount] = useState("");
+  const [description, setDescription] = useState("");
+  const [transactionType, setTransactionType] = useState("CR");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [data, setData] = useState([]);
-  const [fileUpdate,setfileUpdate] = useState("open")
+  const [fileUpdate, setfileUpdate] = useState("open");
 
   const navigate = useNavigate();
   const { isSidebarOpen } = useSidebar();
@@ -42,14 +40,10 @@ const Cr = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await apiGet(API_GET_USERS_ENDPOINT, {
-          headers: {
-            Authorization: `Bearer ${ACCESS_TOKEN}`,
-          },
-        });
+        const response = await apiGet(API_GET_USERS_ENDPOINT);
         setData(response.data.data);
       } catch (err) {
-        console.log(err)
+        console.log(err);
       }
     };
 
@@ -60,53 +54,43 @@ const Cr = () => {
     const selectedMemberId = e.target.value;
     setMember(selectedMemberId);
 
-    // Find the selected member from the data and set the available balance
     const selectedMember = data.find((item) => item._id === selectedMemberId);
     if (selectedMember) {
       setAvailableBalance(selectedMember.EwalletBalance);
     } else {
-      setAvailableBalance('');
+      setAvailableBalance("");
     }
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    // Construct the request body
     const requestBody = {
       transactionAmount: parseFloat(transferAmount),
-      transactionType: transactionType === 'CR' ? 'Cr.' : 'Dr.',
+      transactionType: transactionType === "CR" ? "Cr." : "Dr.",
     };
 
-    // API Call to transfer the amount
     try {
-      const response = await apiGet(
-        `${API_TRANSFER_ENDPOINT}/${member}`, // Use member ID in the endpoint
-        requestBody, // Pass the request body
-        {
-          headers: {
-            Authorization: `Bearer ${ACCESS_TOKEN}`,
-          },
-        }
+      const response = await apiPost(
+        `${API_TRANSFER_ENDPOINT}/${member}`,
+        requestBody
       );
-
-      setfileUpdate("done")
+      setfileUpdate("done");
 
       if (response.status === 200) {
         const { data } = response.data;
         setAvailableBalance(data.afterAmount.toString());
-
         setIsDialogOpen(true);
       }
     } catch (err) {
-      alert('An error occurred while processing the transaction.');
+      alert("An error occurred while processing the transaction.");
       console.log(err);
     }
 
-    setMember('');
-    setAvailableBalance('');
-    setTransferAmount('');
-    setDescription('');
+    setMember("");
+    setAvailableBalance("");
+    setTransferAmount("");
+    setDescription("");
   };
 
   const handleCloseDialog = () => {
@@ -114,18 +98,18 @@ const Cr = () => {
   };
 
   const handleCancel = () => {
-    navigate(-1); // Navigate to the previous page
+    navigate(-1);
   };
 
   return (
     <Container
       maxWidth="lg"
       style={{
-        marginLeft: isSidebarOpen ? '16rem' : '10rem',
-        transition: 'margin-left 0.3s ease',
-        minWidth: '600px',
-        maxWidth: '80%',
-        marginTop: '8%',
+        marginLeft: isSidebarOpen ? "16rem" : "10rem",
+        transition: "margin-left 0.3s ease",
+        minWidth: "600px",
+        maxWidth: "80%",
+        marginTop: "8%",
       }}
     >
       <Box
@@ -134,18 +118,23 @@ const Cr = () => {
           p: 4,
           borderRadius: 2,
           boxShadow: 3,
-          backgroundColor: 'background.paper',
-          position: 'relative',
+          backgroundColor: "background.paper",
+          position: "relative",
         }}
       >
         <IconButton
           onClick={() => navigate(-1)}
           color="primary"
-          sx={{ position: 'absolute', top: 0, left: 16 }}
+          sx={{ position: "absolute", top: 0, left: 16 }}
         >
           <ArrowBackIcon />
         </IconButton>
-        <Typography variant="h4" component="h1" gutterBottom sx={{color: 'teal'}}>
+        <Typography
+          variant="h4"
+          component="h1"
+          gutterBottom
+          sx={{ color: "teal" }}
+        >
           Credit Fund
         </Typography>
 
@@ -190,7 +179,9 @@ const Cr = () => {
             </Grid>
             <Grid item xs={12} sm={6} md={4}>
               <FormControl fullWidth variant="outlined" required>
-                <InputLabel id="transaction-type-label">Transaction Type</InputLabel>
+                <InputLabel id="transaction-type-label">
+                  Transaction Type
+                </InputLabel>
                 <Select
                   labelId="transaction-type-label"
                   value={transactionType}
@@ -214,11 +205,27 @@ const Cr = () => {
                 onChange={(e) => setDescription(e.target.value)}
               />
             </Grid>
-            <Grid item xs={12} container spacing={2} justifyContent="flex-end" marginTop={1}>
-              <Button type="submit" variant="contained" color="primary" sx={{ mr: 2, background: 'teal' }}>
+            <Grid
+              item
+              xs={12}
+              container
+              spacing={2}
+              justifyContent="flex-end"
+              marginTop={1}
+            >
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                sx={{ mr: 2, background: "teal" }}
+              >
                 Submit
               </Button>
-              <Button variant="outlined" color="secondary" onClick={handleCancel}>
+              <Button
+                variant="outlined"
+                color="secondary"
+                onClick={handleCancel}
+              >
                 Cancel
               </Button>
             </Grid>
@@ -229,9 +236,7 @@ const Cr = () => {
         <Dialog open={isDialogOpen} onClose={handleCloseDialog}>
           <DialogTitle>Transfer Successful</DialogTitle>
           <DialogContent>
-            <Typography>
-              The amount has been successfully credited!
-            </Typography>
+            <Typography>The amount has been successfully credited!</Typography>
           </DialogContent>
           <DialogActions>
             <Button onClick={handleCloseDialog} color="primary">
