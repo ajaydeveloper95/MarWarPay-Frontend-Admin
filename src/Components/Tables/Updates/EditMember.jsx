@@ -286,7 +286,7 @@ const EditMember = () => {
           </Box>
         </form>
       </Paper>
-      <ToastContainer /> {/* Add ToastContainer for toast notifications */}
+      <ToastContainer />
     </Container>
   );
 };

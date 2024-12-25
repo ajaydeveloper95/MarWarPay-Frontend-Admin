@@ -24,26 +24,21 @@ import {
   FormControl,
   Box,
   Pagination,
-  DialogContentText,
 } from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useSidebar } from "../../../Context/SidebarContext";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
-import { apiGet, apiPost } from "../../../utils/http";
-import MoneyOffIcon from "@mui/icons-material/MoneyOff";
-import { toast, ToastContainer } from "react-toastify";
+import { apiGet } from "../../../utils/http";
 
-const API_ENDPOINT = `apiAdmin/v1/payin/allSuccessPayIn`;
+const API_ENDPOINT = `apiAdmin/v1/chargeBack/getAllChargeBack`;
 const USER_LIST_API = `apiAdmin/v1/utility/getUserList`;
-const GENERATE_CHARGEBACK_API = `apiAdmin/v1/chargeBack/generateChargeBack`;
 
-const Payin = () => {
+const ChargeBack = () => {
   const navigate = useNavigate();
   const { isSidebarOpen } = useSidebar();
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedTrxId, setSelectedTrxId] = useState("");
   const [filterData, setFilterData] = useState({
     page: 1,
     limit: 25,
@@ -56,19 +51,16 @@ const Payin = () => {
 
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [dialogOpen1, setDialogOpen1] = useState(false);
-  const [dialogMessage1, setDialogMessage1] = useState("");
   const [error, setError] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [dialogMessage, setDialogMessage] = useState("");
   const [dialogSeverity, setDialogSeverity] = useState("info");
   const [userList, setUserList] = useState([]);
 
-
   const formatDateTime = (dateString) => {
     const date = new Date(dateString);
     const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0"); 
+    const month = String(date.getMonth() + 1).padStart(2, "0");
     const day = String(date.getDate()).padStart(2, "0");
     const hours = String(date.getHours()).padStart(2, "0");
     const minutes = String(date.getMinutes()).padStart(2, "0");
@@ -83,15 +75,15 @@ const Payin = () => {
         ...filterData,
         export: exportCSV,
       });
-      if(exportCSV == "true") {
-        const blob = new Blob([response.data], { type: 'text/csv' }); 
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = `payments${filterData.startDate}-${filterData.endDate}.csv`;  
- 
-            link.click();
-            link.remove();
-      } else{
+      if (exportCSV == "true") {
+        const blob = new Blob([response.data], { type: "text/csv" });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = `payments${filterData.startDate}-${filterData.endDate}.csv`;
+
+        link.click();
+        link.remove();
+      } else {
         setData(
           response.data.data.map((item, index) => ({
             id: index + 1,
@@ -100,18 +92,16 @@ const Payin = () => {
             txnID: item.trxId,
             bankRRN: item.bankRRN,
             amount: `${item.amount}`,
-            charge: `${item.chargeAmount}`,
-            credit: `${item.finalAmount}`,
             vpaID: item.vpaId,
-            description: item.payerName, 
+            description: item.description,
             dateTime: formatDateTime(item.createdAt),
             status: item.isSuccess,
           }))
         );
-        
+
         setTotalCount(response.data.totalDocs);
       }
-      
+
       setLoading(false);
     } catch (err) {
       setData([]);
@@ -175,27 +165,7 @@ const Payin = () => {
     setDialogOpen(false);
   };
 
-  const handleCrgBackClick = async () => {
-    try {
-      const response = await apiPost(GENERATE_CHARGEBACK_API, { trxId:selectedTrxId });
-      setDialogMessage1(response.data.message || "Chargeback generated successfully.");
-      setDialogSeverity("Success");
-      toast.success("Chargeback generated successfully!");
-      
-    } catch (error) {
-      setDialogMessage1(
-        error.response?.data?.message || "Failed to generate chargeback."
-      );
-      setDialogSeverity("error");
-      toast.error("Failed to generate chargeback.");
-    } finally {
-      setDialogOpen1(false);
-    }
-  };
 
-  const handleDialogClose1 = () => {
-    setDialogOpen1(false)
-  };
 
   return (
     <>
@@ -210,7 +180,7 @@ const Payin = () => {
         }}
       >
         <Grid container spacing={2} mb={2}>
-          <Grid item xs={12} sm={6} md={4}>
+          <Grid item xs={12} sm={6}>
             <Box
               sx={{
                 p: 2,
@@ -220,7 +190,7 @@ const Payin = () => {
               }}
             >
               <Typography variant="h6" sx={{ color: "teal" }}>
-                Total balance
+                 ChargeBack Amount
               </Typography>
               <Typography>
                 ₹{" "}
@@ -235,7 +205,7 @@ const Payin = () => {
               </Typography>
             </Box>
           </Grid>
-          <Grid item xs={12} sm={6} md={4}>
+          <Grid item xs={12} sm={6}>
             <Box
               sx={{
                 p: 2,
@@ -245,32 +215,7 @@ const Payin = () => {
               }}
             >
               <Typography variant="h6" sx={{ color: "teal" }}>
-                Total Charges
-              </Typography>
-              <Typography>
-                ₹{" "}
-                {data.length > 0
-                  ? data
-                      .reduce(
-                        (total, user) => total + parseFloat(user.charge || 0),
-                        0
-                      )
-                      .toLocaleString("en-IN", { minimumFractionDigits: 2 })
-                  : "0.00"}
-              </Typography>
-            </Box>
-          </Grid>
-          <Grid item xs={12} sm={6} md={4}>
-            <Box
-              sx={{
-                p: 2,
-                borderRadius: 2,
-                backgroundColor: "background.paper",
-                boxShadow: "5px 0 10px -3px rgba(0, 128, 128, 0.6)",
-              }}
-            >
-              <Typography variant="h6" sx={{ color: "teal" }}>
-                Total Transaction
+                ChargeBack Transaction
               </Typography>
               <Typography>{data.length}</Typography>
             </Box>
@@ -304,7 +249,7 @@ const Payin = () => {
                 gutterBottom
                 sx={{ color: "teal", flexGrow: 1 }}
               >
-                UPI Collection
+               Charge Back
               </Typography>
             </Grid>
 
@@ -481,24 +426,6 @@ const Payin = () => {
                       border: "1px solid rgba(224, 224, 224, 1)",
                     }}
                   >
-                    Charge
-                  </TableCell>
-                  <TableCell
-                    sx={{
-                      fontWeight: "bold",
-                      fontSize: "16px",
-                      border: "1px solid rgba(224, 224, 224, 1)",
-                    }}
-                  >
-                    Credit
-                  </TableCell>
-                  <TableCell
-                    sx={{
-                      fontWeight: "bold",
-                      fontSize: "16px",
-                      border: "1px solid rgba(224, 224, 224, 1)",
-                    }}
-                  >
                     VPAID
                   </TableCell>
                   <TableCell
@@ -536,15 +463,6 @@ const Payin = () => {
                     }}
                   >
                     Action
-                  </TableCell>
-                  <TableCell
-                    sx={{
-                      fontWeight: "bold",
-                      fontSize: "16px",
-                      border: "1px solid rgba(224, 224, 224, 1)",
-                    }}
-                  >
-                    ChargeBack
                   </TableCell>
                 </TableRow>
               </TableHead>
@@ -603,16 +521,6 @@ const Payin = () => {
                       <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
                       >
-                        {row.charge}
-                      </TableCell>
-                      <TableCell
-                        sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
-                      >
-                        {row.credit}
-                      </TableCell>
-                      <TableCell
-                        sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
-                      >
                         {row.vpaID}
                       </TableCell>
                       <TableCell
@@ -648,17 +556,6 @@ const Payin = () => {
                           onClick={() => handleViewClick(row.status)}
                         >
                           <VisibilityIcon />
-                        </IconButton>
-                      </TableCell>
-                      <TableCell>
-                        <IconButton
-                          color="primary"
-                          onClick={() => {
-                            setSelectedTrxId(row.txnID)
-                            setDialogOpen1(true)
-                          }}
-                        >
-                          <MoneyOffIcon />
                         </IconButton>
                       </TableCell>
                     </TableRow>
@@ -698,7 +595,7 @@ const Payin = () => {
           sx: {
             width: "500px",
             maxWidth: "90%",
-            padding: 2,
+            padding: 4,
             borderRadius: 2,
             boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.2)",
           },
@@ -731,66 +628,8 @@ const Payin = () => {
         </DialogActions>
       </Dialog>
 
-      <Dialog
-  open={dialogOpen1}
-  onClose={() => handleDialogClose1(false)}
-  sx={{
-    '& .MuiDialog-paper': {
-      margin: '20px', 
-      padding: '20px', 
-      minWidth: '350px',
-      borderRadius: '12px',
-      boxShadow: 3,
-      backgroundColor: '#f9f9f9', // Soft light background
-    },
-  }}
->
-  <DialogTitle sx={{ fontWeight: 600, color: '#333', fontSize: '1.25rem' }}>
-    Confirmation
-  </DialogTitle>
-  <DialogContent sx={{ marginBottom: '20px' }}>
-    <DialogContentText sx={{ fontSize: '1rem', color: '#555', lineHeight: '1.5' }}>
-      Are you sure you want to apply the chargeback for transaction ID?
-    </DialogContentText>
-  </DialogContent>
-  <DialogActions sx={{ justifyContent: 'end' }}>
-    <Button
-      onClick={() => handleDialogClose1(false)}
-      color="secondary"
-      sx={{
-        backgroundColor: '#f44336',
-        color: '#fff',
-        '&:hover': {
-          backgroundColor: '#d32f2f', 
-        },
-        fontWeight: 500,
-      }}
-    >
-      No
-    </Button>
-    <Button
-      onClick={() => handleCrgBackClick()}
-      color="primary"
-      autoFocus
-      sx={{
-        backgroundColor: '#4caf50', 
-        color: '#fff',
-        '&:hover': {
-          backgroundColor: '#388e3c', 
-        },
-        fontWeight: 500,
-      }}
-    >
-      Yes
-    </Button>
-  </DialogActions>
-</Dialog>
-
-<ToastContainer />
-
-
     </>
   );
 };
 
-export default Payin;
+export default ChargeBack;
