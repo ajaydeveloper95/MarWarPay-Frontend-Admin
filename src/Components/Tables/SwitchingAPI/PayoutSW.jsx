@@ -50,28 +50,28 @@ const PayoutSW = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const navigate = useNavigate();
 
+  const fetchUserList = async () => {
+    try {
+      const response = await apiGet(USER_LIST_API);
+      setUserList(response.data.data);
+    } catch (err) {
+      setError("Please Wait...", err);
+    }
+  };
+
+  const fetchPayInApiList = async () => {
+    try {
+      const response = await apiGet(PAYOUT_API_LIST);
+      setPayInApiList(response.data.data);
+    } catch (err) {
+      setError("Please Wait...", err);
+    }
+  };
+
   useEffect(() => {
-    const fetchUserList = async () => {
-      try {
-        const response = await apiGet(USER_LIST_API);
-        setUserList(response.data.data);
-      } catch (err) {
-        setError("Please Wait...", err);
-      }
-    };
-
-    const fetchPayInApiList = async () => {
-      try {
-        const response = await apiGet(PAYOUT_API_LIST);
-        setPayInApiList(response.data.data);
-      } catch (err) {
-        setError("Please Wait...", err);
-      }
-    };
-
     fetchUserList();
     fetchPayInApiList();
-  }, [payInApiList]);
+  }, []);
 
   const handleCancel = () => navigate(-1);
   const handleOpenDialog = () => setIsDialogOpen(true);
