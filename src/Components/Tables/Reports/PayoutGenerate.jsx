@@ -76,6 +76,8 @@ const PayoutGenerate = () => {
           accountNumber: item.accountNumber,
           ifsc: item.ifscCode,
           amount: `${item.amount}`,
+          chargeAmount: `${item?.payoutSuccessData?.chargeAmount || 0}`,
+          finalAmount: `${item?.payoutSuccessData?.finalAmount || 0}`,
           txnId: item.trxId,
           status: item.isSuccess,
           dateTime: formatDateTime(item.createdAt),
@@ -430,6 +432,24 @@ const PayoutGenerate = () => {
                       border: "1px solid rgba(224, 224, 224, 1)",
                     }}
                   >
+                    Charge Amount
+                  </TableCell>
+                  <TableCell
+                    sx={{
+                      fontWeight: "bold",
+                      fontSize: "16px",
+                      border: "1px solid rgba(224, 224, 224, 1)",
+                    }}
+                  >
+                    Final Amount
+                  </TableCell>
+                  <TableCell
+                    sx={{
+                      fontWeight: "bold",
+                      fontSize: "16px",
+                      border: "1px solid rgba(224, 224, 224, 1)",
+                    }}
+                  >
                     Txn ID
                   </TableCell>
                   <TableCell
@@ -507,6 +527,16 @@ const PayoutGenerate = () => {
                       <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
                       >
+                        {item.chargeAmount}
+                      </TableCell>
+                      <TableCell
+                        sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
+                      >
+                        {item.finalAmount}
+                      </TableCell>
+                      <TableCell
+                        sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
+                      >
                         {item.txnId}
                       </TableCell>
                       <TableCell
@@ -519,13 +549,13 @@ const PayoutGenerate = () => {
                                 ? "green"
                                 : item.status === "Failed"
                                 ? "red"
-                                : "orange", // Color for Pending
+                                : "orange", 
                             backgroundColor:
                               item.status === "Success"
                                 ? "rgba(0, 128, 0, 0.1)"
                                 : item.status === "Failed"
                                 ? "rgba(255, 0, 0, 0.1)"
-                                : "rgba(255, 165, 0, 0.1)", // Background for Pending
+                                : "rgba(255, 165, 0, 0.1)", 
                             borderRadius: 2,
                             padding: "2px 10px",
                           }}
@@ -535,7 +565,6 @@ const PayoutGenerate = () => {
                             : item.status === "Failed"
                             ? "Failed"
                             : "Pending"}{" "}
-                          {/* Display Pending when callBackStatus is not Success or Failed */}
                         </Button>
                       </TableCell>
                       <TableCell
