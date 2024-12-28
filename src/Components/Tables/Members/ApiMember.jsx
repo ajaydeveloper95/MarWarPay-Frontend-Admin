@@ -8,28 +8,25 @@ import { useSidebar } from '../../../Context/SidebarContext';
 const membersData = [
   { id: 1, name: 'John Doe', email: 'john@example.com', phone: '123-456-7890', selfBalance: '$1000', downlineBalance: '$500', created: '2023-08-01', status: 'Active' },
   { id: 2, name: 'Jane Smith', email: 'jane@example.com', phone: '987-654-3210', selfBalance: '$800', downlineBalance: '$300', created: '2023-07-15', status: 'Inactive' },
-  // Add more member objects as needed
 ];
 
 const ApiMember = () => {
-  const navigate = useNavigate(); // Initialize useNavigate
-  const { isSidebarOpen } = useSidebar(); // Get sidebar state
-  const [searchQuery, setSearchQuery] = useState(''); // State for search query
-  const [date, setDate] = useState(''); // State for selected date
-  const [pageSize, setPageSize] = useState('all'); // State for items per page
-  const [currentPage, setCurrentPage] = useState(0); // State for current page
-  const [previousPage, setPreviousPage] = useState(0); // State for previous page
+  const navigate = useNavigate();
+  const { isSidebarOpen } = useSidebar(); 
+  const [searchQuery, setSearchQuery] = useState(''); 
+  const [date, setDate] = useState('');
+  const [pageSize, setPageSize] = useState('all'); 
+  const [currentPage, setCurrentPage] = useState(0);
+  const [previousPage, setPreviousPage] = useState(0);
 
   useEffect(() => {
-    // Reset page number when pageSize changes to handle "View All"
     setCurrentPage(0);
     setPreviousPage(0);
   }, [pageSize]);
 
-  // Filter members based on search query and date
   const filteredMembers = membersData.filter((member) => {
     const matchesName = member.name.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesDate = date ? member.created === date : true; // Filter by date if selected
+    const matchesDate = date ? member.created === date : true; 
     return matchesName && matchesDate;
   });
 

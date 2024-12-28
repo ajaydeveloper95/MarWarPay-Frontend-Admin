@@ -23,14 +23,10 @@ import {
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useSidebar } from "../../../Context/SidebarContext";
-import { accessToken } from "../../../helpingFile";
-import { saveAs } from "file-saver";
-import Papa from "papaparse";
 import { apiGet } from "../../../utils/http";
 
 const API_ENDPOINT = `apiAdmin/v1/payout/allPayOutPayment`;
 const USER_LIST_API = `apiAdmin/v1/utility/getUserList`;
-const ACCESS_TOKEN = accessToken;
 
 const PayoutGenerate = () => {
   const navigate = useNavigate();
@@ -43,14 +39,13 @@ const PayoutGenerate = () => {
     startDate: "",
     endDate: "",
     status: "",
-    memberId: ""
+    memberId: "",
   });
   const [data, setData] = useState([]);
   const [userList, setUserList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  // const [status, setStatus] = useState("");
-  const [totalCount, setTotalCount] = useState(0); // Total records count
+  const [totalCount, setTotalCount] = useState(0);
 
   const formatDateTime = (dateString) => {
     const date = new Date(dateString);
@@ -63,48 +58,57 @@ const PayoutGenerate = () => {
     return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
   };
 
-
-  const fetchData = async () => {
+  const fetchData = async (exportCSV = false) => {
     setLoading(true);
     try {
-      const response = await apiGet(API_ENDPOINT, { ...filterData });
-      setData(
-        response.data.data.map((item, index) => ({
-          id: index + 1,
-          memberId: item.userInfo.memberId,
-          name: item.userInfo.fullName,
-          accountNumber: item.accountNumber,
-          ifsc: item.ifscCode,
-          amount: `${item.amount}`,
-          chargeAmount: `${item?.payoutSuccessData?.chargeAmount || 0}`,
-          finalAmount: `${item?.payoutSuccessData?.finalAmount || 0}`,
-          txnId: item.trxId,
-          status: item.isSuccess,
-          dateTime: formatDateTime(item.createdAt),
-        }))
-      );
-      setTotalCount(response.data.totalDocs);
-      // setLoading(false);
+      const response = await apiGet(API_ENDPOINT, {
+        ...filterData,
+        export: exportCSV,
+      });
+      if (exportCSV == "true") {
+        const blob = new Blob([response.data], { type: "text/csv" });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = `payout${filterData.startDate}-${filterData.endDate}.csv`;
+
+        link.click();
+        link.remove();
+      } else {
+        setData(
+          response.data.data.map((item, index) => ({
+            id: index + 1,
+            memberId: item.userInfo.memberId,
+            name: item.userInfo.fullName,
+            accountNumber: item.accountNumber,
+            ifsc: item.ifscCode,
+            amount: `${item.amount}`,
+            charge: `${item?.payoutSuccessData?.chargeAmount ?? 0}`,
+            finalAmt: `${item?.payoutSuccessData?.finalAmount ?? 0}`,
+            txnId: item.trxId,
+            status: item.isSuccess,
+            dateTime: formatDateTime(item.createdAt),
+          }))
+        );
+        // setData(response?.data?.data)
+
+        setTotalCount(response.data.totalDocs);
+      }
     } catch (err) {
-      setData([]);      
-    }
-    finally {
+      setData([]);
+    } finally {
       setLoading(false);
     }
   };
 
   const fetchUserList = async () => {
     try {
-      const response = await apiGet(USER_LIST_API, {
-        headers: {
-          Authorization: `Bearer ${ACCESS_TOKEN}`,
-        },
-      });
-      setUserList(response.data.data); // Store user data
+      const response = await apiGet(USER_LIST_API);
+      setUserList(response.data.data);
     } catch (err) {
       // setError(err);
     }
   };
+console.log("dataaaaa>>", data);
 
   useEffect(() => {
     fetchData();
@@ -112,11 +116,7 @@ const PayoutGenerate = () => {
 
   useEffect(() => {
     fetchUserList();
-  },[])
-
-  // const handleStatusChange = (event) => {
-  //   setStatus(event.target.value);
-  // };
+  }, []);
 
   useEffect(() => {
     const timeOutId = setTimeout(() => {
@@ -141,27 +141,6 @@ const PayoutGenerate = () => {
 
   const handleBackButtonClick = () => {
     navigate(-1);
-  };
-
-  const handleExport = () => {
-    const csvData = data.map((item) => ({
-      ID: item.id,
-      MemberID: item.memberId,
-      Name: item.name,
-      AccountNumber: item.accountNumber,
-      IFSC: item.ifsc,
-      Amount: item.amount,
-      TxnID: item.txnId,
-      Status: item.status,
-      DateTime: item.dateTime,
-    }));
-
-    const csv = Papa.unparse(csvData);
-    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-    saveAs(
-      blob,
-      `Payout_History_${new Date().toISOString().split("T")[0]}.csv`
-    ); // Save file
   };
 
   return (
@@ -279,7 +258,7 @@ const PayoutGenerate = () => {
               <Button
                 variant="contained"
                 color="primary"
-                onClick={handleExport}
+                onClick={() => fetchData("true")}
               >
                 Export
               </Button>
@@ -485,13 +464,13 @@ const PayoutGenerate = () => {
                       No data available
                     </TableCell>
                   </TableRow>
-                ) : data?.length === 0 ? (
+                ) : Array.isArray(data) && data.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={8} align="center">
                       No data available.
                     </TableCell>
                   </TableRow>
-                ) : (
+                ) : Array.isArray(data) ? (
                   data?.map((item, index) => (
                     <TableRow key={item.id}>
                       <TableCell
@@ -502,42 +481,42 @@ const PayoutGenerate = () => {
                       <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
                       >
-                        {item.memberId}
+                        {item?.memberId}
                       </TableCell>
                       <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
                       >
-                        {item.name}
+                        {item?.name}
                       </TableCell>
                       <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
                       >
-                        {item.accountNumber}
+                        {item?.accountNumber}
                       </TableCell>
                       <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
                       >
-                        {item.ifsc}
+                        {item?.ifsc}
                       </TableCell>
                       <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
                       >
-                        {item.amount}
+                        {item?.amount}
                       </TableCell>
                       <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
                       >
-                        {item.chargeAmount}
+                        {item?.charge || '0'}
                       </TableCell>
                       <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
                       >
-                        {item.finalAmount}
+                        {item?.finalAmt || '0'}
                       </TableCell>
                       <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
                       >
-                        {item.txnId}
+                        {item?.txnId}
                       </TableCell>
                       <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
@@ -574,6 +553,12 @@ const PayoutGenerate = () => {
                       </TableCell>
                     </TableRow>
                   ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={12} align="center">
+                      No data available.
+                    </TableCell>
+                  </TableRow>
                 )}
               </TableBody>
             </Table>

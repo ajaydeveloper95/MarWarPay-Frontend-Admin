@@ -20,10 +20,8 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useSidebar } from '../../../Context/SidebarContext';
 import { useState, useEffect } from 'react';
-import { accessToken } from '../../../helpingFile';
 import { apiDelete, apiGet, apiPost } from '../../../utils/http';
 
-const ACCESS_TOKEN = accessToken;
 const API_GET_PACKAGE = `apiAdmin/v1/package/getSinglePackage/`;
 const API_UPDATE_PACKAGE = `apiAdmin/v1/package/updatePackage/`;
 const API_DELETE_PACKAGE = `apiAdmin/v1/package/deletePackage/`;
@@ -50,9 +48,7 @@ const EditPackage = () => {
   useEffect(() => {
     const fetchPackageData = async () => {
       try {
-        const response = await apiGet(`${API_GET_PACKAGE}${id}`, {
-          headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
-        });
+        const response = await apiGet(`${API_GET_PACKAGE}${id}`);
         if (response.data.statusCode === 200) {
           const data = response.data.data;
           setPackageData({
@@ -72,9 +68,7 @@ const EditPackage = () => {
 
     const fetchPayOutPackages = async () => {
       try {
-        const response = await apiGet(API_PayoutCharge, {
-          headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
-        });
+        const response = await apiGet(API_PayoutCharge);
         if (response.data.statusCode === 200) {
           setPayOutPackages(response.data.data);
         } else {
@@ -88,9 +82,7 @@ const EditPackage = () => {
 
     const fetchPayInPackages = async () => {
       try {
-        const response = await apiGet(API_PayinCharge, {
-          headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
-        });
+        const response = await apiGet(API_PayinCharge);
         if (response.data.statusCode === 200) {
           setPayInPackages(response.data.data);
         } else {
@@ -138,12 +130,6 @@ const EditPackage = () => {
           packagePayInCharge: packageData.packagePayInCharge,
           packagePayOutCharge: packageData.packagePayOutCharge,
           isActive: packageData.isActive,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${ACCESS_TOKEN}`,
-            'Content-Type': 'application/json',
-          },
         }
       );
 
@@ -161,9 +147,7 @@ const EditPackage = () => {
 
   const handleDelete = async () => {
     try {
-      const response = await apiDelete(`${API_DELETE_PACKAGE}${id}`, {
-        headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
-      });
+      const response = await apiDelete(`${API_DELETE_PACKAGE}${id}`);
 
       if (response.data.statusCode === 200) {
         alert('Package deleted successfully.');

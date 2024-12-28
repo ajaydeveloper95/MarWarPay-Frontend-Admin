@@ -39,22 +39,31 @@ const My_Wllt = () => {
   });
   const [totalCount, setTotalCount] = useState(0);
   const [transactions, setTransactions] = useState([]);
-  // const [loading, setLoading] = useState(true);
+
+
+  const fetchData = async (exportCSV = false) => {
+    try {
+      const response = await apiGet(API_ENDPOINT, { ...filterData , export: exportCSV});
+      if (exportCSV == "true") {
+        const blob = new Blob([response.data], { type: 'text/csv' }); 
+          const link = document.createElement('a');
+          link.href = URL.createObjectURL(blob);
+          link.download = `Transations${filterData.startDate}-${filterData.endDate}.csv`;  
+
+          link.click();
+          link.remove();
+      } else{
+        setTransactions(response.data.data);
+        setTotalCount(response.data.totalDocs);
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      // setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await apiGet(API_ENDPOINT, { ...filterData });
-        console.log("res",response)
-        setTotalCount(response.data.totalDocs);
-        setTransactions(response.data.data);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      } finally {
-        // setLoading(false);
-      }
-    };
-
     fetchData();
   }, [filterData]);
 
@@ -80,52 +89,6 @@ const My_Wllt = () => {
     return () => clearTimeout(timeOutId);
   }, [searchQuery]);
 
-  // Function to convert JSON to CSV
-  const convertToCSV = (data) => {
-    const headers = [
-      "MemberID",
-      "Before Amount",
-      "Cr/Dr Amount",
-      "After Amount",
-      "Date Time",
-      "Type",
-      "Description",
-      "Status",
-    ];
-
-    const rows = data.map((transaction) => [
-      transaction.userInfo.memberId,
-      transaction.beforeAmount,
-      transaction.transactionAmount,
-      transaction.afterAmount,
-      new Date(transaction.createdAt).toLocaleString(),
-      transaction.transactionType === "Cr." ? "Cr." : "Dr.",
-      transaction.description,
-      transaction.transactionStatus ? "Success" : "Failed",
-    ]);
-
-    // Combine headers and rows
-    const csvContent = [headers, ...rows]
-      .map((row) => row.join(","))
-      .join("\n");
-
-    return csvContent;
-  };
-
-  // Function to handle export action
-  const handleExport = () => {
-    const csvContent = convertToCSV(transactions);
-
-    // Create a blob from the CSV data
-    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-
-    // Create a download link
-    const link = document.createElement("a");
-    const url = URL.createObjectURL(blob);
-    link.setAttribute("href", url);
-    link.setAttribute("download", "transactions.csv");
-    link.click();
-  };
 
   return (
     <Container
@@ -223,7 +186,7 @@ const My_Wllt = () => {
             </FormControl>
           </Grid>
           <Grid item xs={12} md={2}>
-            <Button variant="contained" color="primary" onClick={handleExport}>
+            <Button variant="contained" color="primary" onClick={() => fetchData("true")}>
               Export
             </Button>
           </Grid>

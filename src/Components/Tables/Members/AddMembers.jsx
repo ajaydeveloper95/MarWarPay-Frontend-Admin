@@ -19,7 +19,6 @@ import {
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate } from "react-router-dom";
 import { useSidebar } from "../../../Context/SidebarContext";
-import { accessToken } from "../../../helpingFile";
 import { apiGet, apiPost } from "../../../utils/http";
 import axios from "axios";
 
@@ -27,7 +26,6 @@ const API_ENDPOINT = `apiAdmin/v1/user/addUser`;
 const PACKAGE_API_ENDPOINT = `apiAdmin/v1/utility/getPackageList`;
 const COUNTRY_API_ENDPOINT = `https://restcountries.com/v3.1/all`;
 const STATE_API_ENDPOINT = `https://countriesnow.space/api/v0.1/countries/states`;
-const ACCESS_TOKEN = accessToken;
 
 const AddMembers = () => {
   const [memberType, setMemberType] = useState("");
@@ -56,12 +54,10 @@ const AddMembers = () => {
   useEffect(() => {
     const fetchPackages = async () => {
       try {
-        const response = await apiGet(PACKAGE_API_ENDPOINT, {
-          headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
-        });
+        const response = await apiGet(PACKAGE_API_ENDPOINT);
 
         if (response.status === 200) {
-          setPackages(response.data.data); // Set package data
+          setPackages(response.data.data);
         }
       } catch (err) {
         console.error("Error fetching package data:", err);
@@ -158,11 +154,6 @@ const AddMembers = () => {
           package: packageType,
           minWalletBalance: minimumWallet,
           isActive: status,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${ACCESS_TOKEN}`,
-          },
         }
       );
 

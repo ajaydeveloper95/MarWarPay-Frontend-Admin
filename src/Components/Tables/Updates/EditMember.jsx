@@ -15,12 +15,9 @@ import {
 import { useNavigate, useParams } from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useSidebar } from "../../../Context/SidebarContext";
-import { accessToken } from "../../../helpingFile";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { apiGet, apiPost } from "../../../utils/http";
-
-const ACCESS_TOKEN = accessToken;
 const PACKAGE_API_ENDPOINT = `apiAdmin/v1/utility/getPackageList`;
 
 const EditMember = () => {
@@ -36,12 +33,7 @@ const EditMember = () => {
     const fetchUserData = async () => {
       try {
         const response = await apiGet(
-          `apiAdmin/v1/user/userProfile/${id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${ACCESS_TOKEN}`,
-            },
-          }
+          `apiAdmin/v1/user/userProfile/${id}`
         );
         if (response.data.statusCode === 200) {
           setUserData(response.data.data);
@@ -55,9 +47,7 @@ const EditMember = () => {
 
     const fetchPackages = async () => {
       try {
-        const response = await apiGet(PACKAGE_API_ENDPOINT, {
-          headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
-        });
+        const response = await apiGet(PACKAGE_API_ENDPOINT);
 
         if (response.status === 200) {
           setPackages(response.data.data);
@@ -76,23 +66,14 @@ const EditMember = () => {
     try {
       const response = await apiPost(
         `apiAdmin/v1/user/updateUser/${userData._id}`,
-        userData1,
-        {
-          headers: {
-            Authorization: `Bearer ${ACCESS_TOKEN}`,
-            "Content-Type": "application/json",
-          },
-        }
+        userData1
       );
       if (response.status === 200) {
-        toast.success("Updated successfully!"); // Show success toast
-        // setTimeout(() => {
-        //   navigate("/members/all_members"); // Navigate after 2 seconds
-        // }, 2000);
+        toast.success("Updated successfully!"); 
       }
     } catch (err) {
       console.error("Error updating user data:", err);
-      toast.error("Error updating user data. Please try again."); // Show error toast
+      toast.error("Error updating user data. Please try again."); 
     }
   };
 
@@ -305,7 +286,7 @@ const EditMember = () => {
           </Box>
         </form>
       </Paper>
-      <ToastContainer /> {/* Add ToastContainer for toast notifications */}
+      <ToastContainer />
     </Container>
   );
 };

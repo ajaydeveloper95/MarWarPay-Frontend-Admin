@@ -23,11 +23,9 @@ import { useNavigate } from 'react-router-dom';
 import { useSidebar } from '../../../Context/SidebarContext';
 
 const PayoutCharge = () => {
-  const [selectedPackage, setSelectedPackage] = useState(''); // State for selected package
+  const [selectedPackage, setSelectedPackage] = useState('');
   const [isDefault, setIsDefault] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-
-  // State for additional input fields
   const [startRange, setStartRange] = useState('');
   const [endRange, setEndRange] = useState('');
   const [mdCharge, setMdCharge] = useState('');
@@ -40,11 +38,7 @@ const PayoutCharge = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-
-    // Display the success dialog
     setIsDialogOpen(true);
-
-    // Reset form fields
     setSelectedPackage('');
     setIsDefault(false);
     setStartRange('');
@@ -60,11 +54,10 @@ const PayoutCharge = () => {
   };
 
   const handleCancel = () => {
-    navigate(-1); // Navigate to the previous page
+    navigate(-1); 
   };
 
   const handleSearch = () => {
-    // Logic to handle search functionality
     console.log('Searching for:', selectedPackage);
   };
 
@@ -100,7 +93,6 @@ const PayoutCharge = () => {
           Add Package
         </Typography>
 
-        {/* Select Package and Search Button */}
         <Grid container spacing={2} alignItems="center" sx={{ mb: 2 }}>
           <Grid item xs={12} sm={8}>
             <FormControl fullWidth variant="outlined">

@@ -24,11 +24,9 @@ import {
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useSidebar } from "../../../Context/SidebarContext";
-import { accessToken } from "../../../helpingFile";
 import { apiGet } from "../../../utils/http";
 
 const API_ENDPOINT = `apiAdmin/v1/user/getUsers`;
-const ACCESS_TOKEN = accessToken;
 
 const ViewAllMembers = () => {
   const navigate = useNavigate();
@@ -55,11 +53,7 @@ const ViewAllMembers = () => {
 
   const fetchData = () => {
     setLoading(true);
-    apiGet(API_ENDPOINT, {
-        headers: {
-          Authorization: `Bearer ${ACCESS_TOKEN}`,
-        },
-      })
+    apiGet(API_ENDPOINT)
       .then((response) => {
         setUsersData(response.data.data);
         setLoading(false);
@@ -117,8 +111,6 @@ const ViewAllMembers = () => {
     navigate(`/member/EditMember/${memberId}`);
   };
 
-  // if (loading) return <div>Loading...</div>;
-  // if (error) return <div>Error: {error.message}</div>;
 
   return (
     <>

@@ -24,23 +24,26 @@ import {
   FormControl,
   Box,
   Pagination,
+  DialogContentText,
 } from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useSidebar } from "../../../Context/SidebarContext";
-import { accessToken } from "../../../helpingFile";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
-import { apiGet } from "../../../utils/http";
+import { apiGet, apiPost } from "../../../utils/http";
+import MoneyOffIcon from "@mui/icons-material/MoneyOff";
+import { toast, ToastContainer } from "react-toastify";
 
 const API_ENDPOINT = `apiAdmin/v1/payin/allSuccessPayIn`;
 const USER_LIST_API = `apiAdmin/v1/utility/getUserList`;
-const ACCESS_TOKEN = accessToken;
+const GENERATE_CHARGEBACK_API = `apiAdmin/v1/chargeBack/generateChargeBack`;
 
 const Payin = () => {
   const navigate = useNavigate();
   const { isSidebarOpen } = useSidebar();
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedTrxId, setSelectedTrxId] = useState("");
   const [filterData, setFilterData] = useState({
     page: 1,
     limit: 25,
@@ -53,6 +56,8 @@ const Payin = () => {
 
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [dialogOpen1, setDialogOpen1] = useState(false);
+  const [dialogMessage1, setDialogMessage1] = useState("");
   const [error, setError] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [dialogMessage, setDialogMessage] = useState("");
@@ -63,7 +68,7 @@ const Payin = () => {
   const formatDateTime = (dateString) => {
     const date = new Date(dateString);
     const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are zero-based
+    const month = String(date.getMonth() + 1).padStart(2, "0"); 
     const day = String(date.getDate()).padStart(2, "0");
     const hours = String(date.getHours()).padStart(2, "0");
     const minutes = String(date.getMinutes()).padStart(2, "0");
@@ -78,7 +83,6 @@ const Payin = () => {
         ...filterData,
         export: exportCSV,
       });
-      console.log("response export", response.data);
       if(exportCSV == "true") {
         const blob = new Blob([response.data], { type: 'text/csv' }); 
             const link = document.createElement('a');
@@ -99,7 +103,7 @@ const Payin = () => {
             charge: `${item.chargeAmount}`,
             credit: `${item.finalAmount}`,
             vpaID: item.vpaId,
-            description: item.payerName, // Use payerName for description
+            description: item.payerName, 
             dateTime: formatDateTime(item.createdAt),
             status: item.isSuccess,
           }))
@@ -118,13 +122,8 @@ const Payin = () => {
 
   const fetchUserList = async () => {
     try {
-      const response = await apiGet(USER_LIST_API, {
-        headers: {
-          Authorization: `Bearer ${ACCESS_TOKEN}`,
-        },
-      });
-      // console.log(response);
-      setUserList(response.data.data); // Store user data
+      const response = await apiGet(USER_LIST_API);
+      setUserList(response.data.data);
     } catch (err) {
       // setError(err);
     }
@@ -174,6 +173,28 @@ const Payin = () => {
 
   const handleDialogClose = () => {
     setDialogOpen(false);
+  };
+
+  const handleCrgBackClick = async () => {
+    try {
+      const response = await apiPost(GENERATE_CHARGEBACK_API, { trxId:selectedTrxId });
+      setDialogMessage1(response.data.message || "Chargeback generated successfully.");
+      setDialogSeverity("Success");
+      toast.success("Chargeback generated successfully!");
+      
+    } catch (error) {
+      setDialogMessage1(
+        error.response?.data?.message || "Failed to generate chargeback."
+      );
+      setDialogSeverity("error");
+      toast.error("Failed to generate chargeback.");
+    } finally {
+      setDialogOpen1(false);
+    }
+  };
+
+  const handleDialogClose1 = () => {
+    setDialogOpen1(false)
   };
 
   return (
@@ -516,6 +537,15 @@ const Payin = () => {
                   >
                     Action
                   </TableCell>
+                  <TableCell
+                    sx={{
+                      fontWeight: "bold",
+                      fontSize: "16px",
+                      border: "1px solid rgba(224, 224, 224, 1)",
+                    }}
+                  >
+                    ChargeBack
+                  </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -612,12 +642,23 @@ const Payin = () => {
                           {row.status}
                         </Button>
                       </TableCell>
-                      <TableCell>
+                      <TableCell sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}>
                         <IconButton
                           color="primary"
                           onClick={() => handleViewClick(row.status)}
                         >
                           <VisibilityIcon />
+                        </IconButton>
+                      </TableCell>
+                      <TableCell>
+                        <IconButton
+                          color="primary"
+                          onClick={() => {
+                            setSelectedTrxId(row.txnID)
+                            setDialogOpen1(true)
+                          }}
+                        >
+                          <MoneyOffIcon />
                         </IconButton>
                       </TableCell>
                     </TableRow>
@@ -689,6 +730,65 @@ const Payin = () => {
           </Button>
         </DialogActions>
       </Dialog>
+
+      <Dialog
+  open={dialogOpen1}
+  onClose={() => handleDialogClose1(false)}
+  sx={{
+    '& .MuiDialog-paper': {
+      margin: '20px', 
+      padding: '20px', 
+      minWidth: '350px',
+      borderRadius: '12px',
+      boxShadow: 3,
+      backgroundColor: '#f9f9f9', // Soft light background
+    },
+  }}
+>
+  <DialogTitle sx={{ fontWeight: 600, color: '#333', fontSize: '1.25rem' }}>
+    Confirmation
+  </DialogTitle>
+  <DialogContent sx={{ marginBottom: '20px' }}>
+    <DialogContentText sx={{ fontSize: '1rem', color: '#555', lineHeight: '1.5' }}>
+      Are you sure you want to apply the chargeback for transaction ID?
+    </DialogContentText>
+  </DialogContent>
+  <DialogActions sx={{ justifyContent: 'end' }}>
+    <Button
+      onClick={() => handleDialogClose1(false)}
+      color="secondary"
+      sx={{
+        backgroundColor: '#f44336',
+        color: '#fff',
+        '&:hover': {
+          backgroundColor: '#d32f2f', 
+        },
+        fontWeight: 500,
+      }}
+    >
+      No
+    </Button>
+    <Button
+      onClick={() => handleCrgBackClick()}
+      color="primary"
+      autoFocus
+      sx={{
+        backgroundColor: '#4caf50', 
+        color: '#fff',
+        '&:hover': {
+          backgroundColor: '#388e3c', 
+        },
+        fontWeight: 500,
+      }}
+    >
+      Yes
+    </Button>
+  </DialogActions>
+</Dialog>
+
+<ToastContainer />
+
+
     </>
   );
 };

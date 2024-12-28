@@ -111,7 +111,6 @@ const MemberWlt = () => {
       member.transactionStatus === "Success" ? "Success" : "Failed",
     ]);
 
-    // Combine headers and rows
     const csvContent = [headers, ...rows]
       .map((row) => row.join(","))
       .join("\n");
