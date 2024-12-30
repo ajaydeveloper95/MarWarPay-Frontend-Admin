@@ -82,11 +82,14 @@ const PayoutGenerate = () => {
             accountNumber: item.accountNumber,
             ifsc: item.ifscCode,
             amount: `${item.amount}`,
+            charge: `${item?.payoutSuccessData?.chargeAmount ?? 0}`,
+            finalAmt: `${item?.payoutSuccessData?.finalAmount ?? 0}`,
             txnId: item.trxId,
             status: item.isSuccess,
             dateTime: formatDateTime(item.createdAt),
           }))
         );
+        // setData(response?.data?.data)
 
         setTotalCount(response.data.totalDocs);
       }
@@ -105,6 +108,7 @@ const PayoutGenerate = () => {
       // setError(err);
     }
   };
+console.log("dataaaaa>>", data);
 
   useEffect(() => {
     fetchData();
@@ -407,6 +411,24 @@ const PayoutGenerate = () => {
                       border: "1px solid rgba(224, 224, 224, 1)",
                     }}
                   >
+                    Charge Amount
+                  </TableCell>
+                  <TableCell
+                    sx={{
+                      fontWeight: "bold",
+                      fontSize: "16px",
+                      border: "1px solid rgba(224, 224, 224, 1)",
+                    }}
+                  >
+                    Final Amount
+                  </TableCell>
+                  <TableCell
+                    sx={{
+                      fontWeight: "bold",
+                      fontSize: "16px",
+                      border: "1px solid rgba(224, 224, 224, 1)",
+                    }}
+                  >
                     Txn ID
                   </TableCell>
                   <TableCell
@@ -442,13 +464,13 @@ const PayoutGenerate = () => {
                       No data available
                     </TableCell>
                   </TableRow>
-                ) : data?.length === 0 ? (
+                ) : Array.isArray(data) && data.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={8} align="center">
                       No data available.
                     </TableCell>
                   </TableRow>
-                ) : (
+                ) : Array.isArray(data) ? (
                   data?.map((item, index) => (
                     <TableRow key={item.id}>
                       <TableCell
@@ -459,32 +481,42 @@ const PayoutGenerate = () => {
                       <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
                       >
-                        {item.memberId}
+                        {item?.memberId}
                       </TableCell>
                       <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
                       >
-                        {item.name}
+                        {item?.name}
                       </TableCell>
                       <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
                       >
-                        {item.accountNumber}
+                        {item?.accountNumber}
                       </TableCell>
                       <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
                       >
-                        {item.ifsc}
+                        {item?.ifsc}
                       </TableCell>
                       <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
                       >
-                        {item.amount}
+                        {item?.amount}
                       </TableCell>
                       <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
                       >
-                        {item.txnId}
+                        {item?.charge || '0'}
+                      </TableCell>
+                      <TableCell
+                        sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
+                      >
+                        {item?.finalAmt || '0'}
+                      </TableCell>
+                      <TableCell
+                        sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
+                      >
+                        {item?.txnId}
                       </TableCell>
                       <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
@@ -496,13 +528,13 @@ const PayoutGenerate = () => {
                                 ? "green"
                                 : item.status === "Failed"
                                 ? "red"
-                                : "orange", // Color for Pending
+                                : "orange", 
                             backgroundColor:
                               item.status === "Success"
                                 ? "rgba(0, 128, 0, 0.1)"
                                 : item.status === "Failed"
                                 ? "rgba(255, 0, 0, 0.1)"
-                                : "rgba(255, 165, 0, 0.1)", // Background for Pending
+                                : "rgba(255, 165, 0, 0.1)", 
                             borderRadius: 2,
                             padding: "2px 10px",
                           }}
@@ -512,7 +544,6 @@ const PayoutGenerate = () => {
                             : item.status === "Failed"
                             ? "Failed"
                             : "Pending"}{" "}
-                          {/* Display Pending when callBackStatus is not Success or Failed */}
                         </Button>
                       </TableCell>
                       <TableCell
@@ -522,6 +553,12 @@ const PayoutGenerate = () => {
                       </TableCell>
                     </TableRow>
                   ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={12} align="center">
+                      No data available.
+                    </TableCell>
+                  </TableRow>
                 )}
               </TableBody>
             </Table>
