@@ -57,6 +57,7 @@ const Qr = () => {
   const [qrDialogOpen, setQrDialogOpen] = useState(false);
   const [qrData, setQrData] = useState(null);
   const [totalCount, setTotalCount] = useState(0);  
+  const [successTPS, setSuccessTPS] = useState(0);  
 
   const formatDateTime = (dateString) => {
     const date = new Date(dateString);
@@ -73,7 +74,8 @@ const Qr = () => {
     setLoading(true);
     try {
       const response = await apiGet(API_ENDPOINT, { ...filterData });
-      setData(response?.data?.data);
+      setData(response?.data?.data); 
+      setSuccessTPS(response?.data?.message?.successRatePerMinute.toFixed(3))
       setTotalCount(response.data.totalDocs);
       // setLoading(false);
     } catch (err) {
@@ -202,6 +204,22 @@ const Qr = () => {
                 Total QR generate Transaction
               </Typography>
               <Typography>{data?.length}</Typography>
+            </Box>
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <Box
+              sx={{
+                p: 2,
+                borderRadius: 2,
+                backgroundColor: "background.paper",
+                boxShadow: "5px 0 10px -3px rgba(0, 128, 128, 0.6)",
+              }}
+            >
+              <Typography variant="h6" sx={{ color: "teal" }}>
+               Transaction success perminute
+              </Typography>
+              
+              <Typography>{successTPS}</Typography>
             </Box>
           </Grid>
         </Grid>
