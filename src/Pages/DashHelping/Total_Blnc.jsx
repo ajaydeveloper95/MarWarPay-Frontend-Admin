@@ -244,7 +244,7 @@ function Total_Blnc() {
             Waayupay-ImpactPeak Balance
             </Typography>
             <Typography variant="h4" sx={{ color: 'white', fontWeight: 'bold', mb: 2 }}>
-              ₹ {waayuPay.data.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+              ₹ {waayuPay.data}
             </Typography>
             <ResponsiveContainer width="100%" height={100}>
               <LineChart data={chartData}>
