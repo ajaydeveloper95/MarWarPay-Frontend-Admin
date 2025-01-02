@@ -11,12 +11,14 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import { apiGet } from '../../utils/http';
-
 const API_GET_USERS_ENDPOINT = `apiAdmin/v1/utility/getUserWithWallet`;
 const API_GET_BANK_BALANCE = `apiAdmin/v1/utility/getBalanceFetch`;
+const API_GET_WAAYUPAY_2_BALANCE = `apiAdmin/v1/utility/getBalanceFetchImpactPeek`
+
 
 function Total_Blnc() {
   const [data, setData] = useState([]);
+  const [waayuPay, setWaayuPay2Data] = useState([])
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [openMoneyBalance, setOpenMoneyBalance] = useState(-1);
@@ -34,6 +36,7 @@ function Total_Blnc() {
     fetchData();
   }, []);
 
+
   useEffect(() => {
     const fetchBankData = async () => {
       try {
@@ -47,13 +50,11 @@ function Total_Blnc() {
         console.error('Error fetching open money balance', error);
       }
     };
-
     fetchBankData();
   }, []);
 
   useEffect(() => {
     if (intervalId) clearInterval(intervalId);
-
     if (openMoneyBalance < 30000) {
       const id = setInterval(() => {
         setSnackbarMessage('Very low balance! Manage it immediately, or services may be suspended.');
@@ -69,9 +70,20 @@ function Total_Blnc() {
     } else {
       setOpenSnackbar(false);
     }
-
     return () => clearInterval(intervalId);
   }, [openMoneyBalance]);
+
+  useEffect(() => {
+    const fetchWaayuPayData = async () => {
+      try {
+        const response = await apiGet(API_GET_WAAYUPAY_2_BALANCE);
+        setWaayuPay2Data(response.data);
+      } catch (error) {
+        console.error('Error fetching data', error);
+      }
+    };
+    fetchWaayuPayData();
+  }, []);
 
   const handleSnackbarClose = () => {
     setOpenSnackbar(false);
@@ -167,6 +179,8 @@ function Total_Blnc() {
           </Box>
         </Grid>
 
+        
+
         {/* Open Money Balance */}
         <Grid item xs={12} sm={6} md={4}>
           <Box
@@ -185,20 +199,15 @@ function Total_Blnc() {
               },
             }}
           >
-            <Tooltip title="Open Money">
+            <Tooltip title="Waayupay Money">
               <Money sx={{ color: 'white', fontSize: 40, position: 'absolute', top: 16, right: 16 }} />
             </Tooltip>
             <Typography variant="h6" sx={{ color: 'white', mb: 1, mt: 2 }}>
-              Bank Balance
+            Waayupay-Brightbuck Balance
             </Typography>
             <Typography variant="h4" sx={{ color: 'white', fontWeight: 'bold', mb: 2 }}>
               ₹ {openMoneyBalance.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
             </Typography>
-            {/* {openMoneyBalance < 300000 && (
-              <Typography variant="body2" sx={{ color: 'white', mb: 2 }}>
-                Very low balance! Manage it immediately.
-              </Typography>
-            )} */}
             <ResponsiveContainer width="100%" height={100}>
               <LineChart data={chartData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.3)" />
@@ -206,6 +215,120 @@ function Total_Blnc() {
                 <YAxis hide />
                 <RechartsTooltip />
                 <Line type="monotone" dataKey="openMoneyBalance" stroke="#ffffff" strokeWidth={2} dot={false} />
+              </LineChart>
+            </ResponsiveContainer>
+          </Box>
+        </Grid>
+
+         <Grid item xs={12} sm={6} md={4}>
+          <Box
+            sx={{
+              p: 3,
+              borderRadius: 2,
+              background: 'linear-gradient(135deg, #9b4f94, #5b86e5)',
+              boxShadow: 3,
+              textAlign: 'center',
+              minHeight: '250px',
+              position: 'relative',
+              transition: 'transform 0.4s, box-shadow 0.4s',
+              '&:hover': {
+                transform: 'translateY(-5px)',
+                boxShadow: '0 12px 24px rgba(0, 0, 0, 0.25)',
+              },
+            }}
+          >
+            <Tooltip title="Waayupay-2">
+              <AccountBalance sx={{ color: 'white', fontSize: 40, position: 'absolute', top: 16, right: 16 }} />
+            </Tooltip>
+            <Typography variant="h6" sx={{ color: 'white', mb: 1, mt: 2 }}>
+            Waayupay-ImpactPeak Balance
+            </Typography>
+            <Typography variant="h4" sx={{ color: 'white', fontWeight: 'bold', mb: 2 }}>
+              ₹ {waayuPay.data}
+            </Typography>
+            <ResponsiveContainer width="100%" height={100}>
+              <LineChart data={chartData}>
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.3)" />
+                <XAxis dataKey="name" hide />
+                <YAxis hide />
+                <RechartsTooltip />
+                <Line type="monotone" dataKey="WaayupayBalance" stroke="#ffffff" strokeWidth={2} dot={false} />
+              </LineChart>
+            </ResponsiveContainer>
+          </Box>
+        </Grid>
+
+         <Grid item xs={12} sm={6} md={4}>
+          <Box
+            sx={{
+              p: 3,
+              borderRadius: 2,
+              background: 'linear-gradient(135deg, #dc36a7c4, #131d32)',
+              boxShadow: 3,
+              textAlign: 'center',
+              minHeight: '250px',
+              position: 'relative',
+              transition: 'transform 0.4s, box-shadow 0.4s',
+              '&:hover': {
+                transform: 'translateY(-5px)',
+                boxShadow: '0 12px 24px rgba(0, 0, 0, 0.25)',
+              },
+            }}
+          >
+            <Tooltip title="Iservu">
+              <AccountBalance sx={{ color: 'white', fontSize: 40, position: 'absolute', top: 16, right: 16 }} />
+            </Tooltip>
+            <Typography variant="h6" sx={{ color: 'white', mb: 1, mt: 2 }}>
+            Iservu Balance
+            </Typography>
+            <Typography variant="h4" sx={{ color: 'white', fontWeight: 'bold', mb: 2 }}>
+              ₹ 00.00
+            </Typography>
+            <ResponsiveContainer width="100%" height={100}>
+              <LineChart data={chartData}>
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.3)" />
+                <XAxis dataKey="name" hide />
+                <YAxis hide />
+                <RechartsTooltip />
+                <Line type="monotone" dataKey="iservuBalance" stroke="#ffffff" strokeWidth={2} dot={false} />
+              </LineChart>
+            </ResponsiveContainer>
+          </Box>
+        </Grid>
+
+         <Grid item xs={12} sm={6} md={4}>
+          <Box
+            sx={{
+              p: 3,
+              borderRadius: 2,
+              background: 'linear-gradient(135deg, rgb(80 167 17), #5b86e5)',
+              boxShadow: 3,
+              textAlign: 'center',
+              minHeight: '250px',
+              position: 'relative',
+              transition: 'transform 0.4s, box-shadow 0.4s',
+              '&:hover': {
+                transform: 'translateY(-5px)',
+                boxShadow: '0 12px 24px rgba(0, 0, 0, 0.25)',
+              },
+            }}
+          >
+            <Tooltip title="IsmartPay">
+              <AccountBalance sx={{ color: 'white', fontSize: 40, position: 'absolute', top: 16, right: 16 }} />
+            </Tooltip>
+            <Typography variant="h6" sx={{ color: 'white', mb: 1, mt: 2 }}>
+            IsmartPay Balance
+            </Typography>
+            <Typography variant="h4" sx={{ color: 'white', fontWeight: 'bold', mb: 2 }}>
+              ₹ 00.00
+            </Typography>
+            <ResponsiveContainer width="100%" height={100}>
+              <LineChart data={chartData}>
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.3)" />
+                <XAxis dataKey="name" hide />
+                <YAxis hide />
+                <RechartsTooltip />
+                <Line type="monotone" dataKey="ismartPayBalance" stroke="#ffffff" strokeWidth={2} dot={false} />
               </LineChart>
             </ResponsiveContainer>
           </Box>
