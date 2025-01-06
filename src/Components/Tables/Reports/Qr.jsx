@@ -94,9 +94,11 @@ const Qr = () => {
       // setError(err);
     }
   };
+
   useEffect(() => {
     fetchData();
   }, [filterData]);
+
   useEffect(() => {
     fetchUserList();
   }, []);
@@ -140,6 +142,7 @@ const Qr = () => {
       setDialogOpen(true);
     }
   };
+  
   const handleFilterChange = (key, value) => {
     setFilterData((prev) => ({ ...prev, [key]: value }));
   };

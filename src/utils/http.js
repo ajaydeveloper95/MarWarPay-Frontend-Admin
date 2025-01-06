@@ -3,6 +3,7 @@ import { axiosInstance } from "./axiosInstance";
 const GetAPI = async (url) => {
   const headers = {
     "Content-Type": "application/json",
+    "Accept": "application/json",
   };
 
   const response = await axiosInstance.get(url, {
@@ -19,6 +20,7 @@ function apiGet(url, params = {}) {
 function apiPost(url, body, contentType = "application/json") {
   const headers = {
     "Content-Type": contentType,
+    "Accept": contentType,
   };
 
   return axiosInstance.post(url, body, {
@@ -29,6 +31,7 @@ function apiPost(url, body, contentType = "application/json") {
 function apiPut(url, body, contentType = "application/json") {
   const headers = {
     "Content-Type": contentType,
+    "Accept": contentType,
   };
 
   return axiosInstance.put(url, body, {
