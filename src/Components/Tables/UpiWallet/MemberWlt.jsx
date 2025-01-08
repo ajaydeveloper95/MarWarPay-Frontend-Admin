@@ -44,6 +44,7 @@ const MemberWlt = () => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [reloadStrict, setreloadStrict] = useState(0);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -66,6 +67,12 @@ const MemberWlt = () => {
   const handleFilterChange = (key, value) => {
     setFilterData((prev) => ({ ...prev, [key]: value }));
   };
+
+  const handlesearchtxn = (e) => {
+    setSearchQuery(e.target.value)
+    setreloadStrict(1)
+  }
+
   const handlePageChange = (event, value) => {
     setFilterData((prev) => ({
       ...prev,
@@ -74,6 +81,7 @@ const MemberWlt = () => {
   };
 
   useEffect(() => {
+    if (reloadStrict !== 0) {
     const timeOutId = setTimeout(() => {
       setFilterData({
         ...filterData,
@@ -81,6 +89,7 @@ const MemberWlt = () => {
       });
     }, 500);
     return () => clearTimeout(timeOutId);
+  }
   }, [searchQuery]);
 
   const handleBackButtonClick = () => {
@@ -159,7 +168,7 @@ const MemberWlt = () => {
                 variant="outlined"
                 fullWidth
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={handlesearchtxn}
               />
             </Grid>
             <Grid item xs={12} md={2}>

@@ -58,6 +58,7 @@ const Qr = () => {
   const [qrData, setQrData] = useState(null);
   const [totalCount, setTotalCount] = useState(0);  
   const [successTPS, setSuccessTPS] = useState(0);  
+  const [reloadStrict, setreloadStrict] = useState(0);
 
   const formatDateTime = (dateString) => {
     const date = new Date(dateString);
@@ -104,6 +105,7 @@ const Qr = () => {
   }, []);
 
   useEffect(() => {
+    if (reloadStrict !== 0) {
     const timeOutId = setTimeout(() => {
       setFilterData({
         ...filterData,
@@ -112,6 +114,7 @@ const Qr = () => {
     }, 500);
 
     return () => clearTimeout(timeOutId);
+  }
   }, [searchQuery]);
 
   const handleBackButtonClick = () => {
@@ -146,6 +149,11 @@ const Qr = () => {
   const handleFilterChange = (key, value) => {
     setFilterData((prev) => ({ ...prev, [key]: value }));
   };
+
+  const handlesearchtxn = (e) => {
+    setSearchQuery(e.target.value)
+    setreloadStrict(1)
+  }
 
   const handlePageChange = (event, value) => {
     setFilterData((prev) => ({
@@ -266,7 +274,7 @@ const Qr = () => {
                 variant="outlined"
                 fullWidth
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={handlesearchtxn}
               />
             </Grid>
             <Grid item xs={12} md={2}>

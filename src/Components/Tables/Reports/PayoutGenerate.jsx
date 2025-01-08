@@ -46,6 +46,7 @@ const PayoutGenerate = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [totalCount, setTotalCount] = useState(0);
+  const [reloadStrict, setreloadStrict] = useState(0);
 
   const formatDateTime = (dateString) => {
     const date = new Date(dateString);
@@ -108,7 +109,6 @@ const PayoutGenerate = () => {
       // setError(err);
     }
   };
-console.log("dataaaaa>>", data);
 
   useEffect(() => {
     fetchData();
@@ -119,18 +119,25 @@ console.log("dataaaaa>>", data);
   }, []);
 
   useEffect(() => {
-    const timeOutId = setTimeout(() => {
-      setFilterData({
-        ...filterData,
-        keyword: searchQuery,
-      });
-    }, 500);
-    return () => clearTimeout(timeOutId);
-  }, [searchQuery]);
+    if (reloadStrict !== 0) {
+      const timeOutId = setTimeout(() => {
+        setFilterData({
+          ...filterData,
+          keyword: searchQuery,
+        });
+      }, 500);
+      return () => clearTimeout(timeOutId);
+    }
+  }, [searchQuery,reloadStrict]);
 
   const handleFilterChange = (key, value) => {
     setFilterData((prev) => ({ ...prev, [key]: value }));
   };
+
+  const handlesearchtxn = (e) => {
+    setSearchQuery(e.target.value)
+    setreloadStrict(1)
+  }
 
   const handlePageChange = (event, value) => {
     setFilterData((prev) => ({
@@ -235,7 +242,7 @@ console.log("dataaaaa>>", data);
                 variant="outlined"
                 fullWidth
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={handlesearchtxn}
               />
             </Grid>
             <Grid item xs={12} sm={2}>
@@ -506,12 +513,12 @@ console.log("dataaaaa>>", data);
                       <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
                       >
-                        {item?.charge || '0'}
+                        {item?.charge || "0"}
                       </TableCell>
                       <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
                       >
-                        {item?.finalAmt || '0'}
+                        {item?.finalAmt || "0"}
                       </TableCell>
                       <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
@@ -528,13 +535,13 @@ console.log("dataaaaa>>", data);
                                 ? "green"
                                 : item.status === "Failed"
                                 ? "red"
-                                : "orange", 
+                                : "orange",
                             backgroundColor:
                               item.status === "Success"
                                 ? "rgba(0, 128, 0, 0.1)"
                                 : item.status === "Failed"
                                 ? "rgba(255, 0, 0, 0.1)"
-                                : "rgba(255, 165, 0, 0.1)", 
+                                : "rgba(255, 165, 0, 0.1)",
                             borderRadius: 2,
                             padding: "2px 10px",
                           }}

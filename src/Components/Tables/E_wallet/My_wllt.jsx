@@ -39,6 +39,7 @@ const My_Wllt = () => {
   });
   const [totalCount, setTotalCount] = useState(0);
   const [transactions, setTransactions] = useState([]);
+  const [reloadStrict, setreloadStrict] = useState(0);
 
 
   const fetchData = async (exportCSV = false) => {
@@ -71,6 +72,11 @@ const My_Wllt = () => {
     setFilterData((prev) => ({ ...prev, [key]: value }));
   };
 
+  const handlesearchtxn = (e) => {
+    setSearchQuery(e.target.value)
+    setreloadStrict(1)
+  }
+
 
   const handlePageChange = (event, value) => {
     setFilterData((prev) => ({
@@ -80,6 +86,7 @@ const My_Wllt = () => {
   };
 
   useEffect(() => {
+    if (reloadStrict !== 0) {
     const timeOutId = setTimeout(() => {
       setFilterData({
         ...filterData,
@@ -87,6 +94,7 @@ const My_Wllt = () => {
       });
     }, 500);
     return () => clearTimeout(timeOutId);
+  }
   }, [searchQuery]);
 
 
@@ -131,7 +139,7 @@ const My_Wllt = () => {
               variant="outlined"
               fullWidth
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={handlesearchtxn}
             />
           </Grid>
           <Grid item xs={12} md={2}>
