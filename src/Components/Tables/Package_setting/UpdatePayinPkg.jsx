@@ -21,37 +21,48 @@ import {
   DialogContent,
   DialogTitle,
 } from "@mui/material";
-import DeleteIcon from '@mui/icons-material/Delete';
-import AddIcon from '@mui/icons-material/Add';
+import DeleteIcon from "@mui/icons-material/Delete";
+import AddIcon from "@mui/icons-material/Add";
 import { useSidebar } from "../../../Context/SidebarContext";
 import { apiGet, apiPost } from "../../../utils/http";
 
-
 const UpdatePayinPkg = () => {
+  const passwordGet = import.meta.env.VITE_API_URL_PACKAGEPASS
   const navigate = useNavigate();
   const location = useLocation();
   const { id } = useParams();
 
   const packageData = location.state || {};
-  const [payInPackageName, setpayInPackageName] = useState(packageData.payInPackageName || "");
-  const [payInChargeRange, setpayInChargeRange] = useState(packageData.payInChargeRange || []);
+  const [payInPackageName, setpayInPackageName] = useState(
+    packageData.payInPackageName || ""
+  );
+  const [payInChargeRange, setpayInChargeRange] = useState(
+    packageData.payInChargeRange || []
+  );
   const [isActive, setIsActive] = useState(packageData.isActive || false);
   const { isSidebarOpen } = useSidebar();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [openSuccessDialog, setOpenSuccessDialog] = useState(false);
+  const [openPasswordDialog, setOpenPasswordDialog] = useState(false);
+  const [enteredPassword, setEnteredPassword] = useState("");
+  const [passwordError, setPasswordError] = useState("");
 
   useEffect(() => {
     if (!packageData._id) {
       const fetchPackageData = async () => {
         try {
-          const response = await apiGet(`apiAdmin/v1/package/getSinglePayInPackage/${id}`);
+          const response = await apiGet(
+            `apiAdmin/v1/package/getSinglePayInPackage/${id}`
+          );
           const data = response.data.data;
           setpayInPackageName(data.payInPackageName);
           setpayInChargeRange(data.payInChargeRange);
           setIsActive(data.isActive);
         } catch (err) {
-          setError(err.response ? err.response.data.message : "An error occurred");
+          setError(
+            err.response ? err.response.data.message : "An error occurred"
+          );
         }
       };
       fetchPackageData();
@@ -65,7 +76,10 @@ const UpdatePayinPkg = () => {
   };
 
   const addChargeRange = () => {
-    setpayInChargeRange([...payInChargeRange, { lowerLimit: '', upperLimit: '', chargeType: '', charge: '' }]);
+    setpayInChargeRange([
+      ...payInChargeRange,
+      { lowerLimit: "", upperLimit: "", chargeType: "", charge: "" },
+    ]);
   };
 
   const deleteChargeRange = (index) => {
@@ -73,21 +87,39 @@ const UpdatePayinPkg = () => {
     setpayInChargeRange(updatedChargeRange);
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleUpdateClick = () => {
+    setOpenPasswordDialog(true);
+  };
+
+  const handlePasswordSubmit = async () => {
+    if (enteredPassword !== passwordGet) {
+      setPasswordError("Incorrect password");
+      return;
+    }
+    setPasswordError("");
+    setOpenPasswordDialog(false);
+
+    await handleSubmit();
+  };
+
+  const handlePasswordDialogClose = () => {
+    setOpenPasswordDialog(false);
+    setPasswordError("");
+  };
+
+  const handleSubmit = async () => {
     setLoading(true);
     setError(null);
     try {
-      const updatedChargeRange = payInChargeRange.map(({ _id, ...rest }) => rest);
-      await apiPost(
-        `apiAdmin/v1/package/updatePayInPackage/${id}`,
-        {
-          payInPackageName,
-          payInChargeRange: updatedChargeRange,
-          isActive,
-        }
+      const updatedChargeRange = payInChargeRange.map(
+        ({ _id, ...rest }) => rest
       );
-      setOpenSuccessDialog(true); 
+      await apiPost(`apiAdmin/v1/package/updatePayInPackage/${id}`, {
+        payInPackageName,
+        payInChargeRange: updatedChargeRange,
+        isActive,
+      });
+      setOpenSuccessDialog(true);
       setLoading(false);
     } catch (err) {
       setError(err.response ? err.response.data.message : "An error occurred");
@@ -97,7 +129,7 @@ const UpdatePayinPkg = () => {
 
   const handleCloseSuccessDialog = () => {
     setOpenSuccessDialog(false);
-    navigate("/package/settings/payin"); 
+    navigate("/package/settings/payin");
   };
 
   return (
@@ -115,7 +147,7 @@ const UpdatePayinPkg = () => {
         <Typography variant="h5" gutterBottom>
           Update Payin Package
         </Typography>
-        <form onSubmit={handleSubmit}>
+        <form>
           <Grid container spacing={1}>
             <Grid item xs={12}>
               <TextField
@@ -150,7 +182,13 @@ const UpdatePayinPkg = () => {
                           <TextField
                             type="number"
                             value={range.lowerLimit || ""}
-                            onChange={(e) => handleChargeChange(index, "lowerLimit", Number(e.target.value))}
+                            onChange={(e) =>
+                              handleChargeChange(
+                                index,
+                                "lowerLimit",
+                                Number(e.target.value)
+                              )
+                            }
                             fullWidth
                             required
                           />
@@ -159,7 +197,13 @@ const UpdatePayinPkg = () => {
                           <TextField
                             type="number"
                             value={range.upperLimit || ""}
-                            onChange={(e) => handleChargeChange(index, "upperLimit", Number(e.target.value))}
+                            onChange={(e) =>
+                              handleChargeChange(
+                                index,
+                                "upperLimit",
+                                Number(e.target.value)
+                              )
+                            }
                             fullWidth
                             required
                           />
@@ -168,7 +212,13 @@ const UpdatePayinPkg = () => {
                           <TextField
                             select
                             value={range.chargeType || ""}
-                            onChange={(e) => handleChargeChange(index, "chargeType", e.target.value)}
+                            onChange={(e) =>
+                              handleChargeChange(
+                                index,
+                                "chargeType",
+                                e.target.value
+                              )
+                            }
                             fullWidth
                             required
                           >
@@ -180,13 +230,22 @@ const UpdatePayinPkg = () => {
                           <TextField
                             type="number"
                             value={range.charge || ""}
-                            onChange={(e) => handleChargeChange(index, "charge", Number(e.target.value))}
+                            onChange={(e) =>
+                              handleChargeChange(
+                                index,
+                                "charge",
+                                Number(e.target.value)
+                              )
+                            }
                             fullWidth
                             required
                           />
                         </TableCell>
                         <TableCell align="right">
-                          <IconButton color="secondary" onClick={() => deleteChargeRange(index)}>
+                          <IconButton
+                            color="secondary"
+                            onClick={() => deleteChargeRange(index)}
+                          >
                             <DeleteIcon />
                           </IconButton>
                         </TableCell>
@@ -211,7 +270,12 @@ const UpdatePayinPkg = () => {
             </Grid>
             <Grid item xs={12}>
               <Box mt={2}>
-                <Button type="submit" variant="contained" color="primary" disabled={loading}>
+                <Button
+                  onClick={handleUpdateClick}
+                  variant="contained"
+                  color="primary"
+                  disabled={loading}
+                >
                   {loading ? "Updating..." : "Update Package"}
                 </Button>
                 {error && <Typography color="error">{error}</Typography>}
@@ -222,12 +286,42 @@ const UpdatePayinPkg = () => {
       </Paper>
 
       <Dialog
-        open={openSuccessDialog}
-        onClose={handleCloseSuccessDialog}
+        open={openPasswordDialog}
+        onClose={handlePasswordDialogClose}
+        PaperProps={{
+          sx: {
+            padding: 6,
+            margin: 4, 
+            borderRadius: 2, 
+          },
+        }}
       >
+        <DialogTitle sx={{ pb: 1 }}>Enter Password</DialogTitle>{" "}
+        <DialogContent sx={{ px: 3, py: 2 }}>
+          <TextField
+            type="password"
+            label="Password"
+            fullWidth
+            value={enteredPassword}
+            onChange={(e) => setEnteredPassword(e.target.value)}
+            error={!!passwordError}
+            helperText={passwordError}
+          />
+        </DialogContent>
+        <DialogActions sx={{ justifyContent: "space-between", px: 3, py: 2 }}>
+          <Button onClick={handlePasswordDialogClose} color="secondary">
+            Cancel
+          </Button>
+          <Button onClick={handlePasswordSubmit} color="primary">
+            Submit
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog open={openSuccessDialog} onClose={handleCloseSuccessDialog}>
         <DialogTitle>Success</DialogTitle>
         <DialogContent>
-          <Typography>Payout package updated successfully!</Typography>
+          <Typography>Payin package updated successfully!</Typography>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseSuccessDialog} color="primary">
