@@ -37,7 +37,7 @@ const MemberWlt = () => {
     keyword: "",
     startDate: "",
     endDate: "",
-    memberId: ""
+    memberId: "",
   });
   const [totalCount, setTotalCount] = useState(0);
 
@@ -46,38 +46,42 @@ const MemberWlt = () => {
   // const [error, setError] = useState(null);
   const [reloadStrict, setreloadStrict] = useState(0);
 
-    const fetchData = async (exportCSV = false) => {
-      try {
-        const response = await apiGet(API_ENDPOINT, { ...filterData });
-        if (exportCSV == "true") {
-          const blob = new Blob([response.data], { type: 'text/csv' }); 
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = `Transations${filterData.startDate}-${filterData.endDate}.csv`;  
-  
-            link.click();
-            link.remove();
-        } else{
-          setData(response.data.data);
-          setTotalCount(response.data.totalDocs);
-        }
-      } catch (err) {
-        console.error("Error fetching data:", err);
-      }
-    };
+  const fetchData = async (exportCSV = false) => {
+    try {
+      if (exportCSV == "true") {
+        const response = await apiGet(API_ENDPOINT, {
+          ...filterData,
+          export: exportCSV
+        });
+        const blob = new Blob([response.data], { type: "text/csv" });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = `Transations${filterData.startDate}-${filterData.endDate}.csv`;
 
-    useEffect(() => {
-      fetchData();
-    }, [filterData]);
+        link.click();
+        link.remove();
+      } else {
+        const response = await apiGet(API_ENDPOINT, { ...filterData });
+        setData(response.data.data);
+        setTotalCount(response.data.totalDocs);
+      }
+    } catch (err) {
+      console.error("Error fetching data:", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, [filterData]);
 
   const handleFilterChange = (key, value) => {
     setFilterData((prev) => ({ ...prev, [key]: value }));
   };
 
   const handlesearchtxn = (e) => {
-    setSearchQuery(e.target.value)
-    setreloadStrict(1)
-  }
+    setSearchQuery(e.target.value);
+    setreloadStrict(1);
+  };
 
   const handlePageChange = (event, value) => {
     setFilterData((prev) => ({
@@ -88,20 +92,19 @@ const MemberWlt = () => {
 
   useEffect(() => {
     if (reloadStrict !== 0) {
-    const timeOutId = setTimeout(() => {
-      setFilterData({
-        ...filterData,
-        memberId: searchQuery,
-      });
-    }, 500);
-    return () => clearTimeout(timeOutId);
-  }
+      const timeOutId = setTimeout(() => {
+        setFilterData({
+          ...filterData,
+          memberId: searchQuery,
+        });
+      }, 500);
+      return () => clearTimeout(timeOutId);
+    }
   }, [searchQuery]);
 
   const handleBackButtonClick = () => {
     navigate(-1);
   };
-
 
   return (
     <>
@@ -301,12 +304,12 @@ const MemberWlt = () => {
               </TableHead>
               <TableBody>
                 {Array.isArray(data) && data.length > 0 ? (
-                data.map((member, index) => (
+                  data.map((member, index) => (
                     <TableRow key={member._id}>
                       <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
                       >
-                       {(filterData.limit*(filterData.page-1) + index+1)}
+                        {filterData.limit * (filterData.page - 1) + index + 1}
                       </TableCell>
                       <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
@@ -411,7 +414,11 @@ const MemberWlt = () => {
           {/* Pagination Section */}
           <Box sx={{ display: "flex", justifyContent: "center", marginTop: 2 }}>
             <Pagination
-              count={parseInt(totalCount/filterData.limit)==0?parseInt(totalCount/filterData.limit):parseInt(totalCount/filterData.limit)+1}
+              count={
+                parseInt(totalCount / filterData.limit) == 0
+                  ? parseInt(totalCount / filterData.limit)
+                  : parseInt(totalCount / filterData.limit) + 1
+              }
               page={filterData?.page}
               onChange={handlePageChange}
               variant="outlined"
