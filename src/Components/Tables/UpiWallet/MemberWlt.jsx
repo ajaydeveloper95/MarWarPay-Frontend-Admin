@@ -42,27 +42,33 @@ const MemberWlt = () => {
   const [totalCount, setTotalCount] = useState(0);
 
   const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  // const [loading, setLoading] = useState(true);
+  // const [error, setError] = useState(null);
   const [reloadStrict, setreloadStrict] = useState(0);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
+    const fetchData = async (exportCSV = false) => {
       try {
         const response = await apiGet(API_ENDPOINT, { ...filterData });
-        setTotalCount(response.data.totalDocs);
-        setData(response.data.data);
-        setLoading(false);
+        if (exportCSV == "true") {
+          const blob = new Blob([response.data], { type: 'text/csv' }); 
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `Transations${filterData.startDate}-${filterData.endDate}.csv`;  
+  
+            link.click();
+            link.remove();
+        } else{
+          setData(response.data.data);
+          setTotalCount(response.data.totalDocs);
+        }
       } catch (err) {
         console.error("Error fetching data:", err);
-        // setError(err);
-        // setLoading(false);
       }
     };
 
-    fetchData();
-  }, [filterData]);
+    useEffect(() => {
+      fetchData();
+    }, [filterData]);
 
   const handleFilterChange = (key, value) => {
     setFilterData((prev) => ({ ...prev, [key]: value }));
@@ -96,36 +102,6 @@ const MemberWlt = () => {
     navigate(-1);
   };
 
-  const exportToCSV = () => {
-    const headers = [
-      "ID",
-      "MemberID",
-      "Before Amount",
-      "Cr/Dr Amount",
-      "After Amount",
-      "Date Time",
-      "Type",
-      "Description",
-      "Status",
-    ];
-
-    const rows = data.map((member) => [
-      member.userInfo.memberId,
-      member.beforeAmount,
-      member.transactionAmount,
-      member.afterAmount,
-      new Date(member.createdAt).toLocaleString(),
-      member.transactionType === "Cr." ? "Cr." : "Dr.",
-      member.description,
-      member.transactionStatus === "Success" ? "Success" : "Failed",
-    ]);
-
-    const csvContent = [headers, ...rows]
-      .map((row) => row.join(","))
-      .join("\n");
-
-    return csvContent;
-  };
 
   return (
     <>
@@ -227,7 +203,7 @@ const MemberWlt = () => {
               <Button
                 variant="contained"
                 color="primary"
-                onClick={exportToCSV}
+                onClick={() => fetchData("true")}
                 sx={{ width: "100%" }}
               >
                 Export
@@ -324,26 +300,8 @@ const MemberWlt = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {loading ? (
-                  <TableRow>
-                    <TableCell colSpan={8} align="center">
-                      Loading...
-                    </TableCell>
-                  </TableRow>
-                ) : error ? (
-                  <TableRow>
-                    <TableCell colSpan={8} align="center">
-                      No data available.
-                    </TableCell>
-                  </TableRow>
-                ) : !Array.isArray(data) || data.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={8} align="center">
-                      No data available.
-                    </TableCell>
-                  </TableRow>
-                ) : (
-                  data.map((member, index) => (
+                {Array.isArray(data) && data.length > 0 ? (
+                data.map((member, index) => (
                     <TableRow key={member._id}>
                       <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
@@ -436,6 +394,15 @@ const MemberWlt = () => {
                       </TableCell>
                     </TableRow>
                   ))
+                ) : (
+                  <TableRow>
+                    <TableCell
+                      colSpan={10}
+                      sx={{ textAlign: "center", padding: "16px" }}
+                    >
+                      Data Not Available
+                    </TableCell>
+                  </TableRow>
                 )}
               </TableBody>
             </Table>
