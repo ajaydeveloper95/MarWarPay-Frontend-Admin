@@ -409,6 +409,15 @@ const PayoutGenerate = () => {
                       border: "1px solid rgba(224, 224, 224, 1)",
                     }}
                   >
+                    GateWay
+                  </TableCell>
+                  <TableCell
+                    sx={{
+                      fontWeight: "bold",
+                      fontSize: "16px",
+                      border: "1px solid rgba(224, 224, 224, 1)",
+                    }}
+                  >
                     Amount
                   </TableCell>
                   <TableCell
@@ -504,6 +513,11 @@ const PayoutGenerate = () => {
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
                       >
                         {item?.ifsc}
+                      </TableCell>
+                      <TableCell
+                        sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
+                      >
+                        {item?.pannelUse || "N/A"}
                       </TableCell>
                       <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}

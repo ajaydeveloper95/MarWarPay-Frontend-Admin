@@ -403,6 +403,15 @@ const Qr = () => {
                       border: "1px solid rgba(224, 224, 224, 1)",
                     }}
                   >
+                    GateWay
+                  </TableCell>
+                  <TableCell
+                    sx={{
+                      fontWeight: "bold",
+                      fontSize: "16px",
+                      border: "1px solid rgba(224, 224, 224, 1)",
+                    }}
+                  >
                     Amount
                   </TableCell>
                   <TableCell
@@ -493,6 +502,11 @@ const Qr = () => {
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
                       >
                         {member.refId || "N/A"}
+                      </TableCell>
+                      <TableCell
+                        sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
+                      >
+                        {member.pannelUse || "N/A"}
                       </TableCell>
                       <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
