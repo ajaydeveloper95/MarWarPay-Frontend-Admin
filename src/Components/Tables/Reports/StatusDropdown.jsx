@@ -9,6 +9,7 @@ const StatusDropdown = ({ item, setData }) => {
     const [modalOpen, setModalOpen] = useState(false);
     const [bankRRN, setBankRRN] = useState("");
     const [optxId, setOptxId] = useState("");
+    const [status, setStatus] = useState("");
 
     const handleClick = (event) => {
         if (item.status === "Pending") {
@@ -18,10 +19,6 @@ const StatusDropdown = ({ item, setData }) => {
 
     const updateData = (txnId, status) => {
         setData((prevData) => {
-            // const filteredData = prevData.filter((i) => i.txnId !== txnId);
-            // const updatedItem = prevData.find((i) => i.txnId === txnId);
-
-            // return updatedItem ? [{ ...updatedItem, status }, ...filteredData] : prevData;
             const oldData = JSON.parse(JSON.stringify(prevData))
             return oldData.map((item) => {
                 if (item.txnId === txnId) {
@@ -38,17 +35,9 @@ const StatusDropdown = ({ item, setData }) => {
 
     const handleClose = async (newStatus) => {
         try {
-            let payload = {
-                trxId: item.txnId,
-                memberId: item.memberId,
-                status: "failed"
-            }
-            if (newStatus === "Success") {
-                setModalOpen(true);
-            } else if (newStatus === "Failed") {
-                await apiPost("apiAdmin/v1/payout/payoutStatusUpdate", payload);
-                updateData(item.txnId, newStatus);
-            }
+            setModalOpen(true);
+            setStatus(newStatus);
+            // handleStatus(newStatus);
         } catch (error) {
             console.log("handleClose ~ error:", error);
         } finally {
@@ -57,31 +46,50 @@ const StatusDropdown = ({ item, setData }) => {
 
     };
 
-    const handleSuccess = async () => {
-        if (!bankRRN) {
-            toast.error('Bank RRN is mandatory!', {
-                position: "top-right",
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: false,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "light",
-                transition: Bounce,
-                });
-            return
+    const handleStatus = async () => {
+        try {
+            if (status === "Failed") {
+                let payload = {
+                    trxId: item.txnId,
+                    memberId: item.memberId,
+                    status: "failed"
+                }
+                await apiPost("apiAdmin/v1/payout/payoutStatusUpdate", payload);
+                updateData(item.txnId, status);
+                setModalOpen(false)
+                return;
+            }
+            else if (status === "Success") {
+                if (!bankRRN) {
+                    toast.error('Bank RRN is mandatory!', {
+                        position: "top-right",
+                        autoClose: 5000,
+                        hideProgressBar: false,
+                        closeOnClick: false,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "light",
+                        transition: Bounce,
+                    });
+                    return
+                }
+                let payload = {
+                    trxId: item.txnId,
+                    memberId: item.memberId,
+                    status: "Success",
+                    bankRRN: bankRRN,
+                    optxId: optxId,
+                }
+                await apiPost("apiAdmin/v1/payout/payoutStatusUpdate", payload);
+                updateData(item.txnId, "Success");
+                setModalOpen(false)
+            }
+
+        } catch (error) {
+            console.log("handleSuccess ~ error:", error);
+
         }
-        let payload = {
-            trxId: item.txnId,
-            memberId: item.memberId,
-            status: "Success",
-            bankRRN: bankRRN,
-            optxId: optxId,
-        }
-        await apiPost("apiAdmin/v1/payout/payoutStatusUpdate", payload);
-        updateData(item.txnId, "Success");
-        setModalOpen(false)
     }
 
     return (
@@ -133,14 +141,30 @@ const StatusDropdown = ({ item, setData }) => {
                     borderRadius: 2,
                 }}>
                     {/* <h2>Success Form</h2> */}
-                    <TextField label="Transaction Id" disabled value={item.txnId} slotProps={{ inputLabel: { shrink: true } }} fullWidth sx={{ mb: 2 }} />
-                    <TextField label="Bank RRN" value={bankRRN} required onChange={(e) => setBankRRN(e.target.value)} fullWidth sx={{ mb: 2 }} />
-                    <TextField label="Optx Id" fullWidth value={optxId} onChange={(e) => setOptxId(e.target.value)} sx={{ mb: 2 }} />
-                    <TextField label="Member Id" disabled slotProps={{ inputLabel: { shrink: true } }} value={item.memberId} fullWidth sx={{ mb: 2 }} />
-                    <TextField label="Status" disabled slotProps={{ inputLabel: { shrink: true } }} value={"Success"} fullWidth sx={{ mb: 2 }} />
-                    <Button variant="contained" color="primary" onClick={handleSuccess}>
-                        Submit
-                    </Button>
+                    {status === "Success" ?
+                        <>
+                            <TextField label="Transaction Id" disabled value={item.txnId} slotProps={{ inputLabel: { shrink: true } }} fullWidth sx={{ mb: 2 }} />
+                            <TextField label="Bank RRN" value={bankRRN} required onChange={(e) => setBankRRN(e.target.value)} fullWidth sx={{ mb: 2 }} />
+                            <TextField label="Optx Id" fullWidth value={optxId} onChange={(e) => setOptxId(e.target.value)} sx={{ mb: 2 }} />
+                            <TextField label="Member Id" disabled slotProps={{ inputLabel: { shrink: true } }} value={item.memberId} fullWidth sx={{ mb: 2 }} />
+                            <TextField label="Status" disabled slotProps={{ inputLabel: { shrink: true } }} value={"Success"} fullWidth sx={{ mb: 2 }} />
+                            <Button variant="contained" color="primary" sx={{ marginRight: "20px" }} onClick={handleStatus}>
+                                Submit
+                            </Button>
+                            <Button variant="contained" color="primary" onClick={() => setModalOpen(false)}>
+                                Cancel
+                            </Button>
+                        </>
+                        :
+                        <>
+                            <h2>Are you sure?</h2>
+                            <Button variant="contained" color="primary" sx={{ marginRight: "20px" }} onClick={handleStatus}>
+                                Yes
+                            </Button>
+                            <Button variant="contained" color="primary" onClick={() => setModalOpen(false)}>
+                                No
+                            </Button>
+                        </>}
                 </Box>
             </Modal>
         </>

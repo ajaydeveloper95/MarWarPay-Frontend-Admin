@@ -89,6 +89,7 @@ const PayoutGenerate = () => {
             txnId: item.trxId,
             status: item.isSuccess,
             dateTime: formatDateTime(item.createdAt),
+            pannelUse: item.pannelUse
           }))
         );
         // setData(response?.data?.data)
