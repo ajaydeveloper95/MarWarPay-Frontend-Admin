@@ -24,6 +24,7 @@ import {
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useSidebar } from "../../../Context/SidebarContext";
 import { apiGet } from "../../../utils/http";
+import StatusDropdown from "./StatusDropdown";
 
 const API_ENDPOINT = `apiAdmin/v1/payout/allPayOutPayment`;
 const USER_LIST_API = `apiAdmin/v1/utility/getUserList`;
@@ -128,7 +129,7 @@ const PayoutGenerate = () => {
       }, 500);
       return () => clearTimeout(timeOutId);
     }
-  }, [searchQuery,reloadStrict]);
+  }, [searchQuery, reloadStrict]);
 
   const handleFilterChange = (key, value) => {
     setFilterData((prev) => ({ ...prev, [key]: value }));
@@ -179,11 +180,11 @@ const PayoutGenerate = () => {
                 ₹{" "}
                 {data.length > 0
                   ? data
-                      .reduce(
-                        (total, user) => total + parseFloat(user.amount || 0),
-                        0
-                      )
-                      .toLocaleString("en-IN", { minimumFractionDigits: 2 })
+                    .reduce(
+                      (total, user) => total + parseFloat(user.amount || 0),
+                      0
+                    )
+                    .toLocaleString("en-IN", { minimumFractionDigits: 2 })
                   : "0.00"}
               </Typography>
             </Box>
@@ -542,30 +543,7 @@ const PayoutGenerate = () => {
                       <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
                       >
-                        <Button
-                          sx={{
-                            color:
-                              item.status === "Success"
-                                ? "green"
-                                : item.status === "Failed"
-                                ? "red"
-                                : "orange",
-                            backgroundColor:
-                              item.status === "Success"
-                                ? "rgba(0, 128, 0, 0.1)"
-                                : item.status === "Failed"
-                                ? "rgba(255, 0, 0, 0.1)"
-                                : "rgba(255, 165, 0, 0.1)",
-                            borderRadius: 2,
-                            padding: "2px 10px",
-                          }}
-                        >
-                          {item.status === "Success"
-                            ? "Success"
-                            : item.status === "Failed"
-                            ? "Failed"
-                            : "Pending"}{" "}
-                        </Button>
+                        <StatusDropdown item={item} setData={setData} />
                       </TableCell>
                       <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}

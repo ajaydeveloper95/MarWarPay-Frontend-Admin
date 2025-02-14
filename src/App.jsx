@@ -43,10 +43,12 @@ import AllUserIP from './Components/Tables/UserIP/AllUserIP';
 import AddIP from './Components/Tables/UserIP/AddIP';
 import UpdateIP from './Components/Tables/UserIP/UpdareIP';
 import ChargeBack from './Components/Tables/Reports/ChargeBack';
+import { ToastContainer } from 'react-toastify';
 
 function App() {
   return (
     <SidebarProvider>
+      <ToastContainer />
       <Router>
         <Routes>
           {/* Public route */}
@@ -83,14 +85,14 @@ function App() {
                     {/* UPI wallet routes */}
                     <Route path="upi-wallet/configure" element={<MemberWlt />} />
                     <Route path="upi-wallet/transactions" element={<Transfer />} />
-                    <Route path="/upi-wallet/settlement" element={<Settlement/>} />
+                    <Route path="/upi-wallet/settlement" element={<Settlement />} />
 
                     {/* UPI wallet routes */}
                     <Route path="/ewallet-management/my-wallet" element={<My_Wllt />} />
                     <Route path="/ewallet-management/member-wallet" element={<MemberWllt />} />
                     <Route path="/ewallet-management/credit-fund" element={<Cr />} />
                     <Route path="/ewallet-management/debit-fund" element={<Dr />} />
-                    
+
 
                     {/* Package Management routes */}
                     <Route path="package/add" element={<AddPackage />} />
@@ -102,7 +104,7 @@ function App() {
                     <Route path="/package/settings/payin" element={<AllPayin />} />
                     <Route path="update-payout/:id" element={<UpdatePayout />} />.
                     <Route path="update-payin/:id" element={<UpdatePayinPkg />} />
-                    
+
 
                     {/* Support routes */}
                     <Route path="/support/pandingTicket" element={<Panding />} />
@@ -112,16 +114,16 @@ function App() {
                     {/* Settings route */}
                     <Route path="settings/payoutCharge" element={<PayoutCharge />} />
 
-                     {/* Api Switching routes */}
-                     <Route path="/main-setting/payout-switch" element={<PayoutSW />} />
+                    {/* Api Switching routes */}
+                    <Route path="/main-setting/payout-switch" element={<PayoutSW />} />
                     <Route path="/main-setting/payin-switch" element={<PayinSW />} />
                     <Route path="/main-setting/viewPayin" element={<UpdatePayin />} />
                     <Route path="/main-setting/viewPayout" element={<UpdatePayoutAPI />} />
 
-                     {/* IP route */}
-                     <Route path="/ipManagement/allUsersIP" element={<AllUserIP />} />
-                     <Route path="/ip-whitelist/add" element={<AddIP />} />
-                     <Route path="/ip-whitelist/:id" element={<UpdateIP />} />
+                    {/* IP route */}
+                    <Route path="/ipManagement/allUsersIP" element={<AllUserIP />} />
+                    <Route path="/ip-whitelist/add" element={<AddIP />} />
+                    <Route path="/ip-whitelist/:id" element={<UpdateIP />} />
                   </Routes>
                   <Footer />
                 </>
