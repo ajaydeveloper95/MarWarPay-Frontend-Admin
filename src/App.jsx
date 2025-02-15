@@ -54,6 +54,7 @@ function App() {
           {/* Public route */}
           <Route path="/" element={<Login />} />
 
+
           {/* Private routes */}
           <Route element={<PrivateRoute />}>
             <Route
