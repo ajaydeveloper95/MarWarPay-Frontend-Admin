@@ -24,6 +24,7 @@ import {
   DialogContent,
   DialogTitle,
   Alert,
+  TextField,
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate } from "react-router-dom";
@@ -48,6 +49,8 @@ const PayoutSW = () => {
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [password, setPassword] = useState("");
+  const [isPasswordDialogOpen, setIsPasswordDialogOpen] = useState(false);
   const navigate = useNavigate();
 
   const fetchUserList = async () => {
@@ -75,7 +78,11 @@ const PayoutSW = () => {
 
   const handleCancel = () => navigate(-1);
   const handleOpenDialog = () => setIsDialogOpen(true);
-  const handleCloseDialog = () => setIsDialogOpen(false);
+  const handleCloseDialog = () => {
+    setIsDialogOpen(false);
+    fetchUserList();
+    fetchPayInApiList();
+  };
 
   const handleUserChange = (e, custom) => {
     const value = e.target.value;
@@ -90,6 +97,29 @@ const PayoutSW = () => {
     setUserApiValue(apiId);
   };
 
+  const handlePasswordSubmit = async () => {
+    if (!password) {
+      setError("Please enter a password.");
+      return;
+    }
+
+    try {
+      const isValidPassword = await validatePassword(password);
+      if (isValidPassword) {
+        setIsPasswordDialogOpen(false);
+        handleSave();
+      } else {
+        setError("Incorrect password.");
+      }
+    } catch (err) {
+      setError("Error validating password.");
+    }
+  };
+
+  const validatePassword = async (password) => {
+    return password === "zanithpay@12345";
+  };
+
   const handleSave = async () => {
     if (!selectedApiId) {
       setError("Please select an API to switch.");
@@ -99,15 +129,12 @@ const PayoutSW = () => {
     try {
       let response;
       if (dropdownValue === "allusers") {
-        response = await apiPost(
-          SWITCH_API,
-          { apiId: selectedApiId }
-        );
+        response = await apiPost(SWITCH_API, { apiId: selectedApiId });
       } else {
-        response = await apiPost(
-          SWITCH_API_SINGLE_USER,
-          { userId: dropdownValue, apiId: selectedApiId }
-        );
+        response = await apiPost(SWITCH_API_SINGLE_USER, {
+          userId: dropdownValue,
+          apiId: selectedApiId,
+        });
       }
 
       if (response.data.statusCode === 200) {
@@ -237,17 +264,29 @@ const PayoutSW = () => {
                 <TableHead>
                   <TableRow>
                     <TableCell
-                      sx={{ fontWeight: "bold", bgcolor: "lightgray", border: "1px solid rgba(224, 224, 224, 1)"  }}
+                      sx={{
+                        fontWeight: "bold",
+                        bgcolor: "lightgray",
+                        border: "1px solid rgba(224, 224, 224, 1)",
+                      }}
                     >
                       #
                     </TableCell>
                     <TableCell
-                      sx={{ fontWeight: "bold", bgcolor: "lightgray", border: "1px solid rgba(224, 224, 224, 1)"  }}
+                      sx={{
+                        fontWeight: "bold",
+                        bgcolor: "lightgray",
+                        border: "1px solid rgba(224, 224, 224, 1)",
+                      }}
                     >
                       API
                     </TableCell>
                     <TableCell
-                      sx={{ fontWeight: "bold", bgcolor: "lightgray", border: "1px solid rgba(224, 224, 224, 1)"  }}
+                      sx={{
+                        fontWeight: "bold",
+                        bgcolor: "lightgray",
+                        border: "1px solid rgba(224, 224, 224, 1)",
+                      }}
                     >
                       Status
                     </TableCell>
@@ -256,9 +295,19 @@ const PayoutSW = () => {
                 <TableBody>
                   {payInApiList.map((api, index) => (
                     <TableRow key={api._id}>
-                      <TableCell sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}>{index + 1}</TableCell>
-                      <TableCell sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}>{api.apiName}</TableCell>
-                      <TableCell sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}>
+                      <TableCell
+                        sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
+                      >
+                        {index + 1}
+                      </TableCell>
+                      <TableCell
+                        sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
+                      >
+                        {api.apiName}
+                      </TableCell>
+                      <TableCell
+                        sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
+                      >
                         {dropdownValue !== "false" ? (
                           <FormControlLabel
                             value={api._id}
@@ -286,10 +335,57 @@ const PayoutSW = () => {
         </Box>
 
         <Box sx={{ mt: 4, display: "flex", justifyContent: "flex-end" }}>
-          <Button variant="contained" color="primary" onClick={handleSave}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => setIsPasswordDialogOpen(true)}
+          >
             Save
           </Button>
         </Box>
+
+        {/* Password Dialog */}
+        <Dialog
+          open={isPasswordDialogOpen}
+          onClose={() => setIsPasswordDialogOpen(false)}
+          sx={{
+            "& .MuiDialog-paper": {
+              width: "400px", // Set width of the dialog
+              maxWidth: "90%", // Set max width, it will not exceed 90% of the screen width
+              padding: "16px", // Adjust padding
+              margin: "auto", // Centers the dialog
+            },
+          }}
+        >
+          <DialogTitle>Enter Password</DialogTitle>
+          <DialogContent>
+            <TextField
+              label="Password"
+              type="password"
+              fullWidth
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              sx={{ mb: 2 }} 
+            />
+            <Box
+              sx={{ mt: 2, display: "flex", justifyContent: "space-between" }}
+            >
+              <Button
+                onClick={() => setIsPasswordDialogOpen(false)}
+                color="secondary"
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handlePasswordSubmit}
+                variant="contained"
+                color="primary"
+              >
+                Submit
+              </Button>
+            </Box>
+          </DialogContent>
+        </Dialog>
 
         {/* Snackbar for success/failure messages */}
         <Snackbar
