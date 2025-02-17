@@ -27,10 +27,11 @@ import {
 } from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle"; 
-import CancelIcon from "@mui/icons-material/Cancel"; 
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import CancelIcon from "@mui/icons-material/Cancel";
 import { useSidebar } from "../../../Context/SidebarContext";
 import { apiGet } from "../../../utils/http";
+import { toast } from "react-toastify";
 
 const API_ENDPOINT = `apiAdmin/v1/payin/allPaymentGenerated`;
 const USER_LIST_API = `apiAdmin/v1/utility/getUserList`;
@@ -56,14 +57,14 @@ const Qr = () => {
   const [userList, setUserList] = useState([]);
   const [qrDialogOpen, setQrDialogOpen] = useState(false);
   const [qrData, setQrData] = useState(null);
-  const [totalCount, setTotalCount] = useState(0);  
-  const [successTPS, setSuccessTPS] = useState(0);  
+  const [totalCount, setTotalCount] = useState(0);
+  const [successTPS, setSuccessTPS] = useState(0);
   const [reloadStrict, setreloadStrict] = useState(0);
 
   const formatDateTime = (dateString) => {
     const date = new Date(dateString);
     const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");  
+    const month = String(date.getMonth() + 1).padStart(2, "0");
     const day = String(date.getDate()).padStart(2, "0");
     const hours = String(date.getHours()).padStart(2, "0");
     const minutes = String(date.getMinutes()).padStart(2, "0");
@@ -71,11 +72,26 @@ const Qr = () => {
     return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
   };
 
-  const fetchData = async () => {
+  const fetchData = async (exportCSV = false) => {
     setLoading(true);
     try {
-      const response = await apiGet(API_ENDPOINT, { ...filterData });
-      setData(response?.data?.data); 
+      if (!filterData.startDate && exportCSV == "true") {
+        toast.error("please choose a start date")
+        return
+      };
+      const response = await apiGet(API_ENDPOINT, { ...filterData, export: exportCSV });
+      console.log("fetchData ~ filterData.startDate:", filterData.startDate);
+      if (exportCSV == "true") {
+        const blob = new Blob([response.data], { type: "text/csv" });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = `payout${filterData.startDate}-${filterData.endDate}.csv`;
+
+        link.click();
+        link.remove();
+        return;
+      }
+      setData(response?.data?.data);
       setSuccessTPS(response?.data?.message?.successRatePerMinute.toFixed(3))
       setTotalCount(response.data.totalDocs);
       // setLoading(false);
@@ -106,15 +122,15 @@ const Qr = () => {
 
   useEffect(() => {
     if (reloadStrict !== 0) {
-    const timeOutId = setTimeout(() => {
-      setFilterData({
-        ...filterData,
-        keyword: searchQuery,
-      });
-    }, 500);
+      const timeOutId = setTimeout(() => {
+        setFilterData({
+          ...filterData,
+          keyword: searchQuery,
+        });
+      }, 500);
 
-    return () => clearTimeout(timeOutId);
-  }
+      return () => clearTimeout(timeOutId);
+    }
   }, [searchQuery]);
 
   const handleBackButtonClick = () => {
@@ -145,7 +161,7 @@ const Qr = () => {
       setDialogOpen(true);
     }
   };
-  
+
   const handleFilterChange = (key, value) => {
     setFilterData((prev) => ({ ...prev, [key]: value }));
   };
@@ -196,8 +212,8 @@ const Qr = () => {
                 ₹{" "}
                 {Array.isArray(data) && data.length > 0
                   ? data
-                      .reduce((total, user) => total + (user.amount || 0), 0)
-                      .toLocaleString("en-IN", { minimumFractionDigits: 2 })
+                    .reduce((total, user) => total + (user.amount || 0), 0)
+                    .toLocaleString("en-IN", { minimumFractionDigits: 2 })
                   : "0.00"}
               </Typography>
             </Box>
@@ -227,9 +243,9 @@ const Qr = () => {
               }}
             >
               <Typography variant="h6" sx={{ color: "teal" }}>
-               Transaction success perminute
+                Transaction success perminute
               </Typography>
-              
+
               <Typography>{successTPS}</Typography>
             </Box>
           </Grid>
@@ -317,7 +333,7 @@ const Qr = () => {
                     startDate: e.target.value,
                   })
                 }
-                // onChange={(e) => setStartDate(e.target.value)}
+              // onChange={(e) => setStartDate(e.target.value)}
               />
             </Grid>
             <Grid item xs={12} md={2}>
@@ -335,9 +351,18 @@ const Qr = () => {
                     endDate: e.target.value,
                   })
                 }
-                // value={endDate}
-                // onChange={(e) => setEndDate(e.target.value)}
+              // value={endDate}
+              // onChange={(e) => setEndDate(e.target.value)}
               />
+            </Grid>
+            <Grid item xs={12} md={2} align="right" marginBottom={2}>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => fetchData("true")}
+              >
+                Export
+              </Button>
             </Grid>
             <Grid item xs={12} sm={2}>
               <FormControl fullWidth>
@@ -540,14 +565,14 @@ const Qr = () => {
                               member?.callBackStatus === "Success"
                                 ? "green"
                                 : member?.callBackStatus === "Failed"
-                                ? "red"
-                                : "orange",
+                                  ? "red"
+                                  : "orange",
                             backgroundColor:
                               member?.callBackStatus === "Success"
                                 ? "rgba(0, 128, 0, 0.1)"
                                 : member?.callBackStatus === "Failed"
-                                ? "rgba(255, 0, 0, 0.1)"
-                                : "rgba(255, 165, 0, 0.1)",
+                                  ? "rgba(255, 0, 0, 0.1)"
+                                  : "rgba(255, 165, 0, 0.1)",
                             borderRadius: 2,
                             padding: "2px 10px",
                           }}
