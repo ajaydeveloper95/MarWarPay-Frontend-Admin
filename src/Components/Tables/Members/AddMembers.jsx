@@ -40,6 +40,7 @@ const AddMembers = () => {
   const [pincode, setPincode] = useState("");
   const [packageType, setPackageType] = useState("");
   const [minimumWallet, setMinimumWallet] = useState("");
+  const [EwalletFundLock, setEwalletFundLock] = useState("");
   const [status, setStatus] = useState(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false); // State for success dialog
   const [error, setError] = useState(null);
@@ -124,6 +125,7 @@ const AddMembers = () => {
       !pincode ||
       !packageType ||
       !minimumWallet ||
+      !EwalletFundLock ||
       status === null
     ) {
       setError("Please fill out all required fields.");
@@ -152,7 +154,9 @@ const AddMembers = () => {
           // state,
           // city,
           package: packageType,
+          EwalletFundLock: EwalletFundLock,
           minWalletBalance: minimumWallet,
+
           isActive: status,
         }
       );
@@ -173,6 +177,7 @@ const AddMembers = () => {
       setPincode("");
       setPackageType("");
       setMinimumWallet("");
+      setEwalletFundLock(""),
       setStatus("");
     } catch (err) {
       console.error("Error posting data:", err);
@@ -372,6 +377,17 @@ const AddMembers = () => {
                 fullWidth
                 value={minimumWallet}
                 onChange={(e) => setMinimumWallet(e.target.value)}
+                required
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} md={4}>
+              <TextField
+                label="Fund Lock"
+                type="number"
+                variant="outlined"
+                fullWidth
+                value={EwalletFundLock}
+                onChange={(e) => setEwalletFundLock(e.target.value)}
                 required
               />
             </Grid>
