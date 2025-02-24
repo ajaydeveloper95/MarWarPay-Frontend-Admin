@@ -544,6 +544,23 @@ const ViewAllMembers = () => {
                                 {user.upiWalletBalance}
                               </TableCell>
                             </TableRow>
+                            <TableRow>
+                              <TableCell
+                                sx={{
+                                  border: "1px solid rgba(224, 224, 224, 1)",
+                                  fontWeight: "bold",
+                                }}
+                              >
+                                Fund Lock
+                              </TableCell>
+                              <TableCell
+                                sx={{
+                                  border: "1px solid rgba(224, 224, 224, 1)",
+                                }}
+                              >
+                                {user.EwalletFundLock || 'N/A'}
+                              </TableCell>
+                            </TableRow>
                           </TableBody>
                         </Table>
                       </TableCell>

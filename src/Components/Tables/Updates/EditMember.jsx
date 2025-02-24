@@ -233,6 +233,16 @@ const EditMember = () => {
             </Grid>
             <Grid item xs={12} md={6}>
               <TextField
+                label="Fund Lock"
+                name="EwalletFundLock"
+                variant="outlined"
+                fullWidth
+                value={userData.EwalletFundLock}
+                onChange={onhandle2}
+              />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <TextField
                 label="E Wallet Balance"
                 name="EwalletBalance"
                 variant="outlined"
