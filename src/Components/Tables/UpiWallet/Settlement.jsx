@@ -103,6 +103,7 @@ const Settlement = () => {
         setFilteredTransactions(transactions);
       }
     } catch (err) {
+      setFilteredTransactions([]);
       console.error("Error fetching settlement data:", err);
     } finally {
       setLoading(false); 
@@ -205,6 +206,9 @@ const Settlement = () => {
               InputLabelProps={{
                 shrink: true,
               }}
+              inputProps={{
+                step: 1,
+              }}
               variant="outlined"
             />
           </Grid>
@@ -220,6 +224,9 @@ const Settlement = () => {
               InputLabelProps={{
                 shrink: true,
               }}
+              inputProps={{
+                step: 1,
+              }}
               variant="outlined"
             />
           </Grid>
@@ -229,7 +236,7 @@ const Settlement = () => {
               variant="contained"
               color="primary"
               onClick={handleSearch}
-              disabled={loading} // Disable button while loading
+              disabled={loading} 
             >
               Search
             </Button>
@@ -245,7 +252,7 @@ const Settlement = () => {
               variant="contained"
               color="success"
               onClick={exportToCSV}
-              disabled={filteredTransactions.length === 0} // Disable if no transactions
+              disabled={filteredTransactions.length === 0}
             >
               Export
             </Button>
@@ -334,12 +341,11 @@ const Settlement = () => {
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
                       >
                         {transaction._id || "N/A"}{" "}
-                        {/* Adjusted to show user name */}
                       </TableCell>
                       <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
                       >
-                        {transaction.amount} {/* Displaying the amount */}
+                        {transaction.amount} 
                       </TableCell>
                     </TableRow>
                   ))
