@@ -14,6 +14,7 @@ import { apiGet } from '../../utils/http';
 const API_GET_USERS_ENDPOINT = `apiAdmin/v1/utility/getUserWithWallet`;
 const API_GET_BANK_BALANCE = `apiAdmin/v1/utility/getBalanceFetch`;
 const API_GET_WAAYUPAY_2_BALANCE = `apiAdmin/v1/utility/getBalanceFetchImpactPeek`
+const API_GET_FLIPZIK = `apiAdmin/v1/utility/getBalanceImpactPeekFlipzik`
 
 
 function Total_Blnc() {
@@ -23,6 +24,7 @@ function Total_Blnc() {
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [openMoneyBalance, setOpenMoneyBalance] = useState(-1);
   const [intervalId, setIntervalId] = useState(null);
+  const [flipzik, setFlipzik] = useState([])
 
   useEffect(() => {
     const fetchData = async () => {
@@ -83,6 +85,18 @@ function Total_Blnc() {
       }
     };
     fetchWaayuPayData();
+  }, []);
+
+  useEffect(() => {
+    const fetchFlipzikData = async () => {
+      try {
+        const response = await apiGet(API_GET_FLIPZIK);
+        setFlipzik(response.data);
+      } catch (error) {
+        console.error('Error fetching data', error);
+      }
+    };
+    fetchFlipzikData();
   }, []);
 
   const handleSnackbarClose = () => {
@@ -279,10 +293,10 @@ function Total_Blnc() {
               <AccountBalance sx={{ color: 'white', fontSize: 40, position: 'absolute', top: 16, right: 16 }} />
             </Tooltip>
             <Typography variant="h6" sx={{ color: 'white', mb: 1, mt: 2 }}>
-            Iservu Balance
+            FlipZik ImpactPeak
             </Typography>
             <Typography variant="h4" sx={{ color: 'white', fontWeight: 'bold', mb: 2 }}>
-              ₹ 00.00
+              ₹ {flipzik.data}
             </Typography>
             <ResponsiveContainer width="100%" height={100}>
               <LineChart data={chartData}>
