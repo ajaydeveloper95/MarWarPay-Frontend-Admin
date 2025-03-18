@@ -44,6 +44,9 @@ import AddIP from './Components/Tables/UserIP/AddIP';
 import UpdateIP from './Components/Tables/UserIP/UpdareIP';
 import ChargeBack from './Components/Tables/Reports/ChargeBack';
 import { ToastContainer } from 'react-toastify';
+import ViewAllTopUp from './Components/Tables/TopUp/ViewAllTopUp';
+import PandingTopUp from './Components/Tables/TopUp/PandingTopUp';
+import EditTopUp from './Components/Tables/Updates/EditTopUp';
 
 function App() {
   return (
@@ -111,6 +114,11 @@ function App() {
                     <Route path="/support/pandingTicket" element={<Panding />} />
                     <Route path="/support/allTicket" element={<ViewAll />} />
                     <Route path="/ticket/ViewTicket/:id" element={<EditTicket />} />
+
+                     {/* Support routes */}
+                     <Route path="/request/pendingTopUp" element={<PandingTopUp />} />
+                    <Route path="/request/allTopUp" element={<ViewAllTopUp />} />
+                    <Route path="/request/ViewTopUp/:trxId" element={<EditTopUp />} />
 
                     {/* Settings route */}
                     <Route path="settings/payoutCharge" element={<PayoutCharge />} />

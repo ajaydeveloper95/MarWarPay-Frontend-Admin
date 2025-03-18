@@ -15,8 +15,8 @@ const Sidebar = () => {
   const [isDarkMode] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
-  const location = useLocation(); 
-  const profileMenuRef = useRef(null); 
+  const location = useLocation();
+  const profileMenuRef = useRef(null);
 
   const handleProfileClick = () => {
     setProfileMenuVisible((prev) => !prev);
@@ -79,7 +79,7 @@ const Sidebar = () => {
 
   useEffect(() => {
     setProfileMenuVisible(false);
-  }, [location]); 
+  }, [location]);
 
   return (
     <div>
@@ -277,7 +277,7 @@ const Sidebar = () => {
                         Payin Report
                       </Link>
                     </li>
-                     <li>
+                    <li>
                       <Link
                         to="/report/charge_back"
                         className="flex items-center px-4 py-2 "
@@ -526,7 +526,7 @@ const Sidebar = () => {
                         to="/support/pandingTicket"
                         className="flex items-center px-4 py-2"
                       >
-                        Panding Ticket
+                        Pending Ticket
                       </Link>
                     </li>
                     <li>
@@ -535,6 +535,52 @@ const Sidebar = () => {
                         className="flex items-center px-4 py-2 "
                       >
                         All Tickets
+                      </Link>
+                    </li>
+                  </ul>
+                </div>
+              )}
+            </li>
+
+            {/* Request Top-Up Section with Dropdown */}
+            <li>
+              <button
+                onClick={() => toggleDropdown("topUpRequest")}
+                className="flex items-center px-4 py-2 w-full text-left"
+              >
+                <span
+                  className={`material-icons mr-2 ${
+                    !isSidebarOpen ? "text-sm" : ""
+                  }`}
+                >
+                  account_balance_wallet
+                </span>
+                {isSidebarOpen && "Top-Up Request"}
+                <span
+                  className={`material-icons ml-auto transition-transform ${
+                    isDropdownOpen["topUpRequest"] ? "rotate-180" : "rotate-0"
+                  }`}
+                >
+                  arrow_drop_down
+                </span>
+              </button>
+              {isDropdownOpen["topUpRequest"] && isSidebarOpen && (
+                <div className="ml-5">
+                  <ul className="pl-6 list-disc">
+                    <li>
+                      <Link
+                        to="/request/pendingTopUp"
+                        className="flex items-center px-4 py-2"
+                      >
+                        Pending Top-Up
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        to="/request/allTopUp"
+                        className="flex items-center px-4 py-2"
+                      >
+                        All Top-Ups
                       </Link>
                     </li>
                   </ul>

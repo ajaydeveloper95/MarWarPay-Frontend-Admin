@@ -110,7 +110,7 @@ const Panding = () => {
              
               <Grid item>
                 <Typography variant="h4" component="h1" gutterBottom sx={{color: 'teal'}}>
-                  Panding Tickets
+                  Pending Tickets
                 </Typography>
               </Grid>
             </Grid>
