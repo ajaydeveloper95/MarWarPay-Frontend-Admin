@@ -14,6 +14,7 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  TextField,
 } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
@@ -31,15 +32,11 @@ const EditTopUp = () => {
   const navigate = useNavigate();
   const { isSidebarOpen } = useSidebar();
 
-  // State Initialization
-  const [ticketData, setTicketData] = useState({ isStatus: "" });
+  const [ticketData, setTicketData] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
   const [newStatus, setNewStatus] = useState("");
-  const [ticData, setTicData] = useState();
-
-
 
   useEffect(() => {
     if (!trxId) {
@@ -53,10 +50,18 @@ const EditTopUp = () => {
       try {
         const response = await apiGet(`${API_GET_TICKET}${trxId}`);
 
-        if (response.status === 200 && response.data?.data) {
-          console.log("API Response:", response.data?.data[0]?._id);
-          setTicData(response.data?.data[0]?._id)
-          setTicketData({ isStatus: response.data.data.isStatus || "" });
+        if (response.status === 200 && response.data?.data.length > 0) {
+          const fetchedData = response.data.data[0];
+
+          // Keep memberId but remove userInfo from the display fields
+          const { userInfo, ...filteredData } = fetchedData;
+
+          setTicketData({
+            ...filteredData,
+            memberId: userInfo?.memberId || "N/A", // Extract memberId from userInfo
+          });
+
+          setNewStatus(fetchedData.isStatus || "");
         } else {
           throw new Error("Failed to fetch ticket details.");
         }
@@ -87,7 +92,7 @@ const EditTopUp = () => {
   const handleConfirmUpdate = async () => {
     setOpenDialog(false);
 
-    if (!ticData) {
+    if (!ticketData._id) {
       toast.error("Invalid request. No ID provided.");
       return;
     }
@@ -96,7 +101,7 @@ const EditTopUp = () => {
 
     try {
       console.log("Updating TopUp with:", updatedData);
-      const response = await apiPost(`${API_UPDATE_TICKET}${ticData}`, updatedData);
+      const response = await apiPost(`${API_UPDATE_TICKET}${ticketData._id}`, updatedData);
 
       if (response.status === 200) {
         toast.success("TopUp updated successfully!");
@@ -147,14 +152,30 @@ const EditTopUp = () => {
         )}
 
         <form onSubmit={handleSubmit}>
-          <Grid container spacing={1}>
+          <Grid container spacing={2}>
+            {/* Display All Ticket Fields - ReadOnly */}
+            {Object.entries(ticketData).map(([key, value]) => (
+              key !== "isStatus" && (
+                <Grid item xs={12} sm={6} key={key}>
+                  <TextField
+                    fullWidth
+                    variant="outlined"
+                    label={key.replace(/_/g, " ").toUpperCase()} // Format label
+                    value={value || "N/A"}
+                    InputProps={{ readOnly: true }}
+                  />
+                </Grid>
+              )
+            ))}
+
+            {/* Editable Status Field */}
             <Grid item xs={12} sm={6}>
               <FormControl fullWidth variant="outlined" required>
                 <InputLabel id="status-label">Status</InputLabel>
                 <Select
                   labelId="status-label"
                   name="isStatus"
-                  value={newStatus || ticketData.isStatus}
+                  value={newStatus}
                   onChange={handleChange}
                   label="Status"
                 >
