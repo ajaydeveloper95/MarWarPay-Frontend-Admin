@@ -175,7 +175,7 @@ const PandingTopUp = () => {
               ) : error ? (
                 <TableRow>
                   <TableCell colSpan={13} align="center">
-                    Error fetching data.
+                  No data available.
                   </TableCell>
                 </TableRow>
               ) : paginatedTickets.length === 0 ? (
