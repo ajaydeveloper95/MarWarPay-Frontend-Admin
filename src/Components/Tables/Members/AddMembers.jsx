@@ -76,10 +76,25 @@ const AddMembers = () => {
             .map((country) => country.name.common)
             .sort();
           setCountries(sortedCountries);
+          setError(null); // Clear previous error if any
         }
       } catch (err) {
         console.error("Error fetching countries data:", err);
-        setError(err);
+
+        if (err.response) {
+          // Server responded with an error status
+          setError(
+            `Server Error: ${
+              err.response.data?.message || err.response.statusText
+            }`
+          );
+        } else if (err.request) {
+          // Request was made but no response
+          setError("Network Error: No response received from the server.");
+        } else {
+          // Something else went wrong
+          setError(`Error: ${err.message}`);
+        }
       }
     };
 
@@ -88,7 +103,6 @@ const AddMembers = () => {
   }, []);
 
   useEffect(() => {
-    // Fetch states based on selected country
     const fetchStates = async () => {
       if (country) {
         try {
@@ -97,11 +111,26 @@ const AddMembers = () => {
           });
 
           if (response.status === 200 && response.data.data) {
-            setStates(response.data.data.states); // Set state data
+            setStates(response.data.data.states);
+            setError(null); // Clear any previous errors
           }
         } catch (err) {
           console.error("Error fetching states data:", err);
-          setError(err);
+
+          if (err.response) {
+            // Server responded with a status other than 200 range
+            setError(
+              `Server Error: ${
+                err.response.data?.message || err.response.statusText
+              }`
+            );
+          } else if (err.request) {
+            // Request was made but no response
+            setError("Network Error: No response received from the server.");
+          } else {
+            // Something else happened
+            setError(`Error: ${err.message}`);
+          }
         }
       }
     };
@@ -135,31 +164,28 @@ const AddMembers = () => {
 
     try {
       // Make the POST request to the API endpoint
-      await apiPost(
-        API_ENDPOINT,
-        {
-          memberType,
-          fullName,
-          email,
-          // role,
-          mobileNumber: phone,
-          addresh: {
-            country,
-            state,
-            city,
-            addresh: address,
-            pincode,
-          },
-          // country,
-          // state,
-          // city,
-          package: packageType,
-          EwalletFundLock: EwalletFundLock,
-          minWalletBalance: minimumWallet,
+      await apiPost(API_ENDPOINT, {
+        memberType,
+        fullName,
+        email,
+        // role,
+        mobileNumber: phone,
+        addresh: {
+          country,
+          state,
+          city,
+          addresh: address,
+          pincode,
+        },
+        // country,
+        // state,
+        // city,
+        package: packageType,
+        EwalletFundLock: EwalletFundLock,
+        minWalletBalance: minimumWallet,
 
-          isActive: status,
-        }
-      );
+        isActive: status,
+      });
 
       // Show success dialog
       setIsDialogOpen(true);
@@ -177,8 +203,7 @@ const AddMembers = () => {
       setPincode("");
       setPackageType("");
       setMinimumWallet("");
-      setEwalletFundLock(""),
-      setStatus("");
+      setEwalletFundLock(""), setStatus("");
     } catch (err) {
       console.error("Error posting data:", err);
       setError(err.message || "Failed to submit form.");

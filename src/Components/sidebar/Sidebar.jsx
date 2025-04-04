@@ -132,7 +132,7 @@ const Sidebar = () => {
               >
                 <button
                   onClick={handleLogoutClick}
-                  className="block px-4 py-2 w-full text-left "
+                  className="block px-4 py-1 w-full text-left "
                 >
                   Logout
                 </button>
@@ -162,7 +162,7 @@ const Sidebar = () => {
             />
             {/* Dashboard */}
             <li>
-              <Link to="/dashboard" className="flex items-center px-4 py-2 ">
+              <Link to="/dashboard" className="flex items-center px-4 py-1 ">
                 <span
                   className={`material-icons mr-2 ${
                     !isSidebarOpen && "text-sm"
@@ -178,7 +178,7 @@ const Sidebar = () => {
             <li>
               <button
                 onClick={() => toggleDropdown("members")}
-                className="flex items-center px-4 py-2  w-full text-left"
+                className="flex items-center px-4 py-1  w-full text-left"
               >
                 <span
                   className={`material-icons mr-2 ${
@@ -202,7 +202,7 @@ const Sidebar = () => {
                     <li>
                       <Link
                         to="/members/addMembers"
-                        className="flex items-center px-4 py-2 "
+                        className="flex items-center px-4 py-1 "
                       >
                         Add Member
                       </Link>
@@ -210,7 +210,7 @@ const Sidebar = () => {
                     <li>
                       <Link
                         to="/members/all_members"
-                        className="flex items-center px-4 py-2 "
+                        className="flex items-center px-4 py-1 "
                       >
                         View All Member
                       </Link>
@@ -224,7 +224,7 @@ const Sidebar = () => {
             <li>
               <button
                 onClick={() => toggleDropdown("report")}
-                className="flex items-center px-4 py-2 w-full text-left"
+                className="flex items-center px-4 py-1 w-full text-left"
               >
                 <span
                   className={`material-icons mr-2 ${
@@ -248,7 +248,7 @@ const Sidebar = () => {
                     {/* <li>
                       <Link
                         to="/report/payout"
-                        className="flex items-center px-4 py-2 "
+                        className="flex items-center px-4 py-1 "
                       >
                         Payout History
                       </Link>
@@ -256,7 +256,7 @@ const Sidebar = () => {
                     <li>
                       <Link
                         to="/report/payoutGenerate"
-                        className="flex items-center px-4 py-2 "
+                        className="flex items-center px-4 py-1 "
                       >
                         Payout Generate
                       </Link>
@@ -264,7 +264,7 @@ const Sidebar = () => {
                     <li>
                       <Link
                         to="/report/Qr"
-                        className="flex items-center px-4 py-2 "
+                        className="flex items-center px-4 py-1 "
                       >
                         QR Report
                       </Link>
@@ -272,7 +272,7 @@ const Sidebar = () => {
                     <li>
                       <Link
                         to="/report/payin"
-                        className="flex items-center px-4 py-2 "
+                        className="flex items-center px-4 py-1 "
                       >
                         Payin Report
                       </Link>
@@ -280,7 +280,7 @@ const Sidebar = () => {
                     <li>
                       <Link
                         to="/report/charge_back"
-                        className="flex items-center px-4 py-2 "
+                        className="flex items-center px-4 py-1 "
                       >
                         ChargeBack Report
                       </Link>
@@ -294,7 +294,7 @@ const Sidebar = () => {
             <li>
               <button
                 onClick={() => toggleDropdown("upi-wallet")}
-                className="flex items-center px-4 py-2 w-full text-left"
+                className="flex items-center px-4 py-1 w-full text-left"
               >
                 <span
                   className={`material-icons mr-2 ${
@@ -318,7 +318,7 @@ const Sidebar = () => {
                     <li>
                       <Link
                         to="/upi-wallet/configure"
-                        className="flex items-center px-4 py-2"
+                        className="flex items-center px-4 py-1"
                       >
                         Member Wallet
                       </Link>
@@ -326,7 +326,7 @@ const Sidebar = () => {
                     <li>
                       <Link
                         to="/upi-wallet/transactions"
-                        className="flex items-center px-4 py-2"
+                        className="flex items-center px-4 py-1"
                       >
                         UPI to E-Wallet Transfer
                       </Link>
@@ -334,7 +334,7 @@ const Sidebar = () => {
                     <li>
                       <Link
                         to="/upi-wallet/settlement"
-                        className="flex items-center px-4 py-2"
+                        className="flex items-center px-4 py-1"
                       >
                         Settlemet Amount
                       </Link>
@@ -348,7 +348,7 @@ const Sidebar = () => {
             <li>
               <button
                 onClick={() => toggleDropdown("ewallet-management")}
-                className="flex items-center px-4 py-2 w-full text-left"
+                className="flex items-center px-4 py-1 w-full text-left"
               >
                 <span
                   className={`material-icons mr-2 ${
@@ -374,7 +374,7 @@ const Sidebar = () => {
                     <li>
                       <Link
                         to="/ewallet-management/my-wallet"
-                        className="flex items-center px-4 py-2"
+                        className="flex items-center px-4 py-1"
                       >
                         My Wallet
                       </Link>
@@ -382,7 +382,7 @@ const Sidebar = () => {
                     <li>
                       <Link
                         to="/ewallet-management/credit-fund"
-                        className="flex items-center px-4 py-2"
+                        className="flex items-center px-4 py-1"
                       >
                         Credit Fund
                       </Link>
@@ -390,7 +390,7 @@ const Sidebar = () => {
                     <li>
                       <Link
                         to="/ewallet-management/debit-fund"
-                        className="flex items-center px-4 py-2"
+                        className="flex items-center px-4 py-1"
                       >
                         Debit Fund
                       </Link>
@@ -404,7 +404,7 @@ const Sidebar = () => {
             <li>
               <button
                 onClick={() => toggleDropdown("package-management")}
-                className="flex items-center px-4 py-2 w-full text-left"
+                className="flex items-center px-4 py-1 w-full text-left"
               >
                 <span
                   className={`material-icons mr-2 ${
@@ -430,7 +430,7 @@ const Sidebar = () => {
                     <li>
                       <Link
                         to="/package/add"
-                        className="flex items-center px-4 py-2"
+                        className="flex items-center px-4 py-1"
                       >
                         Add Package
                       </Link>
@@ -438,7 +438,7 @@ const Sidebar = () => {
                     <li>
                       <Link
                         to="/package/view"
-                        className="flex items-center px-4 py-2"
+                        className="flex items-center px-4 py-1"
                       >
                         View Package
                       </Link>
@@ -452,7 +452,7 @@ const Sidebar = () => {
             <li>
               <button
                 onClick={() => toggleDropdown("package-settings")}
-                className="flex items-center px-4 py-2 w-full text-left"
+                className="flex items-center px-4 py-1 w-full text-left"
               >
                 <span
                   className={`material-icons mr-2 ${
@@ -478,7 +478,7 @@ const Sidebar = () => {
                     <li>
                       <Link
                         to="/package/settings/payin"
-                        className="flex items-center px-4 py-2"
+                        className="flex items-center px-4 py-1"
                       >
                         Payin
                       </Link>
@@ -486,7 +486,7 @@ const Sidebar = () => {
                     <li>
                       <Link
                         to="/package/settings/payout"
-                        className="flex items-center px-4 py-2"
+                        className="flex items-center px-4 py-1"
                       >
                         Payout
                       </Link>
@@ -500,7 +500,7 @@ const Sidebar = () => {
             <li>
               <button
                 onClick={() => toggleDropdown("support")}
-                className="flex items-center px-4 py-2  w-full text-left"
+                className="flex items-center px-4 py-1  w-full text-left"
               >
                 <span
                   className={`material-icons mr-2 ${
@@ -524,7 +524,7 @@ const Sidebar = () => {
                     <li>
                       <Link
                         to="/support/pandingTicket"
-                        className="flex items-center px-4 py-2"
+                        className="flex items-center px-4 py-1"
                       >
                         Pending Ticket
                       </Link>
@@ -532,7 +532,7 @@ const Sidebar = () => {
                     <li>
                       <Link
                         to="/support/allTicket"
-                        className="flex items-center px-4 py-2 "
+                        className="flex items-center px-4 py-1 "
                       >
                         All Tickets
                       </Link>
@@ -546,7 +546,7 @@ const Sidebar = () => {
             <li>
               <button
                 onClick={() => toggleDropdown("topUpRequest")}
-                className="flex items-center px-4 py-2 w-full text-left"
+                className="flex items-center px-4 py-1 w-full text-left"
               >
                 <span
                   className={`material-icons mr-2 ${
@@ -570,7 +570,7 @@ const Sidebar = () => {
                     <li>
                       <Link
                         to="/request/pendingTopUp"
-                        className="flex items-center px-4 py-2"
+                        className="flex items-center px-4 py-1"
                       >
                         Pending Top-Up
                       </Link>
@@ -578,7 +578,7 @@ const Sidebar = () => {
                     <li>
                       <Link
                         to="/request/allTopUp"
-                        className="flex items-center px-4 py-2"
+                        className="flex items-center px-4 py-1"
                       >
                         All Top-Ups
                       </Link>
@@ -592,7 +592,7 @@ const Sidebar = () => {
             <li>
               <button
                 onClick={() => toggleDropdown("main-setting")}
-                className="flex items-center px-4 py-2 w-full text-left"
+                className="flex items-center px-4 py-1 w-full text-left"
                 aria-expanded={isDropdownOpen["main-setting"]}
               >
                 {/* Main Setting Icon */}
@@ -617,7 +617,7 @@ const Sidebar = () => {
                     <li>
                       <Link
                         to="/main-setting/payout-switch"
-                        className="flex items-center px-4 py-2"
+                        className="flex items-center px-4 py-1"
                       >
                         Payout Switch
                       </Link>
@@ -625,7 +625,7 @@ const Sidebar = () => {
                     <li>
                       <Link
                         to="/main-setting/viewPayout"
-                        className="flex items-center px-4 py-2"
+                        className="flex items-center px-4 py-1"
                       >
                         View AllPayout
                       </Link>
@@ -634,7 +634,7 @@ const Sidebar = () => {
                     <li>
                       <Link
                         to="/main-setting/payin-switch"
-                        className="flex items-center px-4 py-2"
+                        className="flex items-center px-4 py-1"
                       >
                         Payin Switch
                       </Link>
@@ -642,7 +642,7 @@ const Sidebar = () => {
                     <li>
                       <Link
                         to="/main-setting/viewPayin"
-                        className="flex items-center px-4 py-2"
+                        className="flex items-center px-4 py-1"
                       >
                         View AllPayin
                       </Link>
@@ -656,7 +656,7 @@ const Sidebar = () => {
             <li>
               <button
                 onClick={() => toggleDropdown("ipManagement")}
-                className="flex items-center px-4 py-2 w-full text-left"
+                className="flex items-center px-4 py-1 w-full text-left"
               >
                 <span
                   className={`material-icons mr-2 ${
@@ -680,7 +680,7 @@ const Sidebar = () => {
                     <li>
                       <Link
                         to="/ipManagement/allUsersIP"
-                        className="flex items-center px-4 py-2"
+                        className="flex items-center px-4 py-1"
                       >
                         All Users IP
                       </Link>
@@ -688,7 +688,7 @@ const Sidebar = () => {
                     {/* <li>
                       <Link
                         to="/ipManagement/updateIP"
-                        className="flex items-center px-4 py-2"
+                        className="flex items-center px-4 py-1"
                       >
                         Update IP
                       </Link>
@@ -696,7 +696,7 @@ const Sidebar = () => {
                     <li>
                       <Link
                         to="/ip-whitelist/add"
-                        className="flex items-center px-4 py-2"
+                        className="flex items-center px-4 py-1"
                       >
                         Add IP
                       </Link>
@@ -718,13 +718,13 @@ const Sidebar = () => {
             <div className="flex justify-end space-x-4">
               <button
                 onClick={handleCancelLogout}
-                className="bg-gray-300 px-4 py-2 rounded"
+                className="bg-gray-300 px-4 py-1 rounded"
               >
                 Cancel
               </button>
               <button
                 onClick={handleConfirmLogout}
-                className="bg-red-500 text-white px-4 py-2 rounded"
+                className="bg-red-500 text-white px-4 py-1 rounded"
               >
                 Logout
               </button>

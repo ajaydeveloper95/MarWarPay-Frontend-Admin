@@ -139,7 +139,7 @@ function Total_Blnc() {
             <Typography variant="h6" sx={{ color: 'white', mb: 1, mt: 2 }}>
               E-Wallet Balance
             </Typography>
-            <Typography variant="h4" sx={{ color: 'white', fontWeight: 'bold', mb: 2 }}>
+            <Typography variant="h5" sx={{ color: 'white', fontWeight: 'bold', mb: 2 }}>
               ₹ {data?.length > 0 ? data.reduce((total, user) => total + user.EwalletBalance, 0).toLocaleString('en-IN', { minimumFractionDigits: 2 }) : '0.00'}
             </Typography>
             <ResponsiveContainer width="100%" height={100}>
@@ -178,7 +178,7 @@ function Total_Blnc() {
             <Typography variant="h6" sx={{ color: 'white', mb: 1, mt: 2 }}>
               UPI-Wallet Balance
             </Typography>
-            <Typography variant="h4" sx={{ color: 'white', fontWeight: 'bold', mb: 2 }}>
+            <Typography variant="h5" sx={{ color: 'white', fontWeight: 'bold', mb: 2 }}>
               ₹ {data?.length > 0 ? data.reduce((total, user) => total + user.upiWalletBalance, 0).toLocaleString('en-IN', { minimumFractionDigits: 2 }) : '0.00'}
             </Typography>
             <ResponsiveContainer width="100%" height={100}>
@@ -217,9 +217,9 @@ function Total_Blnc() {
               <Money sx={{ color: 'white', fontSize: 40, position: 'absolute', top: 16, right: 16 }} />
             </Tooltip>
             <Typography variant="h6" sx={{ color: 'white', mb: 1, mt: 2 }}>
-            Waayupay-Brightbuck Balance
+            Waayupay-Brightbuck
             </Typography>
-            <Typography variant="h4" sx={{ color: 'white', fontWeight: 'bold', mb: 2 }}>
+            <Typography variant="h5" sx={{ color: 'white', fontWeight: 'bold', mb: 2 }}>
               ₹ {openMoneyBalance.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
             </Typography>
             <ResponsiveContainer width="100%" height={100}>
@@ -255,9 +255,9 @@ function Total_Blnc() {
               <AccountBalance sx={{ color: 'white', fontSize: 40, position: 'absolute', top: 16, right: 16 }} />
             </Tooltip>
             <Typography variant="h6" sx={{ color: 'white', mb: 1, mt: 2 }}>
-            Waayupay-ImpactPeak Balance
+            Waayupay-ImpactPeak
             </Typography>
-            <Typography variant="h4" sx={{ color: 'white', fontWeight: 'bold', mb: 2 }}>
+            <Typography variant="h5" sx={{ color: 'white', fontWeight: 'bold', mb: 2 }}>
               ₹ {waayuPay.data}
             </Typography>
             <ResponsiveContainer width="100%" height={100}>
@@ -266,7 +266,7 @@ function Total_Blnc() {
                 <XAxis dataKey="name" hide />
                 <YAxis hide />
                 <RechartsTooltip />
-                <Line type="monotone" dataKey="WaayupayBalance" stroke="#ffffff" strokeWidth={2} dot={false} />
+                <Line type="monotone" dataKey="EwalletBalance" stroke="#ffffff" strokeWidth={2} dot={false} />
               </LineChart>
             </ResponsiveContainer>
           </Box>
@@ -295,7 +295,7 @@ function Total_Blnc() {
             <Typography variant="h6" sx={{ color: 'white', mb: 1, mt: 2 }}>
             FlipZik ImpactPeak
             </Typography>
-            <Typography variant="h4" sx={{ color: 'white', fontWeight: 'bold', mb: 2 }}>
+            <Typography variant="h5" sx={{ color: 'white', fontWeight: 'bold', mb: 2 }}>
               ₹ {flipzik.data}
             </Typography>
             <ResponsiveContainer width="100%" height={100}>
@@ -304,7 +304,7 @@ function Total_Blnc() {
                 <XAxis dataKey="name" hide />
                 <YAxis hide />
                 <RechartsTooltip />
-                <Line type="monotone" dataKey="iservuBalance" stroke="#ffffff" strokeWidth={2} dot={false} />
+                <Line type="monotone" dataKey="upiWalletBalance" stroke="#ffffff" strokeWidth={2} dot={false} />
               </LineChart>
             </ResponsiveContainer>
           </Box>
@@ -333,7 +333,7 @@ function Total_Blnc() {
             <Typography variant="h6" sx={{ color: 'white', mb: 1, mt: 2 }}>
             IsmartPay Balance
             </Typography>
-            <Typography variant="h4" sx={{ color: 'white', fontWeight: 'bold', mb: 2 }}>
+            <Typography variant="h5" sx={{ color: 'white', fontWeight: 'bold', mb: 2 }}>
               ₹ 00.00
             </Typography>
             <ResponsiveContainer width="100%" height={100}>
@@ -342,7 +342,7 @@ function Total_Blnc() {
                 <XAxis dataKey="name" hide />
                 <YAxis hide />
                 <RechartsTooltip />
-                <Line type="monotone" dataKey="ismartPayBalance" stroke="#ffffff" strokeWidth={2} dot={false} />
+                <Line type="monotone" dataKey="openMoneyBalance" stroke="#ffffff" strokeWidth={2} dot={false} />
               </LineChart>
             </ResponsiveContainer>
           </Box>
