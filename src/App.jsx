@@ -47,6 +47,8 @@ import { ToastContainer } from 'react-toastify';
 import ViewAllTopUp from './Components/Tables/TopUp/ViewAllTopUp';
 import PandingTopUp from './Components/Tables/TopUp/PandingTopUp';
 import EditTopUp from './Components/Tables/Updates/EditTopUp';
+import HoldEwllt from './Components/Tables/E_wallet/HoldEwllt';
+import EwlltHold from './Components/Tables/E_wallet/EwlltHold';
 
 function App() {
   return (
@@ -91,11 +93,13 @@ function App() {
                     <Route path="upi-wallet/transactions" element={<Transfer />} />
                     <Route path="/upi-wallet/settlement" element={<Settlement />} />
 
-                    {/* UPI wallet routes */}
+                    {/* E-wallet routes */}
                     <Route path="/ewallet-management/my-wallet" element={<My_Wllt />} />
                     <Route path="/ewallet-management/member-wallet" element={<MemberWllt />} />
                     <Route path="/ewallet-management/credit-fund" element={<Cr />} />
                     <Route path="/ewallet-management/debit-fund" element={<Dr />} />
+                    <Route path="/ewallet-management/hoding-ewallet" element={<HoldEwllt />} />
+                    <Route path="/ewallet-management/ewallet-holding" element={<EwlltHold />} />
 
 
                     {/* Package Management routes */}

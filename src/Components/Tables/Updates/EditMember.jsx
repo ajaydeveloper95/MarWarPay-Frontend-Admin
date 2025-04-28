@@ -243,6 +243,16 @@ const EditMember = () => {
             </Grid>
             <Grid item xs={12} md={6}>
               <TextField
+                label="Holding Amount"
+                name="HoldingAmount"
+                variant="outlined"
+                fullWidth
+                value={userData.HoldingAmount}
+                onChange={onhandle2}
+              />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <TextField
                 label="E Wallet Balance"
                 name="EwalletBalance"
                 variant="outlined"

@@ -381,6 +381,22 @@ const Sidebar = () => {
                     </li>
                     <li>
                       <Link
+                        to="/ewallet-management/ewallet-holding"
+                        className="flex items-center px-4 py-1"
+                      >
+                        Ewallet-holding
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        to="/ewallet-management/hoding-ewallet"
+                        className="flex items-center px-4 py-1"
+                      >
+                        Holding-Ewallet
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
                         to="/ewallet-management/credit-fund"
                         className="flex items-center px-4 py-1"
                       >

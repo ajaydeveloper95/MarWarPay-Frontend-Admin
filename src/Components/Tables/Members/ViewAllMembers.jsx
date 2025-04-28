@@ -72,14 +72,16 @@ const ViewAllMembers = () => {
 
 
   // Filter users based on search query and date
-  const filteredUsers = usersData.filter((user) => {
-    const matchesName = user.memberId
-      .toLowerCase()
-      .includes(searchQuery.toLowerCase())||
-      user.fullName
-      .toLowerCase()
-      .includes(searchQuery.toLowerCase());
-    const matchesDate = date ? user.createdAt.split("T")[0] === date : true;
+  const filteredUsers = usersData?.filter((user) => {
+    const memberId = user?.memberId || "";
+    const fullName = user?.fullName || "";
+    
+    const matchesName =
+      memberId.toLowerCase().includes(searchQuery?.toLowerCase() || "") ||
+      fullName.toLowerCase().includes(searchQuery?.toLowerCase() || "");
+  
+    const matchesDate = date ? user?.createdAt?.split("T")[0] === date : true;
+  
     return matchesName && matchesDate;
   });
 
@@ -125,7 +127,7 @@ const ViewAllMembers = () => {
         }}
       >
         <Grid container spacing={2} mb={2}>
-          <Grid item xs={12} md={6}>
+          {/* <Grid item xs={12} md={6}>
             <Box
               sx={{
                 p: 2,
@@ -154,7 +156,7 @@ const ViewAllMembers = () => {
               </Typography>
               <Typography>₹ {usersData.length > 0 ? usersData.reduce((total, user) => total + user.upiWalletBalance, 0).toLocaleString('en-IN', { minimumFractionDigits: 2 }) : '0.00'}</Typography>
             </Box>
-          </Grid>
+          </Grid> */}
         </Grid>
       </Box>
 
@@ -331,14 +333,14 @@ const ViewAllMembers = () => {
                   No data available.
                   </TableCell>
                 </TableRow>
-              ) : paginatedUsers.length === 0 ? (
+              ) : paginatedUsers?.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={8} align="center">
                     No data available.
                   </TableCell>
                 </TableRow>
               ) : (
-                  paginatedUsers.map((user, index) => (
+                  paginatedUsers?.map((user, index) => (
                     <TableRow key={user._id}>
                       <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
@@ -348,12 +350,12 @@ const ViewAllMembers = () => {
                       <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
                       >
-                        {user.memberId}
+                        {user?.memberId}
                       </TableCell>
                       <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
                       >
-                        {user.fullName}
+                        {user?.fullName}
                       </TableCell>
                       <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
@@ -377,7 +379,7 @@ const ViewAllMembers = () => {
                                   border: "1px solid rgba(224, 224, 224, 1)",
                                 }}
                               >
-                                {user.userName}
+                                {user?.userName}
                               </TableCell>
                             </TableRow>
                             <TableRow>
@@ -394,7 +396,7 @@ const ViewAllMembers = () => {
                                   border: "1px solid rgba(224, 224, 224, 1)",
                                 }}
                               >
-                                {user.password}
+                                {user?.password}
                               </TableCell>
                             </TableRow>
                             <TableRow>
@@ -411,7 +413,7 @@ const ViewAllMembers = () => {
                                   border: "1px solid rgba(224, 224, 224, 1)",
                                 }}
                               >
-                                {user.trxPassword}
+                                {user?.trxPassword}
                               </TableCell>
                             </TableRow>
                             <TableRow>
@@ -428,7 +430,7 @@ const ViewAllMembers = () => {
                                   border: "1px solid rgba(224, 224, 224, 1)",
                                 }}
                               >
-                                {user.mobileNumber}
+                                {user?.mobileNumber}
                               </TableCell>
                             </TableRow>
                             <TableRow>
@@ -445,7 +447,7 @@ const ViewAllMembers = () => {
                                   border: "1px solid rgba(224, 224, 224, 1)",
                                 }}
                               >
-                                {user.email}
+                                {user?.email}
                               </TableCell>
                             </TableRow>
                             <TableRow>
@@ -462,7 +464,7 @@ const ViewAllMembers = () => {
                                   border: "1px solid rgba(224, 224, 224, 1)",
                                 }}
                               >
-                                {user.package?.packageName}
+                                {user?.package?.packageName}
                               </TableCell>
                             </TableRow>
                             <TableRow>
@@ -479,7 +481,7 @@ const ViewAllMembers = () => {
                                   border: "1px solid rgba(224, 224, 224, 1)",
                                 }}
                               >
-                                {user.minWalletBalance}
+                                {user?.minWalletBalance}
                               </TableCell>
                             </TableRow>
                             <TableRow>
@@ -496,7 +498,7 @@ const ViewAllMembers = () => {
                                   border: "1px solid rgba(224, 224, 224, 1)",
                                 }}
                               >
-                                {user.memberType}
+                                {user?.memberType}
                               </TableCell>
                             </TableRow>
                           </TableBody>
@@ -524,7 +526,7 @@ const ViewAllMembers = () => {
                                   border: "1px solid rgba(224, 224, 224, 1)",
                                 }}
                               >
-                                {user.EwalletBalance}
+                                {user?.EwalletBalance}
                               </TableCell>
                             </TableRow>
                             <TableRow>
@@ -541,7 +543,7 @@ const ViewAllMembers = () => {
                                   border: "1px solid rgba(224, 224, 224, 1)",
                                 }}
                               >
-                                {user.upiWalletBalance}
+                                {user?.upiWalletBalance}
                               </TableCell>
                             </TableRow>
                             <TableRow>
@@ -561,13 +563,30 @@ const ViewAllMembers = () => {
                                 {user.EwalletFundLock || 'N/A'}
                               </TableCell>
                             </TableRow>
+                            <TableRow>
+                              <TableCell
+                                sx={{
+                                  border: "1px solid rgba(224, 224, 224, 1)",
+                                  fontWeight: "bold",
+                                }}
+                              >
+                                Holding Amount
+                              </TableCell>
+                              <TableCell
+                                sx={{
+                                  border: "1px solid rgba(224, 224, 224, 1)",
+                                }}
+                              >
+                                {user.HoldingAmount || 'N/A'}
+                              </TableCell>
+                            </TableRow>
                           </TableBody>
                         </Table>
                       </TableCell>
                       <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
                       >
-                        {formatDateTime(user.createdAt)}
+                        {formatDateTime(user?.createdAt)}
                       </TableCell>
                       <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
@@ -604,7 +623,7 @@ const ViewAllMembers = () => {
                       >
                         <IconButton
                           color="primary"
-                          onClick={() => handleViewMember(user._id)}
+                          onClick={() => handleViewMember(user?._id)}
                         >
                           <VisibilityIcon />
                         </IconButton>
@@ -629,7 +648,7 @@ const ViewAllMembers = () => {
               variant="contained"
               color="primary"
               onClick={() => handlePageChange("next")}
-              disabled={endIndex >= filteredUsers.length}
+              disabled={endIndex >= filteredUsers?.length}
             >
               Next
             </Button>
