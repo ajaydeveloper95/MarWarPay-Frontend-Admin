@@ -247,8 +247,10 @@ const EditMember = () => {
                 name="HoldingAmount"
                 variant="outlined"
                 fullWidth
-                value={userData.HoldingAmount}
-                onChange={onhandle2}
+                value={userData.HoldingAmount || "0"}
+                InputProps={{
+                  readOnly: true, 
+                }}
               />
             </Grid>
             <Grid item xs={12} md={6}>
