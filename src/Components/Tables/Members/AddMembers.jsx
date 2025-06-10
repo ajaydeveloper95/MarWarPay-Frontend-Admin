@@ -20,18 +20,15 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate } from "react-router-dom";
 import { useSidebar } from "../../../Context/SidebarContext";
 import { apiGet, apiPost } from "../../../utils/http";
-import axios from "axios";
+import { Country, State } from "country-state-city";
 
 const API_ENDPOINT = `apiAdmin/v1/user/addUser`;
 const PACKAGE_API_ENDPOINT = `apiAdmin/v1/utility/getPackageList`;
-const COUNTRY_API_ENDPOINT = `https://restcountries.com/v3.1/all`;
-const STATE_API_ENDPOINT = `https://countriesnow.space/api/v0.1/countries/states`;
 
 const AddMembers = () => {
   const [memberType, setMemberType] = useState("");
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
-  // const [role, setRole] = useState("");
   const [phone, setPhone] = useState("");
   const [country, setCountry] = useState("");
   const [state, setState] = useState("");
@@ -42,7 +39,7 @@ const AddMembers = () => {
   const [minimumWallet, setMinimumWallet] = useState("");
   const [EwalletFundLock, setEwalletFundLock] = useState("");
   const [status, setStatus] = useState(null);
-  const [isDialogOpen, setIsDialogOpen] = useState(false); // State for success dialog
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [error, setError] = useState(null);
   const [submitting, setSubmitting] = useState(null);
   const [packages, setPackages] = useState([]);
@@ -56,86 +53,32 @@ const AddMembers = () => {
     const fetchPackages = async () => {
       try {
         const response = await apiGet(PACKAGE_API_ENDPOINT);
-
         if (response.status === 200) {
           setPackages(response.data.data);
         }
       } catch (err) {
         console.error("Error fetching package data:", err);
-        setError(err);
+        setError("Failed to load packages");
       }
     };
 
-    // Fetch countries data
-    const fetchCountries = async () => {
-      try {
-        const response = await axios.get(COUNTRY_API_ENDPOINT);
-
-        if (response.status === 200) {
-          const sortedCountries = response.data
-            .map((country) => country.name.common)
-            .sort();
-          setCountries(sortedCountries);
-          setError(null); // Clear previous error if any
-        }
-      } catch (err) {
-        console.error("Error fetching countries data:", err);
-
-        if (err.response) {
-          // Server responded with an error status
-          setError(
-            `Server Error: ${
-              err.response.data?.message || err.response.statusText
-            }`
-          );
-        } else if (err.request) {
-          // Request was made but no response
-          setError("Network Error: No response received from the server.");
-        } else {
-          // Something else went wrong
-          setError(`Error: ${err.message}`);
-        }
-      }
-    };
-
+    // Load countries from library
+    setCountries(Country.getAllCountries());
     fetchPackages();
-    fetchCountries();
   }, []);
 
   useEffect(() => {
-    const fetchStates = async () => {
-      if (country) {
-        try {
-          const response = await axios.post(STATE_API_ENDPOINT, {
-            country: country,
-          });
-
-          if (response.status === 200 && response.data.data) {
-            setStates(response.data.data.states);
-            setError(null); // Clear any previous errors
-          }
-        } catch (err) {
-          console.error("Error fetching states data:", err);
-
-          if (err.response) {
-            // Server responded with a status other than 200 range
-            setError(
-              `Server Error: ${
-                err.response.data?.message || err.response.statusText
-              }`
-            );
-          } else if (err.request) {
-            // Request was made but no response
-            setError("Network Error: No response received from the server.");
-          } else {
-            // Something else happened
-            setError(`Error: ${err.message}`);
-          }
-        }
+    if (country) {
+      const selectedCountry = Country.getAllCountries().find(
+        (c) => c.name === country
+      );
+      if (selectedCountry) {
+        const countryStates = State.getStatesOfCountry(selectedCountry.isoCode);
+        setStates(countryStates);
       }
-    };
-
-    fetchStates();
+    } else {
+      setStates([]);
+    }
   }, [country]);
 
   const handleSubmit = async (event) => {
@@ -163,12 +106,10 @@ const AddMembers = () => {
     }
 
     try {
-      // Make the POST request to the API endpoint
       await apiPost(API_ENDPOINT, {
         memberType,
         fullName,
         email,
-        // role,
         mobileNumber: phone,
         addresh: {
           country,
@@ -177,24 +118,16 @@ const AddMembers = () => {
           addresh: address,
           pincode,
         },
-        // country,
-        // state,
-        // city,
         package: packageType,
-        EwalletFundLock: EwalletFundLock,
+        EwalletFundLock,
         minWalletBalance: minimumWallet,
-
         isActive: status,
       });
 
-      // Show success dialog
       setIsDialogOpen(true);
-
-      // Reset form fields after a successful POST request
       setMemberType("");
       setFullName("");
       setEmail("");
-      // setRole("");
       setPhone("");
       setCountry("");
       setState("");
@@ -203,7 +136,8 @@ const AddMembers = () => {
       setPincode("");
       setPackageType("");
       setMinimumWallet("");
-      setEwalletFundLock(""), setStatus("");
+      setEwalletFundLock("");
+      setStatus(null);
     } catch (err) {
       console.error("Error posting data:", err);
       setError(err.message || "Failed to submit form.");
@@ -245,22 +179,16 @@ const AddMembers = () => {
         >
           <ArrowBackIcon />
         </IconButton>
-        <Typography
-          variant="h4"
-          component="h1"
-          gutterBottom
-          sx={{ color: "teal" }}
-        >
+        <Typography variant="h4" gutterBottom sx={{ color: "teal" }}>
           Add New Member
         </Typography>
 
         <form onSubmit={handleSubmit} noValidate autoComplete="off">
-          <Grid container spacing={1}>
+          <Grid container spacing={2}>
             <Grid item xs={12} sm={6} md={4}>
-              <FormControl fullWidth variant="outlined" required>
-                <InputLabel id="member-type">Member Type</InputLabel>
+              <FormControl fullWidth required>
+                <InputLabel>Member Type</InputLabel>
                 <Select
-                  labelId="member-type-label"
                   value={memberType}
                   onChange={(e) => setMemberType(e.target.value)}
                   label="Member Type"
@@ -274,113 +202,105 @@ const AddMembers = () => {
             <Grid item xs={12} sm={6} md={4}>
               <TextField
                 label="Name"
-                variant="outlined"
                 fullWidth
+                required
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
-                required
               />
             </Grid>
             <Grid item xs={12} sm={6} md={4}>
               <TextField
                 label="Email"
                 type="email"
-                variant="outlined"
                 fullWidth
+                required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                required
               />
             </Grid>
             <Grid item xs={12} sm={6} md={4}>
               <TextField
                 label="Phone"
-                variant="outlined"
                 fullWidth
-                value={phone}
-                onChange={(e) => {
-                  const phoneNumber = e.target.value.replace(/\D/g, ""); // Remove non-numeric characters
-                  if (/^\d{0,10}$/.test(phoneNumber)) {
-                    setPhone(phoneNumber);
-                  }
-                }}
                 required
                 inputProps={{ maxLength: 10 }}
+                value={phone}
+                onChange={(e) => {
+                  const digits = e.target.value.replace(/\D/g, "");
+                  if (/^\d{0,10}$/.test(digits)) setPhone(digits);
+                }}
               />
             </Grid>
-            {/* Country Dropdown */}
+
             <Grid item xs={12} sm={6} md={4}>
-              <FormControl fullWidth variant="outlined" required>
-                <InputLabel id="country-label">Country</InputLabel>
+              <FormControl fullWidth required>
+                <InputLabel>Country</InputLabel>
                 <Select
-                  labelId="country-label"
                   value={country}
                   onChange={(e) => setCountry(e.target.value)}
                   label="Country"
                 >
-                  {countries.map((countryName, index) => (
-                    <MenuItem key={index} value={countryName}>
-                      {countryName}
+                  {countries.map((c) => (
+                    <MenuItem key={c.isoCode} value={c.name}>
+                      {c.name}
                     </MenuItem>
                   ))}
                 </Select>
               </FormControl>
             </Grid>
 
-            {/* State Dropdown */}
             <Grid item xs={12} sm={6} md={4}>
-              <FormControl fullWidth variant="outlined" required>
-                <InputLabel id="state-label">State</InputLabel>
+              <FormControl fullWidth required>
+                <InputLabel>State</InputLabel>
                 <Select
-                  labelId="state-label"
                   value={state}
                   onChange={(e) => setState(e.target.value)}
                   label="State"
-                  disabled={!country} // Disable if no country is selected
+                  disabled={!country}
                 >
-                  {states.map((stateObj, index) => (
-                    <MenuItem key={index} value={stateObj.name}>
-                      {stateObj.name}
+                  {states.map((s) => (
+                    <MenuItem key={s.isoCode} value={s.name}>
+                      {s.name}
                     </MenuItem>
                   ))}
                 </Select>
               </FormControl>
             </Grid>
+
             <Grid item xs={12} sm={6} md={4}>
               <TextField
                 label="City"
-                variant="outlined"
                 fullWidth
+                required
                 value={city}
                 onChange={(e) => setCity(e.target.value)}
-                required
               />
             </Grid>
+
             <Grid item xs={12} sm={6} md={4}>
               <TextField
                 label="Address"
-                variant="outlined"
                 fullWidth
+                required
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
-                required
               />
             </Grid>
+
             <Grid item xs={12} sm={6} md={4}>
               <TextField
                 label="Pin Code"
-                variant="outlined"
                 fullWidth
+                required
                 value={pincode}
                 onChange={(e) => setPincode(e.target.value)}
-                required
               />
             </Grid>
+
             <Grid item xs={12} sm={6} md={4}>
-              <FormControl fullWidth variant="outlined" required>
-                <InputLabel id="package-type-label">Package Type</InputLabel>
+              <FormControl fullWidth required>
+                <InputLabel>Package Type</InputLabel>
                 <Select
-                  labelId="package-type-label"
                   value={packageType}
                   onChange={(e) => setPackageType(e.target.value)}
                   label="Package Type"
@@ -398,29 +318,28 @@ const AddMembers = () => {
               <TextField
                 label="Minimum Wallet Balance"
                 type="number"
-                variant="outlined"
                 fullWidth
+                required
                 value={minimumWallet}
                 onChange={(e) => setMinimumWallet(e.target.value)}
-                required
               />
             </Grid>
+
             <Grid item xs={12} sm={6} md={4}>
               <TextField
                 label="Fund Lock"
                 type="number"
-                variant="outlined"
                 fullWidth
+                required
                 value={EwalletFundLock}
                 onChange={(e) => setEwalletFundLock(e.target.value)}
-                required
               />
             </Grid>
+
             <Grid item xs={12} sm={6} md={4}>
-              <FormControl fullWidth variant="outlined" required>
-                <InputLabel id="status-label">Status</InputLabel>
+              <FormControl fullWidth required>
+                <InputLabel>Status</InputLabel>
                 <Select
-                  labelId="status-label"
                   value={status}
                   onChange={(e) => setStatus(e.target.value)}
                   label="Status"
@@ -430,6 +349,7 @@ const AddMembers = () => {
                 </Select>
               </FormControl>
             </Grid>
+
             <Grid item xs={12}>
               <Button
                 type="submit"
@@ -444,14 +364,12 @@ const AddMembers = () => {
           </Grid>
         </form>
 
-        {/* Error Display */}
         {error && (
-          <Typography variant="body2" color="error" paragraph>
+          <Typography variant="body2" color="error" sx={{ mt: 2 }}>
             {error}
           </Typography>
         )}
 
-        {/* Success Dialog */}
         <Dialog open={isDialogOpen} onClose={handleCloseDialog}>
           <DialogTitle>Member Added Successfully</DialogTitle>
           <DialogContent>
