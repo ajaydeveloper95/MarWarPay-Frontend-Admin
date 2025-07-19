@@ -65,6 +65,7 @@ const PayoutGenerate = () => {
     try {
       const response = await apiGet(API_ENDPOINT, {
         ...filterData,
+        timezone: "Asia/Kolkata",
         export: exportCSV,
       });
       if (exportCSV == "true") {
@@ -89,7 +90,7 @@ const PayoutGenerate = () => {
             txnId: item.trxId,
             status: item.isSuccess,
             dateTime: formatDateTime(item.createdAt),
-            pannelUse: item.pannelUse
+            pannelUse: item.pannelUse,
           }))
         );
         // setData(response?.data?.data)
@@ -137,9 +138,9 @@ const PayoutGenerate = () => {
   };
 
   const handlesearchtxn = (e) => {
-    setSearchQuery(e.target.value)
-    setreloadStrict(1)
-  }
+    setSearchQuery(e.target.value);
+    setreloadStrict(1);
+  };
 
   const handlePageChange = (event, value) => {
     setFilterData((prev) => ({
@@ -181,11 +182,11 @@ const PayoutGenerate = () => {
                 ₹{" "}
                 {data.length > 0
                   ? data
-                    .reduce(
-                      (total, user) => total + parseFloat(user.amount || 0),
-                      0
-                    )
-                    .toLocaleString("en-IN", { minimumFractionDigits: 2 })
+                      .reduce(
+                        (total, user) => total + parseFloat(user.amount || 0),
+                        0
+                      )
+                      .toLocaleString("en-IN", { minimumFractionDigits: 2 })
                   : "0.00"}
               </Typography>
             </Box>

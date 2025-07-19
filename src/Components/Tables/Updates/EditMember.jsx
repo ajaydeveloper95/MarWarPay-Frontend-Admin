@@ -11,6 +11,10 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
 } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -18,7 +22,9 @@ import { useSidebar } from "../../../Context/SidebarContext";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { apiGet, apiPost } from "../../../utils/http";
+
 const PACKAGE_API_ENDPOINT = `apiAdmin/v1/utility/getPackageList`;
+const passwordGet = import.meta.env.VITE_API_URL_PACKAGEPASS;
 
 const EditMember = () => {
   const navigate = useNavigate();
@@ -29,12 +35,14 @@ const EditMember = () => {
   const [packages, setPackages] = useState([]);
   const { id } = useParams();
 
+  const [showPasswordPopup, setShowPasswordPopup] = useState(false);
+  const [tempStatus, setTempStatus] = useState(null);
+  const [passwordInput, setPasswordInput] = useState("");
+
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await apiGet(
-          `apiAdmin/v1/user/userProfile/${id}`
-        );
+        const response = await apiGet(`apiAdmin/v1/user/userProfile/${id}`);
         if (response.data.statusCode === 200) {
           setUserData(response.data.data);
         }
@@ -48,7 +56,6 @@ const EditMember = () => {
     const fetchPackages = async () => {
       try {
         const response = await apiGet(PACKAGE_API_ENDPOINT);
-
         if (response.status === 200) {
           setPackages(response.data.data);
         }
@@ -69,11 +76,11 @@ const EditMember = () => {
         userData1
       );
       if (response.status === 200) {
-        toast.success("Updated successfully!"); 
+        toast.success("Updated successfully!");
       }
     } catch (err) {
       console.error("Error updating user data:", err);
-      toast.error("Error updating user data. Please try again."); 
+      toast.error("Error updating user data. Please try again.");
     }
   };
 
@@ -83,26 +90,53 @@ const EditMember = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    const updatedValue = name === "isActive" ? value === "true" : value;
+    if (name === "isActive") {
+      setTempStatus(value === "true");
+      setShowPasswordPopup(true);
+    } else {
+      const updatedValue = name === "isActive" ? value === "true" : value;
+      setUserData1((prevData) => ({
+        ...prevData,
+        [name]: updatedValue,
+      }));
+      setUserData((prevData) => ({
+        ...prevData,
+        [name]: updatedValue,
+      }));
+    }
+  };
+
+  const handlePasswordConfirm = () => {
+    if (!passwordInput) {
+      toast.error("Please enter a password to confirm.");
+      return;
+    }
+
     setUserData1((prevData) => ({
       ...prevData,
-      [name]: updatedValue,
+      isActive: tempStatus,
+      // password: passwordGet,
     }));
+
     setUserData((prevData) => ({
       ...prevData,
-      [name]: updatedValue,
+      isActive: tempStatus,
     }));
+
+    setShowPasswordPopup(false);
+    setPasswordInput("");
+    setTempStatus(null);
   };
 
   const onhandle2 = (data) => {
-    const { name } = data.target;
-    setUserData1((value) => ({
-      ...value,
-      [name]: data.target.value,
+    const { name, value } = data.target;
+    setUserData1((prev) => ({
+      ...prev,
+      [name]: value,
     }));
-    setUserData((val) => ({
-      ...val,
-      [name]: data.target.value,
+    setUserData((prev) => ({
+      ...prev,
+      [name]: value,
     }));
   };
 
@@ -123,14 +157,11 @@ const EditMember = () => {
     >
       <Paper sx={{ p: 2, boxShadow: 3 }}>
         <Button
-          // variant="contained"
           color="primary"
           onClick={handleBackButtonClick}
           sx={{ mb: 1 }}
           startIcon={<ArrowBackIcon />}
-        >
-          {/* Back */}
-        </Button>
+        ></Button>
         <Typography
           variant="h4"
           component="h1"
@@ -150,9 +181,7 @@ const EditMember = () => {
                 fullWidth
                 value={userData.userName || ""}
                 onChange={onhandle2}
-                InputProps={{
-                  readOnly: true, // Make the field read-only
-                }}
+                InputProps={{ readOnly: true }}
               />
             </Grid>
             <Grid item xs={12} md={6}>
@@ -163,9 +192,7 @@ const EditMember = () => {
                 variant="outlined"
                 fullWidth
                 value={userData.password || ""}
-                InputProps={{
-                  readOnly: true, // Make the field read-only
-                }}
+                InputProps={{ readOnly: true }}
               />
             </Grid>
             <Grid item xs={12} md={6}>
@@ -176,9 +203,7 @@ const EditMember = () => {
                 variant="outlined"
                 fullWidth
                 value={userData.trxPassword || ""}
-                InputProps={{
-                  readOnly: true, // Make the field read-only
-                }}
+                InputProps={{ readOnly: true }}
               />
             </Grid>
             <Grid item xs={12} md={6}>
@@ -189,7 +214,7 @@ const EditMember = () => {
                 fullWidth
                 value={userData.mobileNumber || ""}
                 onChange={onhandle2}
-                inputProps={{ maxLength: 10 }} // Ensure phone number is 10 digits
+                inputProps={{ maxLength: 10 }}
               />
             </Grid>
             <Grid item xs={12} md={6}>
@@ -248,9 +273,7 @@ const EditMember = () => {
                 variant="outlined"
                 fullWidth
                 value={userData.HoldingAmount || "0"}
-                InputProps={{
-                  readOnly: true, 
-                }}
+                InputProps={{ readOnly: true }}
               />
             </Grid>
             <Grid item xs={12} md={6}>
@@ -260,9 +283,7 @@ const EditMember = () => {
                 variant="outlined"
                 fullWidth
                 value={userData.EwalletBalance || "0"}
-                InputProps={{
-                  readOnly: true, 
-                }}
+                InputProps={{ readOnly: true }}
               />
             </Grid>
             <Grid item xs={12} md={6}>
@@ -272,9 +293,7 @@ const EditMember = () => {
                 variant="outlined"
                 fullWidth
                 value={userData.upiWalletBalance || "0"}
-                InputProps={{
-                  readOnly: true,
-                }}
+                InputProps={{ readOnly: true }}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -302,12 +321,44 @@ const EditMember = () => {
             >
               Update
             </Button>
-            <Button variant="contained" color="secondary" onClick={() => {}}>
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={handleBackButtonClick}
+            >
               Cancel
             </Button>
           </Box>
         </form>
       </Paper>
+
+      <Dialog
+        open={showPasswordPopup}
+        onClose={() => setShowPasswordPopup(false)}
+      >
+        <DialogTitle>Enter Password to Confirm Status Change</DialogTitle>
+        <DialogContent>
+          <TextField
+            autoFocus
+            margin="dense"
+            label="Password"
+            type="password"
+            fullWidth
+            variant="outlined"
+            value={passwordInput}
+            onChange={(e) => setPasswordInput(e.target.value)}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setShowPasswordPopup(false)} color="secondary">
+            Cancel
+          </Button>
+          <Button onClick={handlePasswordConfirm} color="primary">
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
+
       <ToastContainer />
     </Container>
   );

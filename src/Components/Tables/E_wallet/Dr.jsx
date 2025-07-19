@@ -23,6 +23,7 @@ import { apiGet, apiPost } from '../../../utils/http';
 
 const API_GET_USERS_ENDPOINT = `apiAdmin/v1/utility/getUserWithWallet`;
 const API_TRANSFER_ENDPOINT = `apiAdmin/v1/wallet/eWalletFundDebit`;
+const passwordGet = import.meta.env.VITE_API_URL_DABIT
 
 const Dr = () => {
   const [member, setMember] = useState('');
@@ -30,10 +31,11 @@ const Dr = () => {
   const [transferAmount, setTransferAmount] = useState('');
   const [description, setDescription] = useState('');
   const [transactionType, setTransactionType] = useState('DR');
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isSuccessDialogOpen, setIsSuccessDialogOpen] = useState(false);
+  const [isPasswordDialogOpen, setIsPasswordDialogOpen] = useState(false);
+  const [password, setPassword] = useState('');
   const [data, setData] = useState([]);
-  const [fileUpdate,setfileUpdate] = useState("open")
-
+  const [fileUpdate, setfileUpdate] = useState('open');
 
   const navigate = useNavigate();
   const { isSidebarOpen } = useSidebar();
@@ -44,63 +46,66 @@ const Dr = () => {
         const response = await apiGet(API_GET_USERS_ENDPOINT);
         setData(response.data.data);
       } catch (err) {
-        console.log(err)
+        console.log(err);
       }
     };
 
     fetchData();
   }, [fileUpdate]);
 
-  const handleMemberChange = async (e) => {
+  const handleMemberChange = (e) => {
     const selectedMemberId = e.target.value;
     setMember(selectedMemberId);
 
     const selectedMember = data.find((item) => item._id === selectedMemberId);
-    if (selectedMember) {
-      setAvailableBalance(selectedMember.EwalletBalance);
-    } else {
-      setAvailableBalance('');
-    }
+    setAvailableBalance(selectedMember ? selectedMember.EwalletBalance : '');
   };
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
+  const handlePasswordDialogSubmit = async () => {
+    const frontendPassword = passwordGet;
+
+
+    if (password !== frontendPassword) {
+      alert('Incorrect password. Please try again.');
+      return;
+    }
+
     const requestBody = {
       transactionAmount: parseFloat(transferAmount),
       transactionType: transactionType === 'CR' ? 'Cr.' : 'Dr.',
+      description,
     };
+
     try {
       const response = await apiPost(
         `${API_TRANSFER_ENDPOINT}/${member}`,
         requestBody
       );
 
-      setfileUpdate("done")
+      setfileUpdate('done');
 
       if (response.status === 200) {
         const { data } = response.data;
         setAvailableBalance(data.afterAmount.toString());
-
-        setIsDialogOpen(true);
+        setIsSuccessDialogOpen(true);
       }
     } catch (err) {
       alert('An error occurred while processing the transaction.');
       console.log(err);
     }
 
-    // Reset form fields
+    // Reset all
+    setIsPasswordDialogOpen(false);
+    setPassword('');
     setMember('');
     setAvailableBalance('');
     setTransferAmount('');
     setDescription('');
   };
 
-  const handleCloseDialog = () => {
-    setIsDialogOpen(false);
-  };
-
-  const handleCancel = () => {
-    navigate(-1); // Navigate to the previous page
+  const handleFormSubmit = (e) => {
+    e.preventDefault();
+    setIsPasswordDialogOpen(true);
   };
 
   return (
@@ -131,11 +136,11 @@ const Dr = () => {
         >
           <ArrowBackIcon />
         </IconButton>
-        <Typography variant="h4" component="h1" gutterBottom sx={{color:"teal"}}>
+        <Typography variant="h4" component="h1" gutterBottom sx={{ color: 'teal' }}>
           Debit Fund
         </Typography>
 
-        <form onSubmit={handleSubmit} noValidate autoComplete="off">
+        <form onSubmit={handleFormSubmit} noValidate autoComplete="off">
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6} md={4}>
               <FormControl fullWidth variant="outlined" required>
@@ -200,27 +205,47 @@ const Dr = () => {
                 onChange={(e) => setDescription(e.target.value)}
               />
             </Grid>
-            <Grid item xs={12} display="flex" justifyContent="flex-end" spacing={2}>
-              <Button type="submit" variant="contained" color="primary" sx={{ mr: 2, background: 'teal' }}>
+            <Grid item xs={12} display="flex" justifyContent="flex-end">
+              <Button type="submit" variant="contained" sx={{ mr: 2, background: 'teal' }}>
                 Submit
               </Button>
-              <Button variant="outlined" color="secondary" onClick={handleCancel}>
+              <Button variant="outlined" color="secondary" onClick={() => navigate(-1)}>
                 Cancel
               </Button>
             </Grid>
           </Grid>
         </form>
 
-        {/* Success Dialog */}
-        <Dialog open={isDialogOpen} onClose={handleCloseDialog}>
-          <DialogTitle>Transfer Successful</DialogTitle>
+        {/* Password Confirmation Dialog */}
+        <Dialog open={isPasswordDialogOpen} onClose={() => setIsPasswordDialogOpen(false)}>
+          <DialogTitle>Confirm Password</DialogTitle>
           <DialogContent>
-            <Typography>
-              The amount has been successfully Debit!
-            </Typography>
+            <TextField
+              label="Enter Password"
+              type="password"
+              fullWidth
+              margin="normal"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
           </DialogContent>
           <DialogActions>
-            <Button onClick={handleCloseDialog} color="primary">
+            <Button onClick={() => setIsPasswordDialogOpen(false)}>Cancel</Button>
+            <Button variant="contained" onClick={handlePasswordDialogSubmit} color="primary">
+              Confirm
+            </Button>
+          </DialogActions>
+        </Dialog>
+
+        {/* Success Dialog */}
+        <Dialog open={isSuccessDialogOpen} onClose={() => setIsSuccessDialogOpen(false)}>
+          <DialogTitle>Transfer Successful</DialogTitle>
+          <DialogContent>
+            <Typography>The amount has been successfully debited!</Typography>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setIsSuccessDialogOpen(false)} color="primary">
               OK
             </Button>
           </DialogActions>

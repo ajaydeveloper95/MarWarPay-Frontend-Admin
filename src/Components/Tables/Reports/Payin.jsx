@@ -82,6 +82,7 @@ const Payin = () => {
     try {
       const response = await apiGet(API_ENDPOINT, {
         ...filterData,
+        timezone: "Asia/Kolkata",
         export: exportCSV,
       });
       if(exportCSV == "true") {
@@ -229,7 +230,7 @@ const Payin = () => {
                 boxShadow: "5px 0 10px -3px rgba(0, 128, 128, 0.6)",
               }}
             >
-              <Typography variant="h6" sx={{ color: "teal" }}>
+              <Typography variant="h6" sx={{ color: "#714eaf" }}>
                 Total balance
               </Typography>
               <Typography>
@@ -254,7 +255,7 @@ const Payin = () => {
                 boxShadow: "5px 0 10px -3px rgba(0, 128, 128, 0.6)",
               }}
             >
-              <Typography variant="h6" sx={{ color: "teal" }}>
+              <Typography variant="h6" sx={{ color: "#714eaf" }}>
                 Total Charges
               </Typography>
               <Typography>
@@ -279,7 +280,7 @@ const Payin = () => {
                 boxShadow: "5px 0 10px -3px rgba(0, 128, 128, 0.6)",
               }}
             >
-              <Typography variant="h6" sx={{ color: "teal" }}>
+              <Typography variant="h6" sx={{ color: "#714eaf" }}>
                 Total Transaction
               </Typography>
               <Typography>{data.length}</Typography>
@@ -328,9 +329,8 @@ const Payin = () => {
             >
               <Button
                 variant="contained"
-                color="success"
+                color="primary"
                 onClick={() => fetchData("true")}
-                sx={{ marginBottom: 2 }}
               > 
                 Export
               </Button>
