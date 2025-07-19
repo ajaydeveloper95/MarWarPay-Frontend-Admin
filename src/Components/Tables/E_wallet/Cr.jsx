@@ -23,6 +23,7 @@ import { apiGet, apiPost } from "../../../utils/http";
 
 const API_GET_USERS_ENDPOINT = `apiAdmin/v1/utility/getUserWithWallet`;
 const API_TRANSFER_ENDPOINT = `apiAdmin/v1/wallet/eWalletFundCredit`;
+const passwordGet = import.meta.env.VITE_API_URL_CREDIT;
 
 const Cr = () => {
   const [member, setMember] = useState("");
@@ -30,7 +31,9 @@ const Cr = () => {
   const [transferAmount, setTransferAmount] = useState("");
   const [description, setDescription] = useState("");
   const [transactionType, setTransactionType] = useState("CR");
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isSuccessDialogOpen, setIsSuccessDialogOpen] = useState(false);
+  const [isPasswordDialogOpen, setIsPasswordDialogOpen] = useState(false);
+  const [password, setPassword] = useState("");
   const [data, setData] = useState([]);
   const [fileUpdate, setfileUpdate] = useState("open");
 
@@ -62,12 +65,23 @@ const Cr = () => {
     }
   };
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
+  const handleFormSubmit = (e) => {
+    e.preventDefault();
+    setIsPasswordDialogOpen(true);
+  };
+
+  const handlePasswordDialogSubmit = async () => {
+    const frontendPassword = passwordGet;
+
+    if (password !== frontendPassword) {
+      alert("Incorrect password. Please try again.");
+      return;
+    }
 
     const requestBody = {
       transactionAmount: parseFloat(transferAmount),
       transactionType: transactionType === "CR" ? "Cr." : "Dr.",
+      description,
     };
 
     try {
@@ -75,26 +89,26 @@ const Cr = () => {
         `${API_TRANSFER_ENDPOINT}/${member}`,
         requestBody
       );
+
       setfileUpdate("done");
 
       if (response.status === 200) {
         const { data } = response.data;
         setAvailableBalance(data.afterAmount.toString());
-        setIsDialogOpen(true);
+        setIsSuccessDialogOpen(true);
       }
     } catch (err) {
       alert("An error occurred while processing the transaction.");
       console.log(err);
     }
 
+    // Reset
+    setIsPasswordDialogOpen(false);
+    setPassword("");
     setMember("");
     setAvailableBalance("");
     setTransferAmount("");
     setDescription("");
-  };
-
-  const handleCloseDialog = () => {
-    setIsDialogOpen(false);
   };
 
   const handleCancel = () => {
@@ -138,7 +152,7 @@ const Cr = () => {
           Credit Fund
         </Typography>
 
-        <form onSubmit={handleSubmit} noValidate autoComplete="off">
+        <form onSubmit={handleFormSubmit} noValidate autoComplete="off">
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6} md={4}>
               <FormControl fullWidth variant="outlined" required>
@@ -232,14 +246,41 @@ const Cr = () => {
           </Grid>
         </form>
 
+        {/* Password Confirmation Dialog */}
+        <Dialog
+          open={isPasswordDialogOpen}
+          onClose={() => setIsPasswordDialogOpen(false)}
+        >
+          <DialogTitle>Confirm Password</DialogTitle>
+          <DialogContent>
+            <TextField
+              label="Enter Password"
+              type="password"
+              fullWidth
+              margin="normal"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setIsPasswordDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button variant="contained" onClick={handlePasswordDialogSubmit}>
+              Confirm
+            </Button>
+          </DialogActions>
+        </Dialog>
+
         {/* Success Dialog */}
-        <Dialog open={isDialogOpen} onClose={handleCloseDialog}>
+        <Dialog open={isSuccessDialogOpen} onClose={() => setIsSuccessDialogOpen(false)}>
           <DialogTitle>Transfer Successful</DialogTitle>
           <DialogContent>
             <Typography>The amount has been successfully credited!</Typography>
           </DialogContent>
           <DialogActions>
-            <Button onClick={handleCloseDialog} color="primary">
+            <Button onClick={() => setIsSuccessDialogOpen(false)} color="primary">
               OK
             </Button>
           </DialogActions>
