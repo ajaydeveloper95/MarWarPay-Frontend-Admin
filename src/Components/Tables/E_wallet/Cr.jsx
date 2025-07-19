@@ -81,7 +81,7 @@ const Cr = () => {
     const requestBody = {
       transactionAmount: parseFloat(transferAmount),
       transactionType: transactionType === "CR" ? "Cr." : "Dr.",
-      description,
+      // description,
     };
 
     try {
