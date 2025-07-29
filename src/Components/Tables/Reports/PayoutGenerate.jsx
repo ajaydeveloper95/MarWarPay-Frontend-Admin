@@ -88,6 +88,7 @@ const PayoutGenerate = () => {
             charge: `${item?.payoutSuccessData?.chargeAmount ?? 0}`,
             finalAmt: `${item?.payoutSuccessData?.finalAmount ?? 0}`,
             txnId: item.trxId,
+            systemTrxId: item.systemTrxId,
             status: item.isSuccess,
             dateTime: formatDateTime(item.createdAt),
             pannelUse: item.pannelUse,
@@ -457,6 +458,15 @@ const PayoutGenerate = () => {
                       border: "1px solid rgba(224, 224, 224, 1)",
                     }}
                   >
+                    System TxnId
+                  </TableCell>
+                  <TableCell
+                    sx={{
+                      fontWeight: "bold",
+                      fontSize: "16px",
+                      border: "1px solid rgba(224, 224, 224, 1)",
+                    }}
+                  >
                     Status
                   </TableCell>
                   <TableCell
@@ -541,6 +551,11 @@ const PayoutGenerate = () => {
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
                       >
                         {item?.txnId}
+                      </TableCell>
+                      <TableCell
+                        sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
+                      >
+                        {item?.systemTrxId}
                       </TableCell>
                       <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}

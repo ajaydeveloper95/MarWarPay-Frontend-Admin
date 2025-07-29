@@ -219,7 +219,7 @@ const UpdatePayoutAPI = () => {
                   <TableCell
                     sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
                   >
-                    {api.trxIdType}
+                    {api.trxIdType || 'N/A'}
                   </TableCell>
                   <TableCell
                     sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
