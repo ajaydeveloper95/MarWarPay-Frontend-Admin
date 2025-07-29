@@ -62,7 +62,7 @@ const Login = () => {
         }
       })
       .catch((err) => {
-        console.error("Login error:", err);
+        // console.error("Login error:", err);
         setSnackbarMessage("Login failed. Please try again.");
         setOpenSnackbar(true);
       });
