@@ -555,7 +555,7 @@ const PayoutGenerate = () => {
                       <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
                       >
-                        {item?.systemTrxId}
+                        {item?.systemTrxId || 'N/A'}
                       </TableCell>
                       <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
