@@ -20,6 +20,11 @@ import {
   DialogActions,
   TextField,
   Switch,
+  FormControlLabel,
+  Radio,
+  FormControl,
+  FormLabel,
+  RadioGroup,
 } from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -81,6 +86,7 @@ const UpdatePayoutAPI = () => {
             apiURL: selectedApi.apiURL,
             apiInfo: selectedApi.apiInfo,
             isActive: selectedApi.isActive,
+            trxIdType: selectedApi.trxIdType,
           }
         );
 
@@ -128,7 +134,7 @@ const UpdatePayoutAPI = () => {
         >
           <ArrowBackIcon />
         </IconButton>
-        <Typography variant="h4" gutterBottom>
+        <Typography variant="h4" gutterBottom sx={{ color: "teal" }}>
           PayIn API Status
         </Typography>
 
@@ -162,6 +168,15 @@ const UpdatePayoutAPI = () => {
                   }}
                 >
                   API Info
+                </TableCell>
+                <TableCell
+                  sx={{
+                    fontWeight: "bold",
+                    fontSize: "16px",
+                    border: "1px solid rgba(224, 224, 224, 1)",
+                  }}
+                >
+                  TxnID Type
                 </TableCell>
                 <TableCell
                   sx={{
@@ -204,6 +219,11 @@ const UpdatePayoutAPI = () => {
                   <TableCell
                     sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
                   >
+                    {api.trxIdType}
+                  </TableCell>
+                  <TableCell
+                    sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
+                  >
                     {api.isActive ? "Active" : "Inactive"}
                   </TableCell>
                   <TableCell
@@ -221,7 +241,7 @@ const UpdatePayoutAPI = () => {
 
         {/* Edit Dialog */}
         <Dialog open={editDialogOpen} onClose={() => setEditDialogOpen(false)}>
-          <DialogTitle>Edit PayIn API</DialogTitle>
+          <DialogTitle sx={{ color: "teal" }}>Edit PayIn API</DialogTitle>
           <DialogContent>
             <TextField
               fullWidth
@@ -250,6 +270,27 @@ const UpdatePayoutAPI = () => {
                 setSelectedApi((prev) => ({ ...prev, apiInfo: e.target.value }))
               }
             />
+            <FormControl component="fieldset" margin="normal">
+              <FormLabel component="legend">TxnID Type</FormLabel>
+              <RadioGroup
+                row
+                value={selectedApi?.trxIdType || ""}
+                onChange={(e) =>
+                  setSelectedApi((prev) => ({
+                    ...prev,
+                    trxIdType: e.target.value,
+                  }))
+                }
+              >
+                <FormControlLabel value="Num" control={<Radio />} label="Num" />
+                <FormControlLabel
+                  value="AlphaNum"
+                  control={<Radio />}
+                  label="Alphanum"
+                />
+              </RadioGroup>
+            </FormControl>
+
             <Box sx={{ display: "flex", alignItems: "center", mt: 2 }}>
               <Typography variant="body1" sx={{ mr: 2 }}>
                 Status

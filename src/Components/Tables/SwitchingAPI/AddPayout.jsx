@@ -5,6 +5,10 @@ import {
     Button,
     Snackbar,
     Alert,
+    FormControl,
+    RadioGroup,
+    FormControlLabel,
+    Radio,
   } from "@mui/material";
   import { useState } from "react";
 import { apiPost } from "../../../utils/http";
@@ -15,6 +19,7 @@ import { apiPost } from "../../../utils/http";
     const [newApiName, setNewApiName] = useState("");
     const [newApiURL, setNewApiURL] = useState("");
     const [newApiInfo, setNewApiInfo] = useState("");
+    const [newTrxIdType, setNewTrxIdType] = useState("");
     const [snackbarMessage, setSnackbarMessage] = useState("");
     const [openSnackbar, setOpenSnackbar] = useState(false);
     const [error, setError] = useState(null);
@@ -24,7 +29,7 @@ import { apiPost } from "../../../utils/http";
     const handleApiInfoChange = (e) => setNewApiInfo(e.target.value);
   
     const handleSubmit = async () => {
-      if (!newApiName || !newApiURL) {
+      if (!newApiName || !newApiURL || !newTrxIdType) {
         setError("All fields are require.");
         return;
       }
@@ -35,7 +40,8 @@ import { apiPost } from "../../../utils/http";
           {
             apiName: newApiName,
             apiURL: newApiURL,
-            apiInfo: newApiInfo
+            apiInfo: newApiInfo,
+            trxIdType: newTrxIdType,
           }
         );
   
@@ -80,8 +86,23 @@ import { apiPost } from "../../../utils/http";
           value={newApiInfo}
           onChange={handleApiInfoChange}
         />
+              <FormControl component="fieldset" margin="normal">
+        <RadioGroup
+          row
+          value={newTrxIdType}
+          onChange={(e) => setNewTrxIdType(e.target.value)}
+        >
+          <FormControlLabel value="Num" control={<Radio />} label="Num" />
+          <FormControlLabel
+            value="AlphaNum"
+            control={<Radio />}
+            label="Alphanum"
+          />
+        </RadioGroup>
+      </FormControl>
         {error && <Typography color="error">{error}</Typography>}
-        <Button
+        <div>
+          <Button
           variant="contained"
           color="primary"
           onClick={handleSubmit}
@@ -97,6 +118,7 @@ import { apiPost } from "../../../utils/http";
         >
           Cancel
         </Button>
+        </div>
         <Snackbar
           open={openSnackbar}
           autoHideDuration={4000}

@@ -5,15 +5,21 @@ import {
   Button,
   Snackbar,
   Alert,
+  Radio,
+  RadioGroup,
+  FormControlLabel,
+  FormControl,
 } from "@mui/material";
 import { useState } from "react";
 import { apiPost } from "../../../utils/http";
+
 const ADD_PAYIN_API = `apiAdmin/v1/apiswitch/addPayInSwitch`;
 
 const AddPayinAPI = ({ onClose }) => {
   const [newApiName, setNewApiName] = useState("");
   const [newApiURL, setNewApiURL] = useState("");
   const [newApiInfo, setNewApiInfo] = useState("");
+  const [newTrxIdType, setNewTrxIdType] = useState("");
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [error, setError] = useState(null);
@@ -23,30 +29,30 @@ const AddPayinAPI = ({ onClose }) => {
   const handleApiInfoChange = (e) => setNewApiInfo(e.target.value);
 
   const handleSubmit = async () => {
-    if (!newApiName || !newApiURL) {
-      setError("All fields are require");
+    if (!newApiName || !newApiURL || !newTrxIdType) {
+      setError("All fields are required");
       return;
     }
 
     try {
-      const response = await apiPost(
-        ADD_PAYIN_API,
-        {
-          apiName: newApiName,
-          apiURL: newApiURL,
-          apiInfo: newApiInfo,
-        }
-      );
+      const response = await apiPost(ADD_PAYIN_API, {
+        apiName: newApiName,
+        apiURL: newApiURL,
+        apiInfo: newApiInfo,
+        trxIdType: newTrxIdType,
+      });
 
       if (response.status === 200) {
-        setSnackbarMessage("Payout API added successfully!");
+        setSnackbarMessage("Payin API added successfully!");
         setOpenSnackbar(true);
         setNewApiName("");
         setNewApiURL("");
-        onClose(); 
+        setNewTrxIdType("");
+        setNewApiInfo("");
+        onClose();
       }
     } catch (err) {
-      setError("Please Wait....", err);
+      setError("An error occurred while adding the API.",err);
     }
   };
 
@@ -57,6 +63,7 @@ const AddPayinAPI = ({ onClose }) => {
       <Typography variant="h5" gutterBottom>
         Add New Payin API
       </Typography>
+
       <TextField
         fullWidth
         margin="normal"
@@ -64,6 +71,7 @@ const AddPayinAPI = ({ onClose }) => {
         value={newApiName}
         onChange={handleApiNameChange}
       />
+
       <TextField
         fullWidth
         margin="normal"
@@ -71,15 +79,34 @@ const AddPayinAPI = ({ onClose }) => {
         value={newApiURL}
         onChange={handleApiUrlChange}
       />
+
       <TextField
         fullWidth
         margin="normal"
-        label="apiInfo"
+        label="API Info"
         value={newApiInfo}
         onChange={handleApiInfoChange}
       />
+
+      <FormControl component="fieldset" margin="normal">
+        <RadioGroup
+          row
+          value={newTrxIdType}
+          onChange={(e) => setNewTrxIdType(e.target.value)}
+        >
+          <FormControlLabel value="Num" control={<Radio />} label="Num" />
+          <FormControlLabel
+            value="AlphaNum"
+            control={<Radio />}
+            label="Alphanum"
+          />
+        </RadioGroup>
+      </FormControl>
+
       {error && <Typography color="error">{error}</Typography>}
-      <Button
+
+     <div>
+       <Button
         variant="contained"
         color="primary"
         onClick={handleSubmit}
@@ -95,6 +122,8 @@ const AddPayinAPI = ({ onClose }) => {
       >
         Cancel
       </Button>
+     </div>
+
       <Snackbar
         open={openSnackbar}
         autoHideDuration={4000}

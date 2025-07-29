@@ -20,6 +20,11 @@ import {
   DialogActions,
   TextField,
   Switch,
+  FormControlLabel,
+  Radio,
+  RadioGroup,
+  FormControl,
+  FormLabel,
 } from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -63,11 +68,11 @@ const UpdatePayoutAPI = () => {
 
   const handleSave = () => {
     setEditDialogOpen(false);
-    setConfirmDialogOpen(true);  
+    setConfirmDialogOpen(true);
   };
 
   const handleConfirmUpdate = async () => {
-    setConfirmDialogOpen(false); 
+    setConfirmDialogOpen(false);
     if (selectedApi) {
       try {
         const response = await apiPost(
@@ -76,13 +81,14 @@ const UpdatePayoutAPI = () => {
             apiName: selectedApi.apiName,
             apiURL: selectedApi.apiURL,
             apiInfo: selectedApi.apiInfo,
-            isActive: selectedApi.isActive, 
+            isActive: selectedApi.isActive,
+            trxIdType: selectedApi.trxIdType,
           }
         );
 
         if (response.data.statusCode === 200) {
           const updatedResponse = await apiGet(PAYOUT_API_LIST);
-          setPayInApiList(updatedResponse.data.data); 
+          setPayInApiList(updatedResponse.data.data);
           showSnackbar("API details updated successfully!");
         } else {
           showSnackbar("Failed to update API details.");
@@ -114,51 +120,118 @@ const UpdatePayoutAPI = () => {
         marginTop: "8%",
       }}
     >
-      <Box sx={{ mt: 4, p: 4, borderRadius: 2, boxShadow: 3, backgroundColor: "background.paper", position: "relative" }}>
-        <IconButton onClick={handleCancel} color="primary" sx={{ position: "absolute", top: 0, left: 16 }}>
+      <Box
+        sx={{
+          mt: 4,
+          p: 4,
+          borderRadius: 2,
+          boxShadow: 3,
+          backgroundColor: "background.paper",
+          position: "relative",
+        }}
+      >
+        <IconButton
+          onClick={handleCancel}
+          color="primary"
+          sx={{ position: "absolute", top: 0, left: 16 }}
+        >
           <ArrowBackIcon />
         </IconButton>
-        <Typography variant="h4" gutterBottom>PayOut API Status</Typography>
+        <Typography variant="h4" gutterBottom sx={{ color: "teal" }}>
+          PayOut API Status
+        </Typography>
 
         <TableContainer component={Paper}>
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell sx={{
-                      fontWeight: "bold",
-                      fontSize: "16px",
-                      border: "1px solid rgba(224, 224, 224, 1)",
-                    }}>#</TableCell>
-                <TableCell sx={{
-                      fontWeight: "bold",
-                      fontSize: "16px",
-                      border: "1px solid rgba(224, 224, 224, 1)",
-                    }}>API Name</TableCell>
-                <TableCell sx={{
-                      fontWeight: "bold",
-                      fontSize: "16px",
-                      border: "1px solid rgba(224, 224, 224, 1)",
-                    }}>API Info</TableCell>
-                <TableCell sx={{
-                      fontWeight: "bold",
-                      fontSize: "16px",
-                      border: "1px solid rgba(224, 224, 224, 1)",
-                    }}>Status</TableCell>
-                <TableCell sx={{
-                      fontWeight: "bold",
-                      fontSize: "16px",
-                      border: "1px solid rgba(224, 224, 224, 1)",
-                    }}>Action</TableCell>
+                <TableCell
+                  sx={{
+                    fontWeight: "bold",
+                    fontSize: "16px",
+                    border: "1px solid rgba(224, 224, 224, 1)",
+                  }}
+                >
+                  #
+                </TableCell>
+                <TableCell
+                  sx={{
+                    fontWeight: "bold",
+                    fontSize: "16px",
+                    border: "1px solid rgba(224, 224, 224, 1)",
+                  }}
+                >
+                  API Name
+                </TableCell>
+                <TableCell
+                  sx={{
+                    fontWeight: "bold",
+                    fontSize: "16px",
+                    border: "1px solid rgba(224, 224, 224, 1)",
+                  }}
+                >
+                  API Info
+                </TableCell>
+                <TableCell
+                  sx={{
+                    fontWeight: "bold",
+                    fontSize: "16px",
+                    border: "1px solid rgba(224, 224, 224, 1)",
+                  }}
+                >
+                  TxnId Type
+                </TableCell>
+                <TableCell
+                  sx={{
+                    fontWeight: "bold",
+                    fontSize: "16px",
+                    border: "1px solid rgba(224, 224, 224, 1)",
+                  }}
+                >
+                  Status
+                </TableCell>
+                <TableCell
+                  sx={{
+                    fontWeight: "bold",
+                    fontSize: "16px",
+                    border: "1px solid rgba(224, 224, 224, 1)",
+                  }}
+                >
+                  Action
+                </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {payInApiList.map((api, index) => (
                 <TableRow key={api._id}>
-                  <TableCell sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}>{index + 1}</TableCell>
-                  <TableCell sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}>{api.apiName}</TableCell>
-                  <TableCell sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}>{api.apiInfo}</TableCell>
-                  <TableCell sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}>{api.isActive ? "Active" : "Inactive"}</TableCell>
-                  <TableCell sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}>
+                  <TableCell
+                    sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
+                  >
+                    {index + 1}
+                  </TableCell>
+                  <TableCell
+                    sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
+                  >
+                    {api.apiName}
+                  </TableCell>
+                  <TableCell
+                    sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
+                  >
+                    {api.apiInfo}
+                  </TableCell>
+                   <TableCell
+                    sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
+                  >
+                    {api.trxIdType}
+                  </TableCell>
+                  <TableCell
+                    sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
+                  >
+                    {api.isActive ? "Active" : "Inactive"}
+                  </TableCell>
+                  <TableCell
+                    sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
+                  >
                     <IconButton onClick={() => handleEditClick(api)}>
                       <VisibilityIcon color="primary" />
                     </IconButton>
@@ -171,29 +244,55 @@ const UpdatePayoutAPI = () => {
 
         {/* Edit Dialog */}
         <Dialog open={editDialogOpen} onClose={() => setEditDialogOpen(false)}>
-          <DialogTitle>Edit PayOut API</DialogTitle>
+          <DialogTitle sx={{ color: "teal" }}>Edit PayOut API</DialogTitle>
           <DialogContent>
             <TextField
               fullWidth
               margin="dense"
               label="API Name"
               value={selectedApi?.apiName || ""}
-              onChange={(e) => setSelectedApi((prev) => ({ ...prev, apiName: e.target.value }))} 
+              onChange={(e) =>
+                setSelectedApi((prev) => ({ ...prev, apiName: e.target.value }))
+              }
             />
             <TextField
               fullWidth
               margin="dense"
               label="API URL"
               value={selectedApi?.apiURL || ""}
-              onChange={(e) => setSelectedApi((prev) => ({ ...prev, apiURL: e.target.value }))} 
+              onChange={(e) =>
+                setSelectedApi((prev) => ({ ...prev, apiURL: e.target.value }))
+              }
             />
-             <TextField
+            <TextField
               fullWidth
               margin="dense"
               label="API Info"
               value={selectedApi?.apiInfo || ""}
-              onChange={(e) => setSelectedApi((prev) => ({ ...prev, apiInfo: e.target.value }))} 
+              onChange={(e) =>
+                setSelectedApi((prev) => ({ ...prev, apiInfo: e.target.value }))
+              }
             />
+                        <FormControl component="fieldset" margin="normal">
+                          <FormLabel component="legend">TxnID Type</FormLabel>
+                          <RadioGroup
+                            row
+                            value={selectedApi?.trxIdType || ""}
+                            onChange={(e) =>
+                              setSelectedApi((prev) => ({
+                                ...prev,
+                                trxIdType: e.target.value,
+                              }))
+                            }
+                          >
+                            <FormControlLabel value="Num" control={<Radio />} label="Num" />
+                            <FormControlLabel
+                              value="AlphaNum"
+                              control={<Radio />}
+                              label="Alphanum"
+                            />
+                          </RadioGroup>
+                        </FormControl>
             <div>
               <Typography variant="body1">Status</Typography>
               <Switch
@@ -208,24 +307,48 @@ const UpdatePayoutAPI = () => {
             </div>
           </DialogContent>
           <DialogActions>
-            <Button onClick={() => setEditDialogOpen(false)} color="secondary">Cancel</Button>
-            <Button onClick={handleSave} color="primary">Save</Button>
+            <Button onClick={() => setEditDialogOpen(false)} color="secondary">
+              Cancel
+            </Button>
+            <Button onClick={handleSave} color="primary">
+              Save
+            </Button>
           </DialogActions>
         </Dialog>
 
         {/* Confirmation Dialog */}
-        <Dialog open={confirmDialogOpen} onClose={() => setConfirmDialogOpen(false)}>
+        <Dialog
+          open={confirmDialogOpen}
+          onClose={() => setConfirmDialogOpen(false)}
+        >
           <DialogTitle>Confirm Update</DialogTitle>
-          <DialogContent>Are you sure you want to update this API?</DialogContent>
+          <DialogContent>
+            Are you sure you want to update this API?
+          </DialogContent>
           <DialogActions>
-            <Button onClick={() => setConfirmDialogOpen(false)} color="secondary">Cancel</Button>
-            <Button onClick={handleConfirmUpdate} color="primary">Yes, Update</Button>
+            <Button
+              onClick={() => setConfirmDialogOpen(false)}
+              color="secondary"
+            >
+              Cancel
+            </Button>
+            <Button onClick={handleConfirmUpdate} color="primary">
+              Yes, Update
+            </Button>
           </DialogActions>
         </Dialog>
 
         {/* Snackbar for notifications */}
-        <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleCloseSnackbar}>
-          <Alert onClose={handleCloseSnackbar} severity="info" sx={{ width: "100%" }}>
+        <Snackbar
+          open={openSnackbar}
+          autoHideDuration={6000}
+          onClose={handleCloseSnackbar}
+        >
+          <Alert
+            onClose={handleCloseSnackbar}
+            severity="info"
+            sx={{ width: "100%" }}
+          >
             {snackbarMessage}
           </Alert>
         </Snackbar>
