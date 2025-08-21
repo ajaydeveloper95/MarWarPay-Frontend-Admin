@@ -510,22 +510,22 @@ const PayoutGenerate = () => {
                       <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
                       >
-                        {item?.memberId}
+                        {item?.memberId || 'N/A'}
                       </TableCell>
                       <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
                       >
-                        {item?.name}
+                        {item?.name || 'N/A'}
                       </TableCell>
                       <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
                       >
-                        {item?.accountNumber}
+                        {item?.accountNumber || 'N/A'}
                       </TableCell>
                       <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
                       >
-                        {item?.ifsc}
+                        {item?.ifsc || 'N/A'}
                       </TableCell>
                       <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
@@ -535,7 +535,7 @@ const PayoutGenerate = () => {
                       <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
                       >
-                        {item?.amount}
+                        {item?.amount || '0'}
                       </TableCell>
                       <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
@@ -550,7 +550,7 @@ const PayoutGenerate = () => {
                       <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
                       >
-                        {item?.txnId}
+                        {item?.txnId || 'N/A'}
                       </TableCell>
                       <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
@@ -565,7 +565,7 @@ const PayoutGenerate = () => {
                       <TableCell
                         sx={{ border: "1px solid rgba(224, 224, 224, 1)" }}
                       >
-                        {item.dateTime}
+                        {item.dateTime || 'N/A'}
                       </TableCell>
                     </TableRow>
                   ))

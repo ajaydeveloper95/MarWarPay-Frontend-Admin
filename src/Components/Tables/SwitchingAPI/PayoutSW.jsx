@@ -37,6 +37,7 @@ const USER_LIST_API = `apiAdmin/v1/utility/getUserListSwitchApi`;
 const PAYOUT_API_LIST = `apiAdmin/v1/utility/getPayOutApiList`;
 const SWITCH_API = `apiAdmin/v1/apiswitch/AllUserSwitchPayOut`;
 const SWITCH_API_SINGLE_USER = `apiAdmin/v1/apiswitch/OneUserSwitchPayOut`;
+const passwordGet = import.meta.env.VITE_API_URL_PayoutSW
 
 const PayoutSW = () => {
   const { isSidebarOpen } = useSidebar();
@@ -117,7 +118,7 @@ const PayoutSW = () => {
   };
 
   const validatePassword = async (password) => {
-    return password === "zanithpay@12345";
+    return password === passwordGet;
   };
 
   const handleSave = async () => {

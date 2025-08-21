@@ -54,7 +54,7 @@ const AllUserIP = () => {
   }, []);
 
   const filteredData = data.filter((entry) =>
-    entry.userInfo.memberId.toLowerCase().includes(searchQuery.toLowerCase())
+    entry?.userInfo?.memberId.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const itemsToDisplay =
